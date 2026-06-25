@@ -1,3 +1,10 @@
+<!-- MathJax -->
+<script>
+  window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<!-- fin MathJax -->
 <!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
 <style id="cm-theme-style">
   .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
@@ -202,7 +209,7 @@
     <strong>Astuce.</strong> Pour comparer des distances entre elles (trouver les plus proches), il est inutile de calculer la racine carrée&nbsp;: comparer les distances <strong>au carré</strong> donne le même classement et évite un calcul coûteux.
   </div>
 
-  <p><strong>KNN est un apprentissage «&nbsp;paresseux&nbsp;»</strong> (<em>lazy learning</em>)&nbsp;: il n'y a pas de phase d'entraînement, on garde simplement les données et tout le calcul se fait au moment de la prédiction. La complexité d'une prédiction est en O(N&middot;n) pour N points en dimension n, à laquelle s'ajoute le tri ou la sélection des k voisins.</p>
+  <p><strong>KNN est un apprentissage «&nbsp;paresseux&nbsp;»</strong> (<em>lazy learning</em>)&nbsp;: il n'y a pas de phase d'entraînement, on garde simplement les données et tout le calcul se fait au moment de la prédiction. La complexité d'une prédiction est en \(O(N&middot;n)\) pour N points en dimension n, à laquelle s'ajoute le tri ou la sélection des k voisins.</p>
 
   <!-- ===================== 6 ===================== -->
   <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. Implémentation de KNN en Python</h2>

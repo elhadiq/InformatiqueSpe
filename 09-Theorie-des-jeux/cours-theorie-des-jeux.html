@@ -1,3 +1,10 @@
+<!-- MathJax -->
+<script>
+  window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<!-- fin MathJax -->
 <!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
 <style id="cm-theme-style">
   .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
@@ -175,7 +182,7 @@
                     attr.add(u); file.append(u)
     return attr</pre>
 <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
-  <strong>Complexité.</strong> Chaque arc est examiné une seule fois (lorsque son extrémité entre dans l'attracteur). L'algorithme est en <strong>O(|V| + |E|)</strong>, comme un parcours de graphe.
+  <strong>Complexité.</strong> Chaque arc est examiné une seule fois (lorsque son extrémité entre dans l'attracteur). L'algorithme est en <strong>\(O(|V| + |E|)\)</strong>, comme un parcours de graphe.
 </div>
 <p>Les positions <strong>hors</strong> de Attr<sub>0</sub>(F) sont exactement les positions <strong>gagnantes pour le Joueur 1</strong> : à partir de là, le Joueur 1 peut éviter F pour toujours. C'est la <strong>détermination</strong> du jeu : chaque position est gagnante pour exactement l'un des deux joueurs.</p>
 
@@ -253,7 +260,7 @@
   <ul style="margin:0;padding-left:22px;">
     <li>Un <strong>jeu d'accessibilité</strong> = graphe biparti G = (V<sub>0</sub> &cup; V<sub>1</sub>, E) + cible F. Le Joueur 0 veut atteindre F, le Joueur 1 veut l'éviter.</li>
     <li>L'<strong>attracteur</strong> Attr<sub>0</sub>(F) = positions d'où le Joueur 0 force F. Règle : &exist; un successeur gagnant sur V<sub>0</sub>, &forall; les successeurs gagnants sur V<sub>1</sub>.</li>
-    <li>Calcul par induction arrière en <strong>O(|V| + |E|)</strong> ; les positions hors attracteur sont gagnantes pour le Joueur 1.</li>
+    <li>Calcul par induction arrière en <strong>\(O(|V| + |E|)\)</strong> ; les positions hors attracteur sont gagnantes pour le Joueur 1.</li>
     <li>La <strong>stratégie gagnante</strong> du Joueur 0 : « baisser le rang » ; celle du Joueur 1 : « rester hors de l'attracteur ». Le jeu est <strong>déterminé</strong>.</li>
     <li><strong>Minimax</strong> + <strong>heuristique</strong> : quand le graphe est trop gros, on explore en profondeur limitée (MAX maximise, MIN minimise) en évaluant les feuilles par une heuristique.</li>
   </ul>

@@ -1,3 +1,10 @@
+<!-- MathJax -->
+<script>
+  window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<!-- fin MathJax -->
 <!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
 <style id="cm-theme-style">
   .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
@@ -203,7 +210,7 @@
 
   <!-- ===================== 6 ===================== -->
   <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. Représentation : matrice d'adjacence</h2>
-  <p>Numérotons les sommets de 0 à n&minus;1. La <strong>matrice d'adjacence</strong> M est une matrice n × n telle que :</p>
+  <p>Numérotons les sommets de 0 à n&minus;1. La <strong>matrice d'adjacence</strong> M est une matrice \(n \times n\) telle que :</p>
   <p style="text-align:center;font-size:1.05em;">M[i][j] = 1 s'il existe un arc/arête de i vers j, &nbsp; M[i][j] = 0 sinon.</p>
   <ul style="padding-left:22px;">
     <li>Pour un graphe <strong>non orienté</strong>, la matrice est <strong>symétrique</strong> : M[i][j] = M[j][i].</li>
@@ -232,15 +239,15 @@ print(M[0][2] == 1)   # True</pre>
     </tr>
     <tr>
       <td style="border:1px solid #ddd;padding:10px;">Test d'existence d'un arc</td>
-      <td style="border:1px solid #ddd;padding:10px;">O(1)</td>
+      <td style="border:1px solid #ddd;padding:10px;">\(O(1)\)</td>
     </tr>
     <tr style="background:#f3f9f9;">
       <td style="border:1px solid #ddd;padding:10px;">Liste des voisins d'un sommet</td>
-      <td style="border:1px solid #ddd;padding:10px;">O(n)</td>
+      <td style="border:1px solid #ddd;padding:10px;">\(O(n)\)</td>
     </tr>
     <tr>
       <td style="border:1px solid #ddd;padding:10px;">Mémoire utilisée</td>
-      <td style="border:1px solid #ddd;padding:10px;">O(n<sup>2</sup>)</td>
+      <td style="border:1px solid #ddd;padding:10px;">\(O(n^{2})\)</td>
     </tr>
   </table>
   <p>La matrice est idéale pour un graphe <strong>dense</strong> (beaucoup d'arêtes) ou quand on teste souvent l'existence d'un lien, mais elle gaspille de la mémoire pour un graphe <strong>creux</strong>.</p>
@@ -271,15 +278,15 @@ print(G['C'])   # ['A', 'B', 'D'] : voisins de C</pre>
     </tr>
     <tr>
       <td style="border:1px solid #ddd;padding:10px;">Test d'existence d'un arc</td>
-      <td style="border:1px solid #ddd;padding:10px;">O(deg(u))</td>
+      <td style="border:1px solid #ddd;padding:10px;">\(O(deg(u))\)</td>
     </tr>
     <tr style="background:#f3f9f9;">
       <td style="border:1px solid #ddd;padding:10px;">Liste des voisins d'un sommet</td>
-      <td style="border:1px solid #ddd;padding:10px;">O(deg(u))</td>
+      <td style="border:1px solid #ddd;padding:10px;">\(O(deg(u))\)</td>
     </tr>
     <tr>
       <td style="border:1px solid #ddd;padding:10px;">Mémoire utilisée</td>
-      <td style="border:1px solid #ddd;padding:10px;">O(n + m)</td>
+      <td style="border:1px solid #ddd;padding:10px;">\(O(n + m)\)</td>
     </tr>
   </table>
   <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
@@ -321,7 +328,7 @@ print(voisins_depuis_matrice(M, 2))   # [0, 1, 3]</pre>
   <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">9. Parcours en largeur (BFS)</h2>
   <p>Le <strong>parcours en largeur</strong> (<em>Breadth-First Search</em>) explore le graphe « par cercles concentriques » : d'abord le sommet de départ, puis tous ses voisins (distance 1), puis les voisins des voisins (distance 2), etc. Il utilise une <strong>file</strong> (FIFO : premier entré, premier sorti).</p>
   <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
-    <strong>⚠️ Efficacité de la file.</strong> Une <code>list</code> Python est lente en tête (<code>pop(0)</code> est en O(n)). On utilise <strong><code>deque</code></strong> du module <code>collections</code> : <code>popleft()</code> et <code>append()</code> sont en O(1).
+    <strong>⚠️ Efficacité de la file.</strong> Une <code>list</code> Python est lente en tête (<code>pop(0)</code> est en \(O(n)\)). On utilise <strong><code>deque</code></strong> du module <code>collections</code> : <code>popleft()</code> et <code>append()</code> sont en \(O(1)\).
   </div>
   <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">from collections import deque
 
@@ -340,7 +347,7 @@ def bfs(G, depart):
 
 G = {'A':['B','C'], 'B':['A','D'], 'C':['A','D'], 'D':['B','C']}
 print(bfs(G, 'A'))   # ['A', 'B', 'C', 'D']</pre>
-  <p>Le BFS visite chaque sommet une fois et examine chaque arête une fois : sa complexité est <strong>O(n + m)</strong>. Propriété fondamentale : dans un graphe non pondéré, le BFS calcule le <strong>plus court chemin</strong> (en nombre d'arêtes) depuis le sommet de départ.</p>
+  <p>Le BFS visite chaque sommet une fois et examine chaque arête une fois : sa complexité est <strong>\(O(n + m)\)</strong>. Propriété fondamentale : dans un graphe non pondéré, le BFS calcule le <strong>plus court chemin</strong> (en nombre d'arêtes) depuis le sommet de départ.</p>
 
   <!-- ===================== 10 ===================== -->
   <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">10. Parcours en profondeur (DFS)</h2>
@@ -370,7 +377,7 @@ def dfs_iter(G, depart):
                 if v not in vus:
                     pile.append(v)
     return ordre</pre>
-  <p>Comme le BFS, le DFS est en <strong>O(n + m)</strong>. La différence est l'<strong>ordre de visite</strong> : le BFS privilégie la largeur (file), le DFS la profondeur (pile/récursion).</p>
+  <p>Comme le BFS, le DFS est en <strong>\(O(n + m)\)</strong>. La différence est l'<strong>ordre de visite</strong> : le BFS privilégie la largeur (file), le DFS la profondeur (pile/récursion).</p>
 
   <!-- ===================== 11 ===================== -->
   <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">11. Applications des parcours : cycle et connexité</h2>
@@ -434,7 +441,7 @@ def dijkstra(G, source):
     return dist
 
 print(dijkstra(G, 'A'))   # {'A': 0, 'B': 3, 'C': 1, 'D': 4}</pre>
-  <p>Avec un tas, Dijkstra s'exécute en <strong>O((n + m) log n)</strong>. Note : le plus court chemin A→B passe par C (1 + 2 = 3) plutôt que par l'arc direct A→B (de poids 4).</p>
+  <p>Avec un tas, Dijkstra s'exécute en <strong>\(O((n + m) \log n)\)</strong>. Note : le plus court chemin A→B passe par C (1 + 2 = 3) plutôt que par l'arc direct A→B (de poids 4).</p>
   <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
     <strong>⚠️ Poids négatifs.</strong> Dijkstra <strong>échoue</strong> en présence de poids négatifs : un sommet figé pourrait encore être amélioré plus tard. Il faut alors d'autres algorithmes (Bellman-Ford, hors programme principal).
   </div>
@@ -451,7 +458,7 @@ print(dijkstra(G, 'A'))   # {'A': 0, 'B': 3, 'C': 1, 'D': 4}</pre>
                 if d[i][k] + d[k][j] < d[i][j]:
                     d[i][j] = d[i][k] + d[k][j]
     return d</pre>
-  <p>Sa complexité est <strong>O(n<sup>3</sup>)</strong>. La <strong>coloration de graphe</strong> (attribuer une couleur à chaque sommet pour que deux voisins n'aient jamais la même) est un autre classique d'application.</p>
+  <p>Sa complexité est <strong>\(O(n^{3})\)</strong>. La <strong>coloration de graphe</strong> (attribuer une couleur à chaque sommet pour que deux voisins n'aient jamais la même) est un autre classique d'application.</p>
 
   <!-- ===================== RECAP ===================== -->
   <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">14. Récapitulatif</h2>
@@ -459,9 +466,9 @@ print(dijkstra(G, 'A'))   # {'A': 0, 'B': 3, 'C': 1, 'D': 4}</pre>
     <ul style="margin:0;padding-left:20px;">
       <li>Un <strong>graphe</strong> G = (S, A) modélise des objets et leurs liens : <strong>arêtes</strong> (non orienté) ou <strong>arcs</strong> (orienté). On se limite aux graphes <strong>simples</strong>.</li>
       <li>Vocabulaire : <strong>ordre</strong> (n sommets), <strong>degré</strong> (entrant/sortant), <strong>chaîne/chemin</strong>, <strong>cycle/circuit</strong>, <strong>connexité</strong>.</li>
-      <li>Deux représentations : <strong>matrice d'adjacence</strong> (O(n<sup>2</sup>) mémoire, test d'arc O(1)) et <strong>listes d'adjacence</strong> (O(n + m) mémoire, idéales pour graphes creux).</li>
-      <li><strong>BFS</strong> (file, <code>deque</code>) et <strong>DFS</strong> (pile/récursion) parcourent un graphe en <strong>O(n + m)</strong> ; applications : <strong>connexité</strong>, <strong>détection de cycle</strong>, plus court chemin non pondéré (BFS).</li>
-      <li>Sur un graphe <strong>pondéré positivement</strong>, <strong>Dijkstra</strong> donne les plus courtes distances en O((n + m) log n). Extensions : <strong>A*</strong> (heuristique), <strong>Floyd-Warshall</strong> (toutes paires, O(n<sup>3</sup>)), coloration.</li>
+      <li>Deux représentations : <strong>matrice d'adjacence</strong> (\(O(n^{2})\) mémoire, test d'arc \(O(1)\)) et <strong>listes d'adjacence</strong> (\(O(n + m)\) mémoire, idéales pour graphes creux).</li>
+      <li><strong>BFS</strong> (file, <code>deque</code>) et <strong>DFS</strong> (pile/récursion) parcourent un graphe en <strong>\(O(n + m)\)</strong> ; applications : <strong>connexité</strong>, <strong>détection de cycle</strong>, plus court chemin non pondéré (BFS).</li>
+      <li>Sur un graphe <strong>pondéré positivement</strong>, <strong>Dijkstra</strong> donne les plus courtes distances en \(O((n + m) \log n)\). Extensions : <strong>A*</strong> (heuristique), <strong>Floyd-Warshall</strong> (toutes paires, \(O(n^{3})\)), coloration.</li>
     </ul>
   </div>
 

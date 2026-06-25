@@ -1,3 +1,10 @@
+<!-- MathJax -->
+<script>
+  window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<!-- fin MathJax -->
 <!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
 <style id="cm-theme-style">
   .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
@@ -233,7 +240,7 @@ def largeur(a):
   <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;text-align:center;">
     toutes les valeurs du sous-arbre <strong>gauche</strong> &lt; valeur du nœud &lt; toutes les valeurs du sous-arbre <strong>droit</strong>
   </div>
-  <p>Cette invariant rend la recherche très efficace : à chaque nœud, on élimine la moitié de l'arbre, exactement comme dans une recherche dichotomique. Le coût d'une recherche, d'une insertion ou d'une suppression est en O(h), donc O(log&nbsp;n) si l'arbre est équilibré, mais O(n) dans le pire des cas (arbre filiforme).</p>
+  <p>Cette invariant rend la recherche très efficace : à chaque nœud, on élimine la moitié de l'arbre, exactement comme dans une recherche dichotomique. Le coût d'une recherche, d'une insertion ou d'une suppression est en \(O(h)\), donc \(O(\log n)\) si l'arbre est équilibré, mais \(O(n)\) dans le pire des cas (arbre filiforme).</p>
 
   <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def recherche(a, x):
     if a is None:
@@ -274,7 +281,7 @@ def inserer_tas(t, x):
         i = pere
     return t</pre>
 
-  <p>Le tas est la structure idéale d'une <strong>file de priorité</strong> : insertion et extraction du maximum coûtent O(log&nbsp;n). Il est au cœur du tri par tas (<em>heapsort</em>).</p>
+  <p>Le tas est la structure idéale d'une <strong>file de priorité</strong> : insertion et extraction du maximum coûtent \(O(\log n)\). Il est au cœur du tri par tas (<em>heapsort</em>).</p>
 
   <!-- ===== RÉCAP ===== -->
   <h2 style="color:#27ae60;border-bottom:2px solid #27ae60;padding-bottom:6px;">8. Récapitulatif</h2>
@@ -284,7 +291,7 @@ def inserer_tas(t, x):
       <li>La <strong>hauteur</strong> mesure la profondeur maximale ; pour <em>n</em> nœuds : h+1 &le; n &le; 2<sup>h+1</sup>&minus;1.</li>
       <li>Représentation Python : <code>[valeur, gauche, droite]</code> ou liste indexée (fils en 2i+1 et 2i+2).</li>
       <li>Parcours en <strong>profondeur</strong> (pile/récursion) : préfixe, infixe, postfixe. Parcours en <strong>largeur</strong> (file).</li>
-      <li>L'<strong>ABR</strong> trie via le parcours infixe et offre recherche/insertion en O(h).</li>
+      <li>L'<strong>ABR</strong> trie via le parcours infixe et offre recherche/insertion en \(O(h)\).</li>
       <li>Le <strong>tas</strong> est un arbre complet rangé en tableau, support des files de priorité.</li>
     </ul>
   </div>
