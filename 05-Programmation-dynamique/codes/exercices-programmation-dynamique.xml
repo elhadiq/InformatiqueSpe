@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz><question type="coderunner"><name><text>Q1 — Fibonacci par mémoïsation (Top-Down)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q1 — Fibonacci par mémoïsation&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;La suite de Fibonacci est définie par F(0)=0, F(1)=1 et F(n)=F(n-1)+F(n-2). La version récursive naïve recalcule sans cesse les mêmes valeurs : sa complexité est exponentielle.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;fib(n)&lt;/code&gt;&lt;/strong&gt; qui calcule F(n) en &lt;strong&gt;mémoïsation&lt;/strong&gt; (approche Top-Down : récursion + cache), pour atteindre une complexité O(n).&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;fib(10) &amp;rarr; 55&lt;/pre&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;fib(20) &amp;rarr; 6765&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def fib(n, memo=None):
+    if memo is None:
+        memo = {}
+    # Compléter : cas de base, lecture du cache, calcul et stockage
+    ...</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def fib(n, memo=None):
+    if memo is None:
+        memo = {}
+    if n &lt; 2:
+        return n
+    if n in memo:
+        return memo[n]
+    memo[n] = fib(n-1, memo) + fib(n-2, memo)
+    return memo[n]</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fib(10))
+</text></testcode><stdin><text /></stdin><expected><text>55
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fib(20))
+</text></testcode><stdin><text /></stdin><expected><text>6765
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fib(0), fib(1), fib(2))
+</text></testcode><stdin><text /></stdin><expected><text>0 1 1
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fib(40))
+</text></testcode><stdin><text /></stdin><expected><text>102334155
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q2 — Fibonacci par tabulation (Bottom-Up)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q2 — Fibonacci par tabulation&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Même suite de Fibonacci, mais cette fois en approche Bottom-Up : on remplit un tableau des plus petites valeurs vers les plus grandes, sans aucune récursion.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;fib(n)&lt;/code&gt;&lt;/strong&gt; qui calcule F(n) par &lt;strong&gt;tabulation&lt;/strong&gt; (remplissage itératif d'une liste). Complexité O(n).&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;fib(7) &amp;rarr; 13&lt;/pre&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;fib(15) &amp;rarr; 610&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def fib(n):
+    if n &lt; 2:
+        return n
+    f = [0] * (n + 1)
+    f[1] = 1
+    # Compléter : boucle de remplissage du tableau
+    ...</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def fib(n):
+    if n &lt; 2:
+        return n
+    f = [0] * (n + 1)
+    f[1] = 1
+    for i in range(2, n + 1):
+        f[i] = f[i-1] + f[i-2]
+    return f[n]</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fib(7))
+</text></testcode><stdin><text /></stdin><expected><text>13
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fib(15))
+</text></testcode><stdin><text /></stdin><expected><text>610
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print([fib(i) for i in range(8)])
+</text></testcode><stdin><text /></stdin><expected><text>[0, 1, 1, 2, 3, 5, 8, 13]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fib(50))
+</text></testcode><stdin><text /></stdin><expected><text>12586269025
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q3 — Rendu de monnaie minimal (PD)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q3 — Rendu de monnaie minimal&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;On dispose d'un système de pièces (valeurs entières, quantité illimitée). Le glouton n'est pas toujours optimal : par exemple avec (1, 3, 4) pour rendre 6, il donne 4+1+1 (3 pièces) au lieu de 3+3 (2 pièces). La programmation dynamique garantit l'optimum.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;rendu_min(systeme, S)&lt;/code&gt;&lt;/strong&gt; qui renvoie le &lt;strong&gt;nombre minimal&lt;/strong&gt; de pièces pour rendre la somme S (on suppose que c'est toujours possible).&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;rendu_min([1, 3, 4], 6) &amp;rarr; 2&lt;/pre&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;rendu_min([1, 2, 5], 11) &amp;rarr; 3&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def rendu_min(systeme, S):
+    INF = float('inf')
+    dp = [0] + [INF] * S
+    # dp[s] = nombre minimal de pieces pour rendre s
+    # Compléter le remplissage de dp
+    ...
+    return dp[S]</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def rendu_min(systeme, S):
+    INF = float('inf')
+    dp = [0] + [INF] * S
+    for s in range(1, S + 1):
+        for p in systeme:
+            if p &lt;= s and dp[s-p] + 1 &lt; dp[s]:
+                dp[s] = dp[s-p] + 1
+    return dp[S]</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(rendu_min([1, 3, 4], 6))
+</text></testcode><stdin><text /></stdin><expected><text>2
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(rendu_min([1, 2, 5], 11))
+</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(rendu_min([2, 5, 10, 1], 27))
+</text></testcode><stdin><text /></stdin><expected><text>4
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(rendu_min([1, 7, 23], 31))
+</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q4 — Sac à dos 0/1</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q4 — Sac à dos 0/1&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;n objets de poids poids[i] et de valeur valeurs[i] ; un sac de capacité C. Chaque objet est pris en entier ou pas du tout. On veut la valeur totale maximale sans dépasser C. Le glouton échoue : la PD donne l'optimum exact.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;sac_a_dos(poids, valeurs, C)&lt;/code&gt;&lt;/strong&gt; qui renvoie la &lt;strong&gt;valeur maximale&lt;/strong&gt; transportable, via le tableau M(i, c).&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;sac_a_dos([10,20,30],[60,100,120],50) &amp;rarr; 220&lt;/pre&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;sac_a_dos([1,3,4,5],[1,4,5,7],7) &amp;rarr; 9&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def sac_a_dos(poids, valeurs, C):
+    n = len(poids)
+    M = [[0] * (C + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for c in range(C + 1):
+            # Compléter : objet trop lourd, sinon max(ne pas prendre, prendre)
+            ...
+    return M[n][C]</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def sac_a_dos(poids, valeurs, C):
+    n = len(poids)
+    M = [[0] * (C + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for c in range(C + 1):
+            if poids[i-1] &gt; c:
+                M[i][c] = M[i-1][c]
+            else:
+                M[i][c] = max(M[i-1][c],
+                              valeurs[i-1] + M[i-1][c - poids[i-1]])
+    return M[n][C]</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(sac_a_dos([10,20,30],[60,100,120],50))
+</text></testcode><stdin><text /></stdin><expected><text>220
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(sac_a_dos([1,3,4,5],[1,4,5,7],7))
+</text></testcode><stdin><text /></stdin><expected><text>9
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(sac_a_dos([2,3,4,5],[3,4,5,6],5))
+</text></testcode><stdin><text /></stdin><expected><text>7
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(sac_a_dos([5,4,6,3],[10,40,30,50],10))
+</text></testcode><stdin><text /></stdin><expected><text>90
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q5 — Plus longue sous-séquence commune</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q5 — Plus longue sous-séquence commune&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Une sous-séquence s'obtient en supprimant des caractères sans changer l'ordre. Étant données deux chaînes X et Y, on cherche la longueur de leur plus longue sous-séquence commune (PLSSC).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;plssc(X, Y)&lt;/code&gt;&lt;/strong&gt; qui renvoie la &lt;strong&gt;longueur&lt;/strong&gt; de la plus longue sous-séquence commune à X et Y.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;plssc('ABCBDAB', 'BDCAB') &amp;rarr; 4&lt;/pre&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;plssc('AGGTAB', 'GXTXAYB') &amp;rarr; 4&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def plssc(X, Y):
+    n, m = len(X), len(Y)
+    L = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            # Compléter : caractères égaux, sinon max
+            ...
+    return L[n][m]</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def plssc(X, Y):
+    n, m = len(X), len(Y)
+    L = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if X[i-1] == Y[j-1]:
+                L[i][j] = L[i-1][j-1] + 1
+            else:
+                L[i][j] = max(L[i-1][j], L[i][j-1])
+    return L[n][m]</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(plssc('ABCBDAB', 'BDCAB'))
+</text></testcode><stdin><text /></stdin><expected><text>4
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(plssc('AGGTAB', 'GXTXAYB'))
+</text></testcode><stdin><text /></stdin><expected><text>4
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(plssc('ABC', 'ABC'), plssc('ABC', 'XYZ'))
+</text></testcode><stdin><text /></stdin><expected><text>3 0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(plssc('AABCDEF', 'XAYBZCWDEF'))
+</text></testcode><stdin><text /></stdin><expected><text>6
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q6 — Distance de Levenshtein</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q6 — Distance de Levenshtein&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;La distance d'édition entre deux chaînes est le nombre minimal d'opérations (insertion, suppression, substitution, chacune de coût 1) pour transformer l'une en l'autre. C'est la base des correcteurs orthographiques.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;levenshtein(X, Y)&lt;/code&gt;&lt;/strong&gt; qui renvoie la &lt;strong&gt;distance d'édition&lt;/strong&gt; entre X et Y, via le tableau D(i, j).&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;levenshtein('CHIEN', 'NICHE') &amp;rarr; 4&lt;/pre&gt;
+&lt;pre style="color:#3b0764;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;levenshtein('chat', 'chats') &amp;rarr; 1&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def levenshtein(X, Y):
+    n, m = len(X), len(Y)
+    D = [[0] * (m + 1) for _ in range(n + 1)]
+    # Cas de base : transformer en/depuis la chaîne vide
+    ...
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            # Compléter : égalité, sinon 1 + min(supp, ins, subst)
+            ...
+    return D[n][m]</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def levenshtein(X, Y):
+    n, m = len(X), len(Y)
+    D = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        D[i][0] = i
+    for j in range(m + 1):
+        D[0][j] = j
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if X[i-1] == Y[j-1]:
+                D[i][j] = D[i-1][j-1]
+            else:
+                D[i][j] = 1 + min(D[i-1][j], D[i][j-1], D[i-1][j-1])
+    return D[n][m]</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(levenshtein('CHIEN', 'NICHE'))
+</text></testcode><stdin><text /></stdin><expected><text>4
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(levenshtein('chat', 'chats'))
+</text></testcode><stdin><text /></stdin><expected><text>1
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(levenshtein('', 'abc'), levenshtein('kitten', 'sitting'))
+</text></testcode><stdin><text /></stdin><expected><text>3 3
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(levenshtein('anniversaire', 'aniversere'))
+</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question></quiz>

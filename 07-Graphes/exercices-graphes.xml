@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz><question type="coderunner"><name><text>Q1 — Degré d'un sommet (matrice)</text></name><questiontext format="html"><text>&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q1 — Degré d'un sommet&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Un graphe simple non orienté est représenté par sa &lt;strong&gt;matrice d'adjacence&lt;/strong&gt; &lt;code&gt;M&lt;/code&gt; (liste de listes de 0 et 1).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;degre(M, u)&lt;/code&gt;&lt;/strong&gt; qui renvoie le &lt;strong&gt;degré&lt;/strong&gt; du sommet &lt;code&gt;u&lt;/code&gt; (son nombre de voisins).&lt;/p&gt;
+&lt;div style="background:#f3f9f9;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#026573;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;M = [[0,1,1,0],
+     [1,0,1,0],
+     [1,1,0,1],
+     [0,0,1,0]]
+degre(M, 2)  →  3&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def degre(M, u):
+    # M : matrice d'adjacence (liste de listes) d'un graphe simple non orienté
+    # Renvoyer le degré du sommet u
+    ...  # à compléter</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def degre(M, u):
+    return sum(M[u])</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,1,1,0],[1,0,1,0],[1,1,0,1],[0,0,1,0]]
+print(degre(M,2))
+</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,1,1,0],[1,0,1,0],[1,1,0,1],[0,0,1,0]]
+print(degre(M,0))
+</text></testcode><stdin><text /></stdin><expected><text>2
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,1,1,0],[1,0,1,0],[1,1,0,1],[0,0,1,0]]
+print(degre(M,3))
+</text></testcode><stdin><text /></stdin><expected><text>1
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,0,0],[0,0,0],[0,0,0]]
+print(degre(M,1))
+</text></testcode><stdin><text /></stdin><expected><text>0
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,1,1,1],[1,0,1,1],[1,1,0,1],[1,1,1,0]]
+print(degre(M,0))
+</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q2 — Voisins d'un sommet (matrice)</text></name><questiontext format="html"><text>&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q2 — Liste des voisins&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Toujours avec la &lt;strong&gt;matrice d'adjacence&lt;/strong&gt; &lt;code&gt;M&lt;/code&gt; d'un graphe simple.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;voisins(M, u)&lt;/code&gt;&lt;/strong&gt; qui renvoie la &lt;strong&gt;liste croissante&lt;/strong&gt; des voisins du sommet &lt;code&gt;u&lt;/code&gt;.&lt;/p&gt;
+&lt;div style="background:#f3f9f9;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#026573;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;M = [[0,1,1,0],
+     [1,0,1,0],
+     [1,1,0,1],
+     [0,0,1,0]]
+voisins(M, 2)  →  [0, 1, 3]&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def voisins(M, u):
+    # Renvoyer la liste des voisins de u (indices j tels que M[u][j] == 1)
+    ...  # à compléter</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def voisins(M, u):
+    return [j for j in range(len(M)) if M[u][j] == 1]</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,1,1,0],[1,0,1,0],[1,1,0,1],[0,0,1,0]]
+print(voisins(M,2))
+</text></testcode><stdin><text /></stdin><expected><text>[0, 1, 3]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,1,1,0],[1,0,1,0],[1,1,0,1],[0,0,1,0]]
+print(voisins(M,0))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,1,1,0],[1,0,1,0],[1,1,0,1],[0,0,1,0]]
+print(voisins(M,3))
+</text></testcode><stdin><text /></stdin><expected><text>[2]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,0,0],[0,0,0],[0,0,0]]
+print(voisins(M,0))
+</text></testcode><stdin><text /></stdin><expected><text>[]
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>M=[[0,1,1,1],[1,0,0,0],[1,0,0,0],[1,0,0,0]]
+print(voisins(M,0))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2, 3]
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q3 — Test d'existence d'une arête</text></name><questiontext format="html"><text>&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q3 — Existence d'une arête&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Un graphe non orienté est représenté par un &lt;strong&gt;dictionnaire de listes d'adjacence&lt;/strong&gt; &lt;code&gt;G&lt;/code&gt; (&lt;code&gt;G[u]&lt;/code&gt; est la liste des voisins de &lt;code&gt;u&lt;/code&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;existe_arete(G, u, v)&lt;/code&gt;&lt;/strong&gt; qui renvoie &lt;code&gt;True&lt;/code&gt; s'il existe une arête entre &lt;code&gt;u&lt;/code&gt; et &lt;code&gt;v&lt;/code&gt;, &lt;code&gt;False&lt;/code&gt; sinon (y compris si un sommet est absent du graphe).&lt;/p&gt;
+&lt;div style="background:#f3f9f9;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#026573;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;G = {'A':['B','C'], 'B':['A','C'], 'C':['A','B','D'], 'D':['C']}
+existe_arete(G, 'A', 'C')  →  True
+existe_arete(G, 'A', 'D')  →  False&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def existe_arete(G, u, v):
+    # G : dictionnaire de listes d'adjacence (graphe non orienté)
+    # Renvoyer True s'il existe une arête entre u et v, False sinon
+    ...  # à compléter</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def existe_arete(G, u, v):
+    return u in G and v in G[u]</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>G={'A':['B','C'],'B':['A','C'],'C':['A','B','D'],'D':['C']}
+print(existe_arete(G,'A','C'))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>G={'A':['B','C'],'B':['A','C'],'C':['A','B','D'],'D':['C']}
+print(existe_arete(G,'A','D'))
+</text></testcode><stdin><text /></stdin><expected><text>False
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>G={'A':['B','C'],'B':['A','C'],'C':['A','B','D'],'D':['C']}
+print(existe_arete(G,'D','C'))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>G={'A':['B'],'B':['A']}
+print(existe_arete(G,'A','Z'))
+</text></testcode><stdin><text /></stdin><expected><text>False
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>G={0:[1,2],1:[0],2:[0]}
+print(existe_arete(G,1,2))
+</text></testcode><stdin><text /></stdin><expected><text>False
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q4 — Parcours en largeur (BFS)</text></name><questiontext format="html"><text>&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q4 — Parcours en largeur&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Un graphe est donné par un &lt;strong&gt;dictionnaire de listes d'adjacence&lt;/strong&gt; &lt;code&gt;G&lt;/code&gt;. Le parcours en largeur utilise une &lt;strong&gt;file&lt;/strong&gt; (&lt;code&gt;deque&lt;/code&gt; du module &lt;code&gt;collections&lt;/code&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;parcours_largeur(G, depart)&lt;/code&gt;&lt;/strong&gt; qui effectue un &lt;strong&gt;parcours en largeur (BFS)&lt;/strong&gt; depuis &lt;code&gt;depart&lt;/code&gt; et renvoie la liste des sommets dans l'ordre de visite. On enfile les voisins dans l'ordre de la liste d'adjacence.&lt;/p&gt;
+&lt;div style="background:#f3f9f9;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#026573;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;G = {0:[1,2], 1:[0,3], 2:[0,3], 3:[1,2]}
+parcours_largeur(G, 0)  →  [0, 1, 2, 3]&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>from collections import deque
+
+def parcours_largeur(G, depart):
+    # Parcours en largeur (BFS) à partir du sommet depart
+    # Renvoyer la liste des sommets dans l'ordre de visite
+    ...  # à compléter</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>from collections import deque
+
+def parcours_largeur(G, depart):
+    vus = {depart}
+    file = deque([depart])
+    ordre = []
+    while file:
+        u = file.popleft()
+        ordre.append(u)
+        for v in G[u]:
+            if v not in vus:
+                vus.add(v)
+                file.append(v)
+    return ordre</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>G={0:[1,2],1:[0,3],2:[0,3],3:[1,2]}
+print(parcours_largeur(G,0))
+</text></testcode><stdin><text /></stdin><expected><text>[0, 1, 2, 3]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>G={0:[1],1:[0,2],2:[1,3],3:[2]}
+print(parcours_largeur(G,0))
+</text></testcode><stdin><text /></stdin><expected><text>[0, 1, 2, 3]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>G={0:[1],1:[0,2],2:[1,3],3:[2]}
+print(parcours_largeur(G,2))
+</text></testcode><stdin><text /></stdin><expected><text>[2, 1, 3, 0]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>G={0:[]}
+print(parcours_largeur(G,0))
+</text></testcode><stdin><text /></stdin><expected><text>[0]
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>G={'A':['B','C'],'B':['A','D'],'C':['A','D'],'D':['B','C']}
+print(parcours_largeur(G,'A'))
+</text></testcode><stdin><text /></stdin><expected><text>['A', 'B', 'C', 'D']
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q5 — Test de connexité</text></name><questiontext format="html"><text>&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q5 — Connexité d'un graphe&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Un graphe non orienté est représenté par un &lt;strong&gt;dictionnaire de listes d'adjacence&lt;/strong&gt; &lt;code&gt;G&lt;/code&gt;. Il est &lt;strong&gt;connexe&lt;/strong&gt; si un parcours lancé depuis un seul sommet atteint tous les sommets.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;est_connexe(G)&lt;/code&gt;&lt;/strong&gt; qui renvoie &lt;code&gt;True&lt;/code&gt; si le graphe est connexe, &lt;code&gt;False&lt;/code&gt; sinon. On pourra s'appuyer sur un parcours (BFS ou DFS).&lt;/p&gt;
+&lt;div style="background:#f3f9f9;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#026573;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;G = {0:[1,2], 1:[0,2], 2:[0,1,3], 3:[2]}   →  True
+G = {0:[1], 1:[0], 2:[3], 3:[2]}            →  False&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>from collections import deque
+
+def est_connexe(G):
+    # G : dictionnaire de listes d'adjacence (graphe non orienté)
+    # Renvoyer True si le graphe est connexe, False sinon
+    ...  # à compléter</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>from collections import deque
+
+def est_connexe(G):
+    if not G:
+        return True
+    depart = next(iter(G))
+    vus = {depart}
+    file = deque([depart])
+    while file:
+        u = file.popleft()
+        for v in G[u]:
+            if v not in vus:
+                vus.add(v)
+                file.append(v)
+    return len(vus) == len(G)</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>G={0:[1,2],1:[0,2],2:[0,1,3],3:[2]}
+print(est_connexe(G))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>G={0:[1],1:[0],2:[3],3:[2]}
+print(est_connexe(G))
+</text></testcode><stdin><text /></stdin><expected><text>False
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>G={'A':['B'],'B':['A','C'],'C':['B']}
+print(est_connexe(G))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>G={0:[]}
+print(est_connexe(G))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>G={0:[1],1:[0],2:[]}
+print(est_connexe(G))
+</text></testcode><stdin><text /></stdin><expected><text>False
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question></quiz>

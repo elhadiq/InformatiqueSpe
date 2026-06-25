@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <question type="stack">
+    <name><text>Métaheuristiques Q1 — Probabilité d&#x27;acceptation</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Dans le recuit simulé, un voisin de variation de coût \(\Delta E > 0\) est accepté avec la probabilité \(P = e^{-\Delta E / T}\).</p><p>On considère \(\Delta E = 6\) et une température \(T = 3\). Donner la valeur exacte de \(P\) (sous forme d'une exponentielle, sans valeur décimale approchée).</p><p>\(P = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>\(P = e^{-\Delta E/T} = e^{-6/3} = e^{-2} \approx 0{,}135\). Comme \(\Delta E > 0\), le voisin est moins bon : il n'est accepté qu'environ une fois sur sept.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : exp(-2);</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>P=exp(-2)</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>exp(-2)</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(P = e^{-6/3} = e^{-2}\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Rappel&#8239;: \(P = e^{-\Delta E/T}\) avec \(\Delta E = 6\) et \(T = 3\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Métaheuristiques Q2 — Variation de coût ΔE</text></name>
+    <questiontext format="html"><text><![CDATA[<p>La solution courante a un coût \(f(s) = 21\). On tire un voisin de coût \(f(s') = 18\).</p><p>Donner la variation de coût \(\Delta E = f(s') - f(s)\).</p><p>\(\Delta E = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>\(\Delta E = 18 - 21 = -3\). Comme \(\Delta E \le 0\), le voisin est <strong>meilleur</strong> : il est accepté avec certitude (probabilité \(1\)).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : -3;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>dE=-3</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>10</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>-3</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>0</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(\Delta E = 18 - 21 = -3 \le 0\), voisin accepté à coup sûr.</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Attention au signe&#8239;: \(\Delta E = f(s') - f(s)\), pas l'inverse.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Métaheuristiques Q3 — Température après refroidissement géométrique</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Le refroidissement géométrique vérifie \(T_{k+1} = \alpha\, T_k\), donc \(T_k = T_0\,\alpha^{k}\).</p><p>Avec \(T_0 = 100\) et \(\alpha = \tfrac{1}{2}\), donner la température \(T_3\) après \(3\) refroidissements (valeur exacte).</p><p>\(T_3 = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>\(T_3 = 100 \times \left(\tfrac{1}{2}\right)^3 = \dfrac{100}{8} = \dfrac{25}{2} = 12{,}5\). La température décroît exponentiellement&#8239;: l'algorithme passe de l'exploration à l'exploitation.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : 100/8;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>T3=25/2</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>10</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>25/2</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>0</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(T_3 = 100/2^3 = 25/2\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Calculez \(T_0\,\alpha^k = 100\times(1/2)^3\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Métaheuristiques Q4 — Taille de l&#x27;espace de recherche (TSP)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Pour le voyageur de commerce à \(n\) villes, le nombre de circuits distincts est \(\dfrac{(n-1)!}{2}\).</p><p>Combien de circuits distincts existe-t-il pour \(n = 5\) villes&#8239;?</p><p>Nombre de circuits \(=\) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>\(\dfrac{(5-1)!}{2} = \dfrac{4!}{2} = \dfrac{24}{2} = 12\). Le nombre de circuits croît de façon <strong>factorielle</strong>&#8239;: l'énumération exhaustive devient vite impossible, d'où l'intérêt des métaheuristiques.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : (5-1)!/2;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>circuits=12</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>10</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>12</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>0</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \((4!)/2 = 12\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Utilisez \(\dfrac{(n-1)!}{2}\) avec \(n = 5\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+</quiz>

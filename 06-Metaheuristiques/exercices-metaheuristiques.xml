@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz><question type="coderunner"><name><text>Q1 — Longueur d'un circuit (voyageur de commerce)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #c9a227;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;&lt;h3 style='margin:0 0 10px;color:#0f172a;'&gt;Coût d'une tournée&lt;/h3&gt;&lt;p&gt;Une tournée du voyageur de commerce est un &lt;b&gt;circuit fermé&lt;/b&gt; : on visite les villes dans l'ordre donné par la liste &lt;code&gt;tour&lt;/code&gt;, puis on revient à la ville de départ.&lt;/p&gt;&lt;p&gt;Écrire &lt;code&gt;longueur(tour, D)&lt;/code&gt; qui renvoie la longueur totale du circuit, où &lt;code&gt;D[i][j]&lt;/code&gt; est la distance de la ville &lt;code&gt;i&lt;/code&gt; à la ville &lt;code&gt;j&lt;/code&gt;.&lt;/p&gt;&lt;p style='color:#475569'&gt;Ne pas oublier l'arête de retour entre la dernière et la première ville.&lt;/p&gt;&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def longueur(tour, D):
+    n = len(tour)
+    s = 0
+    # parcourir le circuit fermé et cumuler les distances
+    # ...
+    return s
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def longueur(tour, D):
+    n = len(tour)
+    s = 0
+    for i in range(n):
+        s += D[tour[i]][tour[(i + 1) % n]]
+    return s
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>D = [[0,2,9,10],[2,0,6,4],[9,6,0,3],[10,4,3,0]]
+print(longueur([0,1,2,3], D))</text></testcode><stdin><text /></stdin><expected><text>21
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>D = [[0,2,9,10],[2,0,6,4],[9,6,0,3],[10,4,3,0]]
+print(longueur([0,1,3,2], D))</text></testcode><stdin><text /></stdin><expected><text>18
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>D = [[0,2,9,10],[2,0,6,4],[9,6,0,3],[10,4,3,0]]
+print(longueur([0,2,1,3], D))</text></testcode><stdin><text /></stdin><expected><text>29
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>D = [[0,2,9,10],[2,0,6,4],[9,6,0,3],[10,4,3,0]]
+print(longueur([3,2,1,0], D))</text></testcode><stdin><text /></stdin><expected><text>21
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q2 — Probabilité d'acceptation de Metropolis</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #c9a227;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;&lt;h3 style='margin:0 0 10px;color:#0f172a;'&gt;Critère de Metropolis&lt;/h3&gt;&lt;p&gt;Dans le recuit simulé, un voisin de variation de coût &lt;code&gt;dE&lt;/code&gt; est accepté :&lt;/p&gt;&lt;ul&gt;&lt;li&gt;avec la probabilité &lt;b&gt;1&lt;/b&gt; si &lt;code&gt;dE &amp;le; 0&lt;/code&gt; (voisin meilleur ou égal) ;&lt;/li&gt;&lt;li&gt;avec la probabilité &lt;b&gt;e&lt;sup&gt;-dE/T&lt;/sup&gt;&lt;/b&gt; si &lt;code&gt;dE &amp;gt; 0&lt;/code&gt;.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Écrire &lt;code&gt;proba_acceptation(dE, T)&lt;/code&gt; qui renvoie cette probabilité (un flottant). Utiliser &lt;code&gt;math.exp&lt;/code&gt;.&lt;/p&gt;&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>import math
+def proba_acceptation(dE, T):
+    # cas dE &lt;= 0 : ...
+    # cas dE &gt; 0  : ...
+    pass
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>import math
+def proba_acceptation(dE, T):
+    if dE &lt;= 0:
+        return 1.0
+    return math.exp(-dE / T)
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(proba_acceptation(0, 10), 4))</text></testcode><stdin><text /></stdin><expected><text>1.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(proba_acceptation(10, 10), 4))</text></testcode><stdin><text /></stdin><expected><text>0.3679
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(proba_acceptation(-5, 10), 4))</text></testcode><stdin><text /></stdin><expected><text>1.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(proba_acceptation(20, 10), 4))</text></testcode><stdin><text /></stdin><expected><text>0.1353
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q3 — Décision d'acceptation (tirage fourni)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #c9a227;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;&lt;h3 style='margin:0 0 10px;color:#0f172a;'&gt;Accepter un voisin ?&lt;/h3&gt;&lt;p&gt;Pour rendre la décision &lt;b&gt;reproductible&lt;/b&gt;, on fournit le tirage aléatoire &lt;code&gt;u&lt;/code&gt; (un flottant de [0,1[) en argument.&lt;/p&gt;&lt;p&gt;Écrire &lt;code&gt;accepte(dE, T, u)&lt;/code&gt; qui renvoie un booléen : &lt;code&gt;True&lt;/code&gt; si le voisin est accepté. Règle : accepter si &lt;code&gt;dE &amp;le; 0&lt;/code&gt;, ou sinon si &lt;code&gt;u &amp;lt; e&lt;sup&gt;-dE/T&lt;/sup&gt;&lt;/code&gt;.&lt;/p&gt;&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>import math
+def accepte(dE, T, u):
+    # renvoyer True/False selon le critère de Metropolis
+    pass
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>import math
+def accepte(dE, T, u):
+    return dE &lt;= 0 or u &lt; math.exp(-dE / T)
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(accepte(-3, 10, 0.9))</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(accepte(50, 1, 0.5))</text></testcode><stdin><text /></stdin><expected><text>False
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(accepte(5, 100, 0.5))</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(accepte(0, 5, 0.99))</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q4 — Descente (hill climbing) et optimum local</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #c9a227;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;&lt;h3 style='margin:0 0 10px;color:#0f172a;'&gt;Recherche locale par descente&lt;/h3&gt;&lt;p&gt;On minimise une fonction &lt;code&gt;f&lt;/code&gt; sur les entiers. Le voisinage d'un entier &lt;code&gt;x&lt;/code&gt; est &lt;code&gt;{x-1, x+1}&lt;/code&gt;.&lt;/p&gt;&lt;p&gt;Écrire &lt;code&gt;descente(f, x0)&lt;/code&gt; qui, partant de &lt;code&gt;x0&lt;/code&gt;, se déplace tant qu'un voisin a un coût &lt;b&gt;strictement plus petit&lt;/b&gt;, et renvoie l'entier où elle se bloque (un optimum local).&lt;/p&gt;&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def descente(f, x0):
+    x = x0
+    while True:
+        # meilleur voisin parmi x-1 et x+1
+        # se déplacer s'il est strictement meilleur, sinon renvoyer x
+        pass
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def descente(f, x0):
+    x = x0
+    while True:
+        m = min([x - 1, x + 1], key=f)
+        if f(m) &lt; f(x):
+            x = m
+        else:
+            return x
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(descente(lambda x: (x - 3) ** 2, 0))</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(descente(lambda x: (x + 5) ** 2, 0))</text></testcode><stdin><text /></stdin><expected><text>-5
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(descente(lambda x: (x - 3) ** 2, 10))</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(descente(lambda x: abs(x - 42), -3))</text></testcode><stdin><text /></stdin><expected><text>42
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q5 — Recuit simulé sur une fonction (minimisation)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #c9a227;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;&lt;h3 style='margin:0 0 10px;color:#0f172a;'&gt;Recuit simulé complet&lt;/h3&gt;&lt;p&gt;Minimiser &lt;code&gt;f&lt;/code&gt; sur les entiers (voisin : &lt;code&gt;x + random.choice([-1, 1])&lt;/code&gt;). Écrire &lt;code&gt;recuit_simule(f, x0, T0, alpha, n_iter)&lt;/code&gt; qui renvoie le &lt;b&gt;meilleur coût&lt;/b&gt; rencontré.&lt;/p&gt;&lt;p&gt;Démarrer par &lt;code&gt;random.seed(0)&lt;/code&gt; (résultat reproductible). À chaque itération : tirer un voisin, calculer &lt;code&gt;dE&lt;/code&gt;, accepter si &lt;code&gt;dE &amp;le; 0&lt;/code&gt; ou &lt;code&gt;random.random() &amp;lt; math.exp(-dE/T)&lt;/code&gt;, mettre à jour le meilleur, puis &lt;code&gt;T = alpha * T&lt;/code&gt;.&lt;/p&gt;&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>import math, random
+def recuit_simule(f, x0, T0, alpha, n_iter):
+    random.seed(0)
+    x = x0
+    c = f(x)
+    best, cbest = x, c
+    T = T0
+    for _ in range(n_iter):
+        # 1) tirer un voisin x2 et calculer dE
+        # 2) accepter selon Metropolis
+        # 3) mettre à jour (best, cbest) et refroidir T
+        pass
+    return cbest
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>import math, random
+def recuit_simule(f, x0, T0, alpha, n_iter):
+    random.seed(0)
+    x = x0
+    c = f(x)
+    best, cbest = x, c
+    T = T0
+    for _ in range(n_iter):
+        x2 = x + random.choice([-1, 1])
+        c2 = f(x2)
+        dE = c2 - c
+        if dE &lt;= 0 or random.random() &lt; math.exp(-dE / T):
+            x, c = x2, c2
+            if c &lt; cbest:
+                best, cbest = x, c
+        T = alpha * T
+    return cbest
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(recuit_simule(lambda x: (x - 7) ** 2, 0, 10, 0.99, 2000))</text></testcode><stdin><text /></stdin><expected><text>0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(recuit_simule(lambda x: (x + 4) ** 2, 0, 10, 0.99, 2000))</text></testcode><stdin><text /></stdin><expected><text>0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(recuit_simule(lambda x: (x - 20) ** 2, 0, 50, 0.995, 5000))</text></testcode><stdin><text /></stdin><expected><text>0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(recuit_simule(lambda x: (x - 7) ** 2, 0, 5, 0.99, 3000))</text></testcode><stdin><text /></stdin><expected><text>0
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question></quiz>

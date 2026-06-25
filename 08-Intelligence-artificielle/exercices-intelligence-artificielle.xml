@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz><question type="coderunner"><name><text>Q1 — Distance euclidienne</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q1 — Distance euclidienne&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;En KNN, on mesure la proximité de deux points par la distance euclidienne.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;distance(a, b)&lt;/code&gt;&lt;/strong&gt; qui renvoie la distance euclidienne entre deux points &lt;code&gt;a&lt;/code&gt; et &lt;code&gt;b&lt;/code&gt; donnés comme listes de coordonnées de même longueur.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#013a42;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;distance([0, 0], [3, 4])  -&amp;gt; 5.0&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>12</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def distance(a, b):
+    # Distance euclidienne entre deux points a et b
+    ...</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def distance(a, b):
+    s = 0
+    for i in range(len(a)):
+        s += (a[i] - b[i]) ** 2
+    return s ** 0.5</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(distance([0,0],[3,4]),4))
+</text></testcode><stdin><text /></stdin><expected><text>5.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(distance([1,2,3],[1,2,3]),4))
+</text></testcode><stdin><text /></stdin><expected><text>0.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(distance([1,1],[4,5]),4))
+</text></testcode><stdin><text /></stdin><expected><text>5.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(distance([2,-1,0],[0,1,2]),4))
+</text></testcode><stdin><text /></stdin><expected><text>3.4641
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q2 — Classification KNN</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q2 — Classification KNN&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;L'algorithme des k plus proches voisins classe un point selon la classe majoritaire de ses voisins.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire &lt;strong&gt;&lt;code&gt;knn(donnees, etiquettes, x, k)&lt;/code&gt;&lt;/strong&gt; : prendre les &lt;code&gt;k&lt;/code&gt; points de &lt;code&gt;donnees&lt;/code&gt; les plus proches de &lt;code&gt;x&lt;/code&gt; (distance euclidienne) et renvoyer la classe majoritaire. &lt;code&gt;donnees&lt;/code&gt; et &lt;code&gt;etiquettes&lt;/code&gt; sont alignées.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#013a42;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;donnees=[[1,1],[2,1],[4,5],[5,4]], etiquettes=['A','A','B','B']
+knn(donnees, etiquettes, [1,2], 3)  -&amp;gt; 'A'&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>from collections import Counter
+
+def distance(a, b):
+    return sum((a[i]-b[i])**2 for i in range(len(a))) ** 0.5
+
+def knn(donnees, etiquettes, x, k):
+    # 1. distances ; 2. k plus proches ; 3. classe majoritaire
+    ...</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>from collections import Counter
+
+def distance(a, b):
+    return sum((a[i]-b[i])**2 for i in range(len(a))) ** 0.5
+
+def knn(donnees, etiquettes, x, k):
+    dd = [(distance(x, donnees[i]), etiquettes[i]) for i in range(len(donnees))]
+    dd.sort(key=lambda c: c[0])
+    voisins = [c for (_, c) in dd[:k]]
+    return Counter(voisins).most_common(1)[0][0]</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>D=[[1,1],[2,1],[4,5],[5,4]]
+E=['A','A','B','B']
+print(knn(D,E,[1,2],3))
+</text></testcode><stdin><text /></stdin><expected><text>A
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>D=[[1,1],[2,1],[4,5],[5,4]]
+E=['A','A','B','B']
+print(knn(D,E,[5,5],3))
+</text></testcode><stdin><text /></stdin><expected><text>B
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>D=[[0,0],[0,1],[10,10],[10,9],[9,10]]
+E=['x','x','y','y','y']
+print(knn(D,E,[8,8],3))
+</text></testcode><stdin><text /></stdin><expected><text>y
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>D=[[0,0],[1,0],[0,1],[6,6],[7,6]]
+E=['p','p','p','q','q']
+print(knn(D,E,[1,1],1))
+</text></testcode><stdin><text /></stdin><expected><text>p
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q3 — Exactitude (matrice de confusion)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q3 — Exactitude du classifieur&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Pour évaluer un classifieur, on compare ses prédictions aux vraies étiquettes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire &lt;strong&gt;&lt;code&gt;exactitude(reel, predit)&lt;/code&gt;&lt;/strong&gt; qui renvoie la proportion de prédictions correctes (positions où &lt;code&gt;reel[i] == predit[i]&lt;/code&gt; sur le total). Les deux listes ont la même longueur.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#013a42;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;exactitude(['A','B','A','B'], ['A','B','B','B'])  -&amp;gt; 0.75&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>12</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def exactitude(reel, predit):
+    # proportion de predictions correctes
+    ...</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def exactitude(reel, predit):
+    bons = 0
+    for i in range(len(reel)):
+        if reel[i] == predit[i]:
+            bons += 1
+    return bons / len(reel)</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(exactitude(['A','B','A','B'],['A','B','B','B']),4))
+</text></testcode><stdin><text /></stdin><expected><text>0.75
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(exactitude([1,1,1],[1,1,1]),4))
+</text></testcode><stdin><text /></stdin><expected><text>1.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(exactitude([1,0,1,0],[0,1,0,1]),4))
+</text></testcode><stdin><text /></stdin><expected><text>0.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(round(exactitude(['x','y','x','y','x'],['x','x','x','y','y']),4))
+</text></testcode><stdin><text /></stdin><expected><text>0.6
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q4 — K-means : etape d affectation</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q4 — K-means : affectation&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;K-means alterne affectation des points au centre le plus proche, puis recalcul des centres.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire &lt;strong&gt;&lt;code&gt;affecter(donnees, centres)&lt;/code&gt;&lt;/strong&gt; qui renvoie, pour chaque point de &lt;code&gt;donnees&lt;/code&gt;, l'indice du centre le plus proche (distance euclidienne). En cas d'égalité, garder l'indice le plus petit.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#013a42;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;donnees=[[1,1],[8,8],[2,1]], centres=[[0,0],[9,9]]
+affecter(donnees, centres)  -&amp;gt; [0, 1, 0]&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>16</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def distance(a, b):
+    return sum((a[i]-b[i])**2 for i in range(len(a))) ** 0.5
+
+def affecter(donnees, centres):
+    # pour chaque point, indice du centre le plus proche
+    ...</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def distance(a, b):
+    return sum((a[i]-b[i])**2 for i in range(len(a))) ** 0.5
+
+def affecter(donnees, centres):
+    res = []
+    for x in donnees:
+        best, dmin = 0, distance(x, centres[0])
+        for j in range(1, len(centres)):
+            dj = distance(x, centres[j])
+            if dj &lt; dmin:
+                best, dmin = j, dj
+        res.append(best)
+    return res</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(affecter([[1,1],[8,8],[2,1]], [[0,0],[9,9]]))
+</text></testcode><stdin><text /></stdin><expected><text>[0, 1, 0]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(affecter([[0,0],[5,5],[10,10]], [[0,0],[10,10]]))
+</text></testcode><stdin><text /></stdin><expected><text>[0, 0, 1]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(affecter([[1,2],[2,1],[9,9],[8,8]], [[1,1],[9,9]]))
+</text></testcode><stdin><text /></stdin><expected><text>[0, 0, 1, 1]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(affecter([[3,3]], [[0,0],[6,6]]))
+</text></testcode><stdin><text /></stdin><expected><text>[0]
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question></quiz>

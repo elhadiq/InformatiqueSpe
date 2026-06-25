@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La complexité algorithmique — CPGE MP/PSI</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root{ --teal:#026573; --dark:#2c3e50; --bg:#e8edf2; --border:#dce3ea; --hl:#e4f1f2; }
+body{ font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--dark);
+  display:flex; flex-direction:column; align-items:center; padding:2rem 1rem 5rem; gap:2rem; }
+.slide{ background:#fff; width:100%; max-width:960px; border-radius:10px; box-shadow:0 4px 18px rgba(0,0,0,.10);
+  padding:2.1rem 2.7rem 1.7rem; position:relative; }
+.slide-number{ position:absolute; bottom:0.7rem; right:1.2rem; font-size:0.72rem; color:#aaa; }
+.slide.title-slide{ background:linear-gradient(145deg,#f4f9fc 60%,#d9eef0); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; min-height:280px; text-align:center; border-top:6px solid var(--teal); }
+.slide.title-slide h1{ font-size:1.9rem; color:var(--dark); margin-bottom:0.4rem; }
+.slide.title-slide .subtitle{ font-size:1.15rem; color:#555; }
+h2.frame-title{ font-size:1.55rem; color:var(--teal); font-weight:700; margin-bottom:0.6rem; padding-bottom:0.3rem; border-bottom:2px solid #b7dadd; }
+h2.frame-title .tag{ font-size:0.68em; font-weight:700; padding:2px 10px; border-radius:12px; color:#fff; vertical-align:middle; margin-left:0.4rem; background:var(--teal); }
+p{ line-height:1.6; margin:0.4rem 0; } ul,ol{ margin:0.4rem 0 0.4rem 1.4rem; line-height:1.7; }
+ul li::marker, ol li::marker{ color:var(--teal); } strong{ font-weight:700; } em{ font-style:italic; }
+.cols{ display:flex; gap:1.6rem; margin-top:0.6rem; align-items:flex-start; } .col{ flex:1; }
+.code{ background:#0d1117; color:#e6edf3; font-family:'Consolas','Courier New',monospace; font-size:0.82rem;
+  line-height:1.5; padding:0.8rem 1rem; border-radius:8px; overflow-x:auto; margin:0.5rem 0; white-space:pre; tab-size:4; }
+.code .kw{color:#ff7b72;} .code .fn{color:#d2a8ff;} .code .nb{color:#79c0ff;} .code .cm{color:#8b949e;}
+.box{ background:var(--hl); border-left:4px solid var(--teal); border-radius:0 6px 6px 0; padding:0.6rem 1rem; margin:0.6rem 0; font-size:0.95rem; }
+.box.warn{ background:#fef9e7; border-left-color:#f39c12; } .box.bad{ background:#fdeef0; border-left-color:#e74c3c; } .box.good{ background:#eafaf1; border-left-color:#27ae60; }
+.box b.lab{ display:block; color:var(--teal); margin-bottom:0.15rem; }
+table.ref{ border-collapse:collapse; width:100%; margin:0.6rem 0; font-size:0.86rem; }
+table.ref th{ background:var(--dark); color:#fff; padding:0.45rem 0.6rem; text-align:left; }
+table.ref td{ border:1px solid var(--border); padding:0.4rem 0.6rem; } table.ref tr:nth-child(even) td{ background:#f4f9fc; }
+.svgwrap{ text-align:center; margin:0.6rem 0; }
+#nav{ position:fixed; bottom:1.5rem; right:1.5rem; display:flex; gap:0.4rem; z-index:100; }
+#nav button{ background:var(--teal); color:#fff; border:none; border-radius:50%; width:40px; height:40px; font-size:1.1rem; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.25); transition:background .2s; }
+#nav button:hover{ background:#014a54; } #nav #btn-scroll{ border-radius:20px; width:auto; padding:0 14px; font-size:0.78rem; font-weight:700; }
+body.slideshow .slide{ display:none; } body.slideshow .slide.active{ display:block; } body.slideshow .slide.active.title-slide{ display:flex; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide title-slide" id="s1">
+  <h1>La complexité<br>algorithmique</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">Informatique CPGE — MP / PSI · Première période</p>
+  <span class="slide-number">1 / 23</span>
+</section>
+
+<!-- 2 -->
+<section class="slide" id="s2">
+  <h2 class="frame-title">Objectifs du chapitre</h2>
+  <ul>
+    <li>Comprendre la notion de complexité et son <strong>intérêt</strong> (choisir un algorithme).</li>
+    <li>Définir la <strong>taille du problème</strong> $n$.</li>
+    <li>Distinguer complexité <strong>temporelle</strong> et <strong>spatiale</strong> ; meilleur et pire des cas.</li>
+    <li>Compter les opérations (méthode <strong>incrémenter &amp; compter</strong>) et utiliser le <strong>grand $O$</strong>.</li>
+    <li>Calculer la complexité d'un programme <strong>itératif</strong> et <strong>récursif</strong> (récurrences, Master théorème).</li>
+  </ul>
+  <span class="slide-number">2 / 23</span>
+</section>
+
+<!-- 3 : pourquoi + schéma -->
+<section class="slide" id="s3">
+  <h2 class="frame-title">Pourquoi mesurer la complexité ?</h2>
+  <p>Un même <strong>problème</strong> admet plusieurs <strong>algorithmes</strong> corrects menant à la même <strong>solution</strong>, mais avec des efficacités différentes. La complexité sert à <strong>choisir lequel</strong>.</p>
+  <div class="svgwrap">
+    <svg viewBox="0 0 720 200" width="100%" style="max-width:720px" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L7,3 L0,6 Z" fill="#026573"/>
+        </marker>
+      </defs>
+      <!-- Problème -->
+      <rect x="20" y="74" width="150" height="52" rx="10" fill="#026573"/>
+      <text x="95" y="105" text-anchor="middle" fill="#fff" font-size="19" font-weight="700">Problème</text>
+      <!-- Algorithmes -->
+      <rect x="290" y="20" width="170" height="48" rx="10" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+      <text x="375" y="49" text-anchor="middle" fill="#026573" font-size="16" font-weight="700">Algorithme 1</text>
+      <rect x="290" y="132" width="170" height="48" rx="10" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+      <text x="375" y="161" text-anchor="middle" fill="#026573" font-size="16" font-weight="700">Algorithme 2</text>
+      <!-- Solution -->
+      <rect x="560" y="74" width="140" height="52" rx="10" fill="#27ae60"/>
+      <text x="630" y="105" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">Solution</text>
+      <!-- flèches -->
+      <line x1="172" y1="92" x2="288" y2="46" stroke="#026573" stroke-width="2.4" marker-end="url(#ar)"/>
+      <line x1="172" y1="108" x2="288" y2="154" stroke="#026573" stroke-width="2.4" marker-end="url(#ar)"/>
+      <line x1="462" y1="46" x2="600" y2="86" stroke="#026573" stroke-width="2.4" marker-end="url(#ar)"/>
+      <line x1="462" y1="154" x2="600" y2="114" stroke="#026573" stroke-width="2.4" marker-end="url(#ar)"/>
+      <text x="500" y="22" text-anchor="middle" fill="#e67e22" font-size="13" font-style="italic">+ rapide ? - mémoire ?</text>
+    </svg>
+  </div>
+  <div class="box"><b class="lab">Méthode</b> On <strong>incrémente un compteur</strong> à chaque opération élémentaire et on <strong>compte</strong> en fonction de $n$ : c'est la mesure objective, indépendante de la machine.</div>
+  <span class="slide-number">3 / 23</span>
+</section>
+
+<!-- 4 : temporelle vs spatiale + icônes -->
+<section class="slide" id="s4">
+  <h2 class="frame-title">Deux types de complexité</h2>
+  <div class="cols">
+    <div class="col" style="text-align:center;">
+      <svg viewBox="0 0 120 120" width="110" height="110" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="60" cy="60" r="46" fill="#e4f1f2" stroke="#026573" stroke-width="4"/>
+        <line x1="60" y1="60" x2="60" y2="28" stroke="#026573" stroke-width="4" stroke-linecap="round"/>
+        <line x1="60" y1="60" x2="84" y2="68" stroke="#e67e22" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="60" cy="60" r="4" fill="#026573"/>
+      </svg>
+      <p><strong>Temporelle</strong></p>
+      <p style="font-size:0.92rem;">Nombre d'<strong>opérations élémentaires</strong> en fonction de $n$ — estime le temps d'exécution.</p>
+    </div>
+    <div class="col" style="text-align:center;">
+      <svg viewBox="0 0 120 120" width="110" height="110" xmlns="http://www.w3.org/2000/svg">
+        <rect x="34" y="34" width="52" height="52" rx="5" fill="#e4f1f2" stroke="#026573" stroke-width="4"/>
+        <rect x="46" y="46" width="28" height="28" rx="3" fill="#026573"/>
+        <g stroke="#026573" stroke-width="4" stroke-linecap="round">
+          <line x1="44" y1="28" x2="44" y2="34"/><line x1="60" y1="28" x2="60" y2="34"/><line x1="76" y1="28" x2="76" y2="34"/>
+          <line x1="44" y1="86" x2="44" y2="92"/><line x1="60" y1="86" x2="60" y2="92"/><line x1="76" y1="86" x2="76" y2="92"/>
+          <line x1="28" y1="44" x2="34" y2="44"/><line x1="28" y1="60" x2="34" y2="60"/><line x1="28" y1="76" x2="34" y2="76"/>
+          <line x1="86" y1="44" x2="92" y2="44"/><line x1="86" y1="60" x2="92" y2="60"/><line x1="86" y1="76" x2="92" y2="76"/>
+        </g>
+      </svg>
+      <p><strong>Spatiale</strong></p>
+      <p style="font-size:0.92rem;">Quantité de <strong>mémoire</strong> supplémentaire utilisée en fonction de $n$ (variables, tableaux, pile d'appels).</p>
+    </div>
+  </div>
+  <div class="box warn"><b class="lab">Compromis temps / espace</b> Gagner du temps coûte souvent de la mémoire (et inversement).</div>
+  <span class="slide-number">4 / 23</span>
+</section>
+
+<!-- 5 : opération élémentaire -->
+<section class="slide" id="s5">
+  <h2 class="frame-title">Opération élémentaire</h2>
+  <p>Instruction de base, de coût supposé constant :</p>
+  <ul>
+    <li>affectation ($x = 3$), comparaison ($a &lt; b$) ;</li>
+    <li>opération arithmétique ($a + b$, $a \times b$) ;</li>
+    <li>accès à une case de tableau (<code>liste[i]</code>).</li>
+  </ul>
+  <div class="box"><b class="lab">Incrémenter &amp; compter</b> On associe un compteur à ces opérations et on l'évalue en fonction de $n$.</div>
+  <span class="slide-number">5 / 23</span>
+</section>
+
+<!-- 6 : NEW taille du problème n -->
+<section class="slide" id="s6">
+  <h2 class="frame-title">La taille du problème $n$<span class="tag">CLÉ</span></h2>
+  <p>La complexité s'exprime en fonction d'un entier $n$ qui mesure la <strong>taille de l'entrée</strong>. Il faut <strong>toujours préciser ce qu'est $n$</strong>.</p>
+  <table class="ref">
+    <tr><th>Entrée</th><th>Taille $n$</th></tr>
+    <tr><td>Une liste / un tableau</td><td>$n = \operatorname{len}(\text{liste})$ (nombre d'éléments)</td></tr>
+    <tr><td>Un entier $N$ à traiter</td><td>$n = N$, ou $n = \log_2 N$ (nombre de chiffres / bits)</td></tr>
+    <tr><td>Une matrice $p \times q$</td><td>$n = p\,q$ (nombre de cases)</td></tr>
+    <tr><td>Un graphe</td><td>$n$ = nombre de sommets (et $m$ = nombre d'arêtes)</td></tr>
+    <tr><td>Une chaîne de caractères</td><td>$n$ = longueur de la chaîne</td></tr>
+  </table>
+  <div class="box"><b class="lab">À retenir</b> Dans chaque calcul, on écrira explicitement $n = \dots$ (le plus souvent $n = \operatorname{len}(\text{liste})$).</div>
+  <span class="slide-number">6 / 23</span>
+</section>
+
+<!-- 7 : meilleur / pire cas -->
+<section class="slide" id="s7">
+  <h2 class="frame-title">Meilleur et pire des cas</h2>
+  <p>Pour une même taille $n = \operatorname{len}(\text{liste})$, le nombre d'opérations dépend du contenu. <strong>En CPGE : meilleur et pire des cas.</strong></p>
+  <div class="cols">
+    <div class="col">
+      <ul>
+        <li><strong>Meilleur cas</strong> : entrée la plus favorable.</li>
+        <li><strong>Pire cas</strong> : entrée la plus défavorable — borne supérieure garantie.</li>
+      </ul>
+      <p>Recherche séquentielle : meilleur $O(1)$, pire $O(n)$.</p>
+    </div>
+    <div class="col">
+      <div class="code"><span class="kw">def</span> <span class="fn">recherche</span>(liste, x):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="nb">range</span>(<span class="nb">len</span>(liste)):
+        <span class="kw">if</span> liste[i] == x:
+            <span class="kw">return</span> i
+    <span class="kw">return</span> -<span class="nb">1</span></div>
+    </div>
+  </div>
+  <span class="slide-number">7 / 23</span>
+</section>
+
+<!-- 8 : compter + O(n) pourquoi -->
+<section class="slide" id="s8">
+  <h2 class="frame-title">Compter les opérations $\Rightarrow O(n)$<span class="tag">POURQUOI</span></h2>
+  <div class="cols">
+    <div class="col">
+      <div class="code"><span class="kw">def</span> <span class="fn">somme</span>(n):
+    s = <span class="nb">0</span>          <span class="cm"># 1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="nb">range</span>(<span class="nb">1</span>,n+<span class="nb">1</span>):  <span class="cm"># n fois</span>
+        s = s + i      <span class="cm"># 2 ops</span>
+    <span class="kw">return</span> s        <span class="cm"># 1</span></div>
+    </div>
+    <div class="col">
+      <p>Total : $T(n) = 1 + 2n + 1 = 2n + 2$.</p>
+      <p><strong>Pourquoi $O(n)$ ?</strong> Quand $n$ grandit, le terme dominant est $2n$ ; les constantes ($+2$) et le facteur ($2$) sont négligeables devant la <em>croissance</em>. On écrit $T(n) = O(n)$ : croissance <strong>linéaire</strong>.</p>
+      <div class="box"><b class="lab">Idée</b> Doubler $n$ double (à peu près) le temps.</div>
+    </div>
+  </div>
+  <span class="slide-number">8 / 23</span>
+</section>
+
+<!-- 9 : boucles imbriquées -->
+<section class="slide" id="s9">
+  <h2 class="frame-title">Boucles imbriquées</h2>
+  <p>Avec $n = \operatorname{len}(\text{liste})$, le corps d'une boucle interne se <strong>multiplie</strong> par les tours de la boucle externe :</p>
+  <div class="code"><span class="kw">for</span> i <span class="kw">in</span> <span class="nb">range</span>(n):        <span class="cm"># n fois</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="nb">range</span>(n):    <span class="cm"># n fois</span>
+        traiter(i, j)    <span class="cm"># n x n</span></div>
+  <p>$n \times n = n^2$ opérations : complexité <strong>quadratique</strong> $O(n^2)$.</p>
+  <span class="slide-number">9 / 23</span>
+</section>
+
+<!-- 10 : grand O définition -->
+<section class="slide" id="s10">
+  <h2 class="frame-title">La notation grand $O$</h2>
+  <div class="box"><b class="lab">Définition</b> $T(n) = O\big(f(n)\big)$ s'il existe $C &gt; 0$ et un rang $n_0$ tels que
+    $$\forall n \ge n_0, \quad T(n) \le C\, f(n).$$
+    $f(n)$ est une <em>borne supérieure</em> de la croissance de $T(n)$, à une constante près.</div>
+  <span class="slide-number">10 / 23</span>
+</section>
+
+<!-- 11 : règles pratiques -->
+<section class="slide" id="s11">
+  <h2 class="frame-title">Règles pratiques</h2>
+  <ul>
+    <li>Ignorer les <strong>constantes multiplicatives</strong> : $5n^2 = O(n^2)$.</li>
+    <li>Ne garder que le <strong>terme dominant</strong> : $3n^2 + 7n + 4 = O(n^2)$.</li>
+    <li>La <strong>base du logarithme</strong> n'importe pas : $\log_2 n,\ \log_{10} n = O(\log n)$.</li>
+  </ul>
+  <span class="slide-number">11 / 23</span>
+</section>
+
+<!-- 12 : ordres classiques -->
+<section class="slide" id="s12">
+  <h2 class="frame-title">Ordres de grandeur classiques</h2>
+  <table class="ref">
+    <tr><th>Notation</th><th>Nom</th><th>Exemple</th></tr>
+    <tr><td>$O(1)$</td><td>Constante</td><td>Accès <code>liste[i]</code></td></tr>
+    <tr><td>$O(\log n)$</td><td>Logarithmique</td><td>Recherche dichotomique</td></tr>
+    <tr><td>$O(n)$</td><td>Linéaire</td><td>Parcours de liste</td></tr>
+    <tr><td>$O(n \log n)$</td><td>Quasi-linéaire</td><td>Tri fusion / rapide</td></tr>
+    <tr><td>$O(n^2)$</td><td>Quadratique</td><td>Double boucle</td></tr>
+    <tr><td>$O(2^n)$</td><td>Exponentielle</td><td>Parties d'un ensemble, force brute</td></tr>
+  </table>
+  <div class="box warn"><b class="lab">Attention</b> Ce tableau ne donne que des <strong>exemples</strong> de complexités — ce n'est <strong>pas une règle générale</strong> : d'autres ordres existent ($O(\sqrt{n})$, $O(n^3)$, $O(n!)$, $O(n^k)$…).</div>
+  <span class="slide-number">12 / 23</span>
+</section>
+
+<!-- 13 : hiérarchie -->
+<section class="slide" id="s13">
+  <h2 class="frame-title">Hiérarchie de croissance</h2>
+  <p style="text-align:center;font-size:1.05rem;margin:0.8rem 0;">$$O(1) &lt; O(\log n) &lt; O(n) &lt; O(n\log n) &lt; O(n^2) &lt; O(2^n) &lt; O(n!)$$</p>
+  <div class="box"><b class="lab">Concrètement, pour $n = 10^6$</b> $O(n)$ : instantané · $O(n^2)$ : $10^{12}$ opérations (minutes/heures) · $O(2^n)$ : irréalisable.</div>
+  <div class="box warn">Là encore, ce ne sont que des <strong>repères par l'exemple</strong> ; l'important est de savoir <em>situer</em> une complexité donnée.</div>
+  <span class="slide-number">13 / 23</span>
+</section>
+
+<!-- 14 : NEW exercice classification grand O -->
+<section class="slide" id="s14">
+  <h2 class="frame-title">Exercice — classer par grand $O$<span class="tag">APPLIQUÉ</span></h2>
+  <p>Donner la classe de complexité (terme dominant) de chaque expression :</p>
+  <table class="ref">
+    <tr><th>$T(n)$</th><th>Réponse $O(\,\cdot\,)$</th></tr>
+    <tr><td>$7n + 100$</td><td>$O(n)$</td></tr>
+    <tr><td>$3n^2 + 50n + 9$</td><td>$O(n^2)$</td></tr>
+    <tr><td>$5\log_2 n + 2$</td><td>$O(\log n)$</td></tr>
+    <tr><td>$4n^3 + n^2\log n$</td><td>$O(n^3)$</td></tr>
+    <tr><td>$2^n + n^{10}$</td><td>$O(2^n)$</td></tr>
+    <tr><td>$n\log n + 3n$</td><td>$O(n\log n)$</td></tr>
+  </table>
+  <div class="box good"><b class="lab">Règle</b> On garde le terme qui <strong>croît le plus vite</strong>, sans son coefficient.</div>
+  <span class="slide-number">14 / 23</span>
+</section>
+
+<!-- 15 : itératif dichotomie + étapes formelles -->
+<section class="slide" id="s15">
+  <h2 class="frame-title">Itératif : dichotomie — calcul formel<span class="tag">$O(\log n)$</span></h2>
+  <div class="cols">
+    <div class="col">
+      <div class="code"><span class="kw">def</span> <span class="fn">dichotomie</span>(L, x):
+    g, d = <span class="nb">0</span>, <span class="nb">len</span>(L)-<span class="nb">1</span>
+    <span class="kw">while</span> g &lt;= d:
+        m = (g+d)//<span class="nb">2</span>
+        <span class="kw">if</span> L[m]==x: <span class="kw">return</span> m
+        <span class="kw">elif</span> L[m]&lt;x: g = m+<span class="nb">1</span>
+        <span class="kw">else</span>: d = m-<span class="nb">1</span></div>
+    </div>
+    <div class="col">
+      <p><strong>Étapes formelles.</strong> Soit $t$ = nombre d'éléments de l'intervalle $[g,d]$. Au départ $t_0 = n$. Chaque tour <strong>divise $t$ par 2</strong> :</p>
+      <p style="text-align:center;">$$t_k = \frac{n}{2^k}$$</p>
+      <p>La boucle s'arrête quand $t_k &lt; 1$, soit $\dfrac{n}{2^k} &lt; 1 \Rightarrow k &gt; \log_2 n$.</p>
+      <div class="box"><b class="lab">Conclusion</b> Au plus $\lfloor \log_2 n\rfloor + 1$ tours $\Rightarrow O(\log n)$.</div>
+    </div>
+  </div>
+  <span class="slide-number">15 / 23</span>
+</section>
+
+<!-- 16 : NEW exemples itératifs par classe -->
+<section class="slide" id="s16">
+  <h2 class="frame-title">Exemples (itératif) par classe</h2>
+  <table class="ref">
+    <tr><th>Classe</th><th>Boucle type</th></tr>
+    <tr><td>$O(1)$</td><td><code>return L[0]</code> (aucune boucle dépendant de $n$)</td></tr>
+    <tr><td>$O(\log n)$</td><td><code>while n&gt;1: n = n//2</code> (on divise par 2)</td></tr>
+    <tr><td>$O(n)$</td><td><code>for i in range(n): ...</code></td></tr>
+    <tr><td>$O(n^2)$</td><td>deux boucles imbriquées sur $n$</td></tr>
+    <tr><td>$O(n^k)$</td><td>$k$ boucles imbriquées sur $n$</td></tr>
+    <tr><td>$O(2^n)$</td><td>parcourir tous les sous-ensembles de $n$ éléments</td></tr>
+  </table>
+  <span class="slide-number">16 / 23</span>
+</section>
+
+<!-- 17 : récursif factorielle / fibo -->
+<section class="slide" id="s17b">
+  <h2 class="frame-title">Méthode : équation caractéristique<span class="tag">RÉCURRENCES</span></h2>
+  <p>Pour une récurrence <strong>linéaire à coefficients constants</strong> :</p>
+  <p style="text-align:center;">$$T(n) = a_1\,T(n-1) + a_2\,T(n-2) + \dots + a_k\,T(n-k)$$</p>
+  <div class="cols">
+    <div class="col">
+      <p><strong>1.</strong> Équation caractéristique :</p>
+      <p style="text-align:center;">$$r^k = a_1 r^{k-1} + \dots + a_k$$</p>
+      <p><strong>2.</strong> Racines $r_1,\dots,r_k$.</p>
+      <p><strong>3.</strong> Solution générale :</p>
+      <ul>
+        <li>racines distinctes : $T(n)=\sum_i C_i\,r_i^{\,n}$ ;</li>
+        <li>racine $r$ de multiplicité $m$ : terme $(C_0+C_1 n+\dots+C_{m-1}n^{m-1})\,r^{\,n}$.</li>
+      </ul>
+      <p><strong>4.</strong> Les $C_i$ se calculent avec les conditions initiales.</p>
+    </div>
+    <div class="col">
+      <div class="box"><b class="lab">Comportement asymptotique</b> La racine de plus grand module $r_{\max}$ domine : $T(n)=\Theta\!\big(|r_{\max}|^{\,n}\big)$ (à un facteur polynomial près en cas de multiplicité).</div>
+      <div class="box good"><b class="lab">Exemples</b>
+        <p style="margin:.2rem 0;">Fibonacci : $r^2=r+1 \Rightarrow \varphi=\tfrac{1+\sqrt5}{2} \Rightarrow \Theta(\varphi^{\,n})$.</p>
+        <p style="margin:.2rem 0;">$T(n)=2T(n-1) \Rightarrow r=2 \Rightarrow \Theta(2^{\,n})$.</p>
+        <p style="margin:.2rem 0;">$T(n)=2T(n-1)-T(n-2) \Rightarrow (r-1)^2=0 \Rightarrow \Theta(n)$.</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">17 / 23</span>
+</section>
+
+<section class="slide" id="s17">
+  <h2 class="frame-title">Récursif : Fibonacci — calcul détaillé<span class="tag">NOMBRE D'OR</span></h2>
+  <div class="cols">
+    <div class="col">
+      <div class="code"><span class="kw">def</span> <span class="fn">fibo</span>(n):
+    <span class="kw">if</span> n&lt;<span class="nb">2</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> fibo(n-<span class="nb">1</span>)+fibo(n-<span class="nb">2</span>)</div>
+      <p>Nombre d'appels : $C(n)=C(n-1)+C(n-2)+1$, avec $C(0)=C(1)=1$ : la croissance est celle de la suite de Fibonacci.</p>
+    </div>
+    <div class="col">
+      <p>Partie homogène $T(n)=T(n-1)+T(n-2)$. <strong>Équation caractéristique</strong> :</p>
+      <p style="text-align:center;">$$r^2 = r+1 \;\Longleftrightarrow\; r^2-r-1=0$$</p>
+      <p>Racines $r=\dfrac{1\pm\sqrt5}{2}$ : $\varphi=\dfrac{1+\sqrt5}{2}\approx 1{,}618$ (nombre d'or) et $\psi=\dfrac{1-\sqrt5}{2}\approx -0{,}618$.</p>
+      <p>$T(n)=A\,\varphi^{\,n}+B\,\psi^{\,n}$ ; comme $|\psi|&lt;1$, $\psi^{\,n}\to 0$.</p>
+    </div>
+  </div>
+  <div class="box good"><b class="lab">Conclusion</b> $T(n)=\Theta(\varphi^{\,n})$ avec $\varphi=\frac{1+\sqrt5}{2}\approx 1{,}618$. La borne $O(2^n)$ est correcte mais <em>lâche</em> car $\varphi&lt;2$.</div>
+  <span class="slide-number">18 / 23</span>
+</section>
+
+<section class="slide" id="s17c">
+  <h2 class="frame-title">Confirmation : algèbre linéaire<span class="tag">DIAGONALISATION</span></h2>
+  <div class="cols">
+    <div class="col">
+      <p>On pose le vecteur d'état :</p>
+      <p style="text-align:center;">$$\begin{pmatrix}F_{n+1}\\ F_n\end{pmatrix}=A\begin{pmatrix}F_n\\ F_{n-1}\end{pmatrix},\quad A=\begin{pmatrix}1&1\\ 1&0\end{pmatrix}$$</p>
+      <p>Par récurrence : $\begin{pmatrix}F_{n+1}\\ F_n\end{pmatrix}=A^{\,n}\begin{pmatrix}F_1\\ F_0\end{pmatrix}=A^{\,n}\begin{pmatrix}1\\ 0\end{pmatrix}$.</p>
+    </div>
+    <div class="col">
+      <p>Valeurs propres : $\det(A-\lambda I)=\lambda^2-\lambda-1=0 \Rightarrow \lambda=\varphi,\ \psi$.</p>
+      <p>$A$ est diagonalisable : $A=PDP^{-1}$ avec $D=\operatorname{diag}(\varphi,\psi)$, donc
+      $$A^{\,n}=P\,D^{\,n}P^{-1},\qquad D^{\,n}=\operatorname{diag}(\varphi^{\,n},\psi^{\,n}).$$</p>
+    </div>
+  </div>
+  <div class="box good"><b class="lab">Terme général (formule de Binet)</b> $F_n=\dfrac{\varphi^{\,n}-\psi^{\,n}}{\sqrt5}$. Comme $|\psi|&lt;1$, on a $F_n\sim \dfrac{\varphi^{\,n}}{\sqrt5}$ : on retrouve bien $\Theta(\varphi^{\,n})$.</div>
+  <span class="slide-number">19 / 23</span>
+</section>
+
+
+<!-- 18 : NEW exemples récursifs par classe -->
+<section class="slide" id="s18">
+  <h2 class="frame-title">Exemples (récursif) par classe<span class="tag">CALCUL</span></h2>
+  <table class="ref">
+    <tr><th>Récurrence</th><th>Exemple</th><th>Complexité</th></tr>
+    <tr><td>$T(n)=O(1)$ (aucun appel récursif dépendant de $n$)</td><td>cas de base / accès direct</td><td>$O(1)$</td></tr>
+    <tr><td>$T(n)=T(n/2)+O(1)$</td><td>dichotomie récursive</td><td>$O(\log n)$</td></tr>
+    <tr><td>$T(n)=T(n-1)+O(1)$</td><td>factorielle</td><td>$O(n)$</td></tr>
+    <tr><td>$T(n)=T(n-1)+O(n)$</td><td>somme de paires</td><td>$O(n^2)$</td></tr>
+    <tr><td>$T(n)=T(n-1)+O(n^{k-1})$</td><td>imbrication d'ordre $k$</td><td>$O(n^k)$</td></tr>
+    <tr><td>$T(n)=T(n-1)+T(n-2)+O(1)$</td><td>Fibonacci naïf</td><td>$O(\varphi^{\,n})$, $\varphi\approx1{,}618$</td></tr>
+  </table>
+  <div class="box"><b class="lab">Méthode</b> Dérouler la récurrence : $T(n)=O(1)+O(1)+\dots$ (compter le nombre de termes), ou appliquer le Master théorème (slide suivante).</div>
+  <span class="slide-number">20 / 23</span>
+</section>
+
+<!-- 19 : diviser pour régner + Master -->
+<section class="slide" id="s19">
+  <h2 class="frame-title">Diviser pour régner — Master théorème<span class="tag">PARTITION</span></h2>
+  <p>Découper en $a$ sous-problèmes de taille $n/b$, avec un coût de partition/recombinaison $O(n^d)$ :</p>
+  <div class="box"><p style="text-align:center;margin:0;">$$T(n) = a\,T\!\left(\tfrac{n}{b}\right) + O(n^d)$$</p></div>
+  <table class="ref">
+    <tr><th>Comparaison</th><th>Complexité</th><th>Exemple</th></tr>
+    <tr><td>$d &gt; \log_b a$</td><td>$O(n^d)$</td><td>—</td></tr>
+    <tr><td>$d = \log_b a$</td><td>$O(n^d \log n)$</td><td>tri fusion : $a{=}b{=}2,\ d{=}1 \Rightarrow O(n\log n)$</td></tr>
+    <tr><td>$d &lt; \log_b a$</td><td>$O(n^{\log_b a})$</td><td>—</td></tr>
+  </table>
+  <p>Cas équilibré usuel : $T(n)=2T(n/2)+O(n) \Rightarrow O(n\log n)$.</p>
+  <span class="slide-number">21 / 23</span>
+</section>
+
+<!-- 20 : complexité spatiale -->
+<section class="slide" id="s20">
+  <h2 class="frame-title">Complexité spatiale</h2>
+  <ul>
+    <li>Quelques variables → $O(1)$ (algorithme <em>en place</em>).</li>
+    <li>Création d'une liste de taille $n$ → $O(n)$.</li>
+    <li><strong>Récursivité</strong> : chaque appel occupe la <em>pile</em> ; profondeur $n$ → $O(n)$ d'espace, même sans tableau.</li>
+  </ul>
+  <div class="box">Un algorithme rapide n'est pas toujours économe : tri fusion $O(n\log n)$ en temps mais $O(n)$ en espace.</div>
+  <span class="slide-number">22 / 23</span>
+</section>
+
+<!-- 21 : récap -->
+<section class="slide" id="s21">
+  <h2 class="frame-title">Récapitulatif</h2>
+  <ul>
+    <li>Toujours préciser $n$ (souvent $n = \operatorname{len}(\text{liste})$).</li>
+    <li>Compter les opérations, garder le terme dominant → grand $O$.</li>
+    <li>Itératif : compter les tours (boucle $\to O(n)$, imbriquées $\to O(n^2)$, division par 2 $\to O(\log n)$).</li>
+    <li>Récursif : poser et dérouler la récurrence ; Master théorème pour diviser pour régner.</li>
+    <li>Les ordres classiques sont des <strong>exemples</strong>, pas une liste exhaustive.</li>
+  </ul>
+  <span class="slide-number">23 / 23</span>
+</section>
+
+<div id="nav">
+  <button id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button id="btn-next" title="Suivant">&#8594;</button>
+</div>
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0, slideshowMode = false;
+const btnScroll = document.getElementById('btn-scroll');
+function setShow(on){
+  slideshowMode = on;
+  document.body.classList.toggle('slideshow', on);
+  btnScroll.textContent = on ? 'Défiler' : 'Diaporama';
+  slides.forEach(s => s.classList.remove('active'));
+  if(on){ slides[current].classList.add('active'); slides[current].scrollIntoView({block:'center'}); }
+}
+function enter(i){
+  if(!slideshowMode){ setShow(true); }
+  slides[current].classList.remove('active');
+  current = (i + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  slides[current].scrollIntoView({behavior:'smooth', block:'center'});
+}
+document.getElementById('btn-prev').addEventListener('click', () => enter(current-1));
+document.getElementById('btn-next').addEventListener('click', () => enter(current+1));
+btnScroll.addEventListener('click', () => setShow(!slideshowMode));
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight' || e.key==='ArrowDown'){ e.preventDefault(); enter(current+1); }
+  if(e.key==='ArrowLeft'  || e.key==='ArrowUp'){ e.preventDefault(); enter(current-1); }
+});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

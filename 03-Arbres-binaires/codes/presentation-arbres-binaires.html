@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les arbres binaires — CPGE MP/PSI</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--teal:#026573;--dark:#2c3e50;--bg:#e8edf2;--border:#dce3ea;--hl:#e4f1f2;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 5rem;gap:2rem;}
+.slide{background:#fff;width:100%;max-width:940px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.10);padding:2.2rem 2.8rem 1.8rem;position:relative;}
+.slide-number{position:absolute;bottom:0.7rem;right:1.2rem;font-size:0.72rem;color:#aaa;}
+.slide.title-slide{background:linear-gradient(145deg,#f4f9fc 60%,#d9eef0);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;border-top:6px solid var(--teal);}
+.slide.title-slide h1{font-size:1.9rem;color:var(--dark);margin-bottom:0.4rem;}
+.slide.title-slide .subtitle{font-size:1.15rem;color:#555;}
+h2.frame-title{font-size:1.6rem;color:var(--teal);font-weight:700;margin-bottom:0.7rem;padding-bottom:0.35rem;border-bottom:2px solid #b7dadd;}
+h2.frame-title .tag{font-size:0.7em;font-weight:700;padding:2px 10px;border-radius:12px;color:#fff;vertical-align:middle;margin-left:0.4rem;background:var(--teal);}
+p{line-height:1.7;margin:0.45rem 0;} ul,ol{margin:0.5rem 0 0.5rem 1.4rem;line-height:1.85;}
+ul li::marker,ol li::marker{color:var(--teal);} strong{font-weight:700;} em{font-style:italic;}
+.cols{display:flex;gap:2rem;margin-top:0.8rem;align-items:flex-start;} .col-text{flex:1.1;} .col-side{flex:0.9;}
+.code{background:#0d1117;color:#e6edf3;font-family:'Consolas','Courier New',monospace;font-size:0.85rem;line-height:1.5;padding:0.9rem 1.1rem;border-radius:8px;overflow-x:auto;margin:0.6rem 0;white-space:pre;tab-size:4;}
+.code .kw{color:#ff7b72;} .code .fn{color:#d2a8ff;} .code .nb{color:#79c0ff;} .code .cm{color:#8b949e;}
+.hl-box{background:var(--hl);border-left:4px solid var(--teal);border-radius:0 6px 6px 0;padding:0.7rem 1rem;margin:0.8rem 0;font-size:0.97rem;}
+.hl-box.warn{background:#fef9e7;border-left-color:#f39c12;} .hl-box.bad{background:#fdeef0;border-left-color:#e74c3c;} .hl-box.good{background:#eafaf1;border-left-color:#27ae60;}
+table.ref{border-collapse:collapse;width:100%;margin:0.7rem 0;font-size:0.92rem;}
+table.ref th{background:var(--dark);color:#fff;padding:0.5rem 0.7rem;text-align:left;} table.ref td{border:1px solid var(--border);padding:0.45rem 0.7rem;} table.ref tr:nth-child(even) td{background:#f4f9fc;}
+.tree-svg{display:block;margin:0.6rem auto;}
+#nav{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:0.4rem;z-index:100;}
+#nav button{background:var(--teal);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:background .2s;}
+#nav button:hover{background:#014a54;} #nav #btn-scroll{border-radius:20px;width:auto;padding:0 14px;font-size:0.78rem;font-weight:700;}
+body.slideshow .slide{display:none;} body.slideshow .slide.active{display:block;} body.slideshow .slide.active.title-slide{display:flex;}
+</style>
+</head>
+<body>
+
+<!-- ===== Slide de titre ===== -->
+<section class="slide title-slide" id="s1">
+  <h1>Les arbres binaires</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">Terminologie · implémentation · parcours · ABR · tas</p>
+  <span class="slide-number">1 / 12</span>
+</section>
+
+<section class="slide" id="s2">
+  <h2 class="frame-title">Pourquoi les arbres ?<span class="tag">INTRO</span></h2>
+  <p>Une structure de données <strong>hiérarchique</strong> : un parent, des enfants.</p>
+  <ul>
+    <li>Systèmes de fichiers, arbres généalogiques, taxonomies.</li>
+    <li>Arbres syntaxiques, arbres de décision, indexation de bases de données.</li>
+  </ul>
+  <div class="hl-box"><strong>Arbre binaire.</strong> Chaque nœud a <strong>au plus deux fils</strong> : gauche et droit.</div>
+  <span class="slide-number">2 / 12</span>
+</section>
+
+<section class="slide" id="s3">
+  <h2 class="frame-title">Vocabulaire<span class="tag">DÉFINITIONS</span></h2>
+  <div class="cols">
+    <div class="col-text">
+      <table class="ref">
+        <tr><th>Terme</th><th>Sens</th></tr>
+        <tr><td>Racine</td><td>nœud sans parent</td></tr>
+        <tr><td>Feuille</td><td>nœud sans fils (degré 0)</td></tr>
+        <tr><td>Nœud interne</td><td>au moins un fils</td></tr>
+        <tr><td>Degré</td><td>nb de fils (0, 1 ou 2)</td></tr>
+        <tr><td>Profondeur</td><td>distance à la racine</td></tr>
+        <tr><td>Hauteur</td><td>profondeur max</td></tr>
+      </table>
+    </div>
+    <div class="col-side">
+      <svg class="tree-svg" width="230" height="200" viewBox="0 0 230 200" xmlns="http://www.w3.org/2000/svg">
+        <line x1="115" y1="35" x2="60" y2="95" stroke="#aebfca" stroke-width="2"/>
+        <line x1="115" y1="35" x2="170" y2="95" stroke="#aebfca" stroke-width="2"/>
+        <line x1="60" y1="95" x2="30" y2="155" stroke="#aebfca" stroke-width="2"/>
+        <line x1="60" y1="95" x2="90" y2="155" stroke="#aebfca" stroke-width="2"/>
+        <circle cx="115" cy="35" r="20" fill="#026573"/><text x="115" y="41" text-anchor="middle" fill="#fff" font-weight="700">4</text>
+        <circle cx="60" cy="95" r="20" fill="#457b9d"/><text x="60" y="101" text-anchor="middle" fill="#fff" font-weight="700">2</text>
+        <circle cx="170" cy="95" r="20" fill="#a8d5ba"/><text x="170" y="101" text-anchor="middle" fill="#1f3a4a" font-weight="700">6</text>
+        <circle cx="30" cy="155" r="20" fill="#a8d5ba"/><text x="30" y="161" text-anchor="middle" fill="#1f3a4a" font-weight="700">1</text>
+        <circle cx="90" cy="155" r="20" fill="#a8d5ba"/><text x="90" y="161" text-anchor="middle" fill="#1f3a4a" font-weight="700">3</text>
+        <text x="170" y="150" text-anchor="middle" fill="#888" font-size="12">racine: 4</text>
+      </svg>
+    </div>
+  </div>
+  <span class="slide-number">3 / 12</span>
+</section>
+
+<section class="slide" id="s4">
+  <h2 class="frame-title">Hauteur et profondeur<span class="tag">MESURES</span></h2>
+  <ul>
+    <li><strong>Profondeur</strong> d'un nœud : nb d'arêtes jusqu'à la racine (racine à 0).</li>
+    <li><strong>Hauteur</strong> de l'arbre : profondeur maximale. Arbre vide $h=-1$.</li>
+  </ul>
+  <div class="hl-box">Pour $n$ nœuds et hauteur $h$ : $\quad h+1 \le n \le 2^{h+1}-1$</div>
+  <p>Arbre <strong>filiforme</strong> : $h = n-1$. &nbsp; Arbre <strong>parfait/équilibré</strong> : $h \approx \log_2 n$.</p>
+  <div class="code"><span class="kw">def</span> <span class="fn">hauteur</span>(a):
+    <span class="kw">if</span> a <span class="kw">is</span> <span class="nb">None</span>: <span class="kw">return</span> -1
+    <span class="kw">return</span> 1 + <span class="nb">max</span>(hauteur(a[1]), hauteur(a[2]))</div>
+  <span class="slide-number">4 / 12</span>
+</section>
+
+<section class="slide" id="s5">
+  <h2 class="frame-title">Implémentation en Python<span class="tag">LISTES</span></h2>
+  <p>Un arbre $=$ <span class="nb">None</span> (vide) &nbsp;ou&nbsp; <code>[valeur, gauche, droite]</code>.</p>
+  <div class="code"><span class="cm"># Exemple :        4</span>
+<span class="cm">#                /   \</span>
+<span class="cm">#               2     6</span>
+arbre = [4, [2, <span class="nb">None</span>, <span class="nb">None</span>], [6, <span class="nb">None</span>, <span class="nb">None</span>]]
+
+<span class="kw">def</span> <span class="fn">nb_noeuds</span>(a):
+    <span class="kw">if</span> a <span class="kw">is</span> <span class="nb">None</span>: <span class="kw">return</span> 0
+    <span class="kw">return</span> 1 + nb_noeuds(a[1]) + nb_noeuds(a[2])</div>
+  <div class="hl-box"><code>a[0]</code> valeur &middot; <code>a[1]</code> sous-arbre gauche &middot; <code>a[2]</code> sous-arbre droit.</div>
+  <span class="slide-number">5 / 12</span>
+</section>
+
+<section class="slide" id="s6">
+  <h2 class="frame-title">Parcours en profondeur<span class="tag">DFS</span></h2>
+  <p>Trois ordres selon le moment où l'on traite la racine :</p>
+  <table class="ref">
+    <tr><th>Parcours</th><th>Ordre</th><th>Sur l'exemple</th></tr>
+    <tr><td>Préfixe</td><td>R → G → D</td><td>4 2 1 3 6 5 7</td></tr>
+    <tr><td>Infixe</td><td>G → R → D</td><td>1 2 3 4 5 6 7</td></tr>
+    <tr><td>Postfixe</td><td>G → D → R</td><td>1 3 2 5 7 6 4</td></tr>
+  </table>
+  <div class="code"><span class="kw">def</span> <span class="fn">infixe</span>(a):
+    <span class="kw">if</span> a <span class="kw">is</span> <span class="nb">None</span>: <span class="kw">return</span> []
+    <span class="kw">return</span> infixe(a[1]) + [a[0]] + infixe(a[2])</div>
+  <span class="slide-number">6 / 12</span>
+</section>
+
+<section class="slide" id="s7">
+  <h2 class="frame-title">Parcours en largeur<span class="tag">BFS</span></h2>
+  <p>Niveau par niveau, de gauche à droite, à l'aide d'une <strong>file</strong> (FIFO).</p>
+  <div class="code"><span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="kw">def</span> <span class="fn">largeur</span>(a):
+    <span class="kw">if</span> a <span class="kw">is</span> <span class="nb">None</span>: <span class="kw">return</span> []
+    file, ordre = deque([a]), []
+    <span class="kw">while</span> file:
+        n = file.popleft()
+        ordre.append(n[0])
+        <span class="kw">if</span> n[1]: file.append(n[1])
+        <span class="kw">if</span> n[2]: file.append(n[2])
+    <span class="kw">return</span> ordre</div>
+  <div class="hl-box"><strong>Profondeur → pile</strong> (récursion) &nbsp;|&nbsp; <strong>largeur → file</strong>.</div>
+  <span class="slide-number">7 / 12</span>
+</section>
+
+<section class="slide" id="s8">
+  <h2 class="frame-title">Arbre binaire de recherche<span class="tag">ABR</span></h2>
+  <div class="hl-box">En tout nœud : <strong>gauche &lt; nœud &lt; droite</strong>.</div>
+  <p>L'invariant d'ordre permet une recherche dichotomique en $O(h)$.</p>
+  <div class="code"><span class="kw">def</span> <span class="fn">recherche</span>(a, x):
+    <span class="kw">if</span> a <span class="kw">is</span> <span class="nb">None</span>: <span class="kw">return</span> <span class="nb">False</span>
+    <span class="kw">if</span> x == a[0]: <span class="kw">return</span> <span class="nb">True</span>
+    <span class="kw">if</span> x &lt; a[0]: <span class="kw">return</span> recherche(a[1], x)
+    <span class="kw">return</span> recherche(a[2], x)</div>
+  <span class="slide-number">8 / 12</span>
+</section>
+
+<section class="slide" id="s9">
+  <h2 class="frame-title">Insertion dans un ABR<span class="tag">ABR</span></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">inserer</span>(a, x):
+    <span class="kw">if</span> a <span class="kw">is</span> <span class="nb">None</span>: <span class="kw">return</span> [x, <span class="nb">None</span>, <span class="nb">None</span>]
+    <span class="kw">if</span> x &lt; a[0]: a[1] = inserer(a[1], x)
+    <span class="kw">elif</span> x &gt; a[0]: a[2] = inserer(a[2], x)
+    <span class="kw">return</span> a</div>
+  <div class="hl-box good">Insérer puis parcourir en <strong>infixe</strong> $\Rightarrow$ liste triée (<em>tri par arbre</em>).</div>
+  <div class="hl-box bad">Pire cas (valeurs déjà triées) : arbre filiforme, $h = n-1$, recherche en $O(n)$.</div>
+  <span class="slide-number">9 / 12</span>
+</section>
+
+<section class="slide" id="s10">
+  <h2 class="frame-title">Le tas (heap)<span class="tag">VARIANTE</span></h2>
+  <p>Arbre binaire <strong>complet</strong> + propriété de tas. Tas-max : parent $\ge$ fils.</p>
+  <div class="hl-box">Rangé dans une liste : fils de $i$ en $2i{+}1$ et $2i{+}2$, père en $\lfloor (i-1)/2 \rfloor$.</div>
+  <div class="code"><span class="kw">def</span> <span class="fn">inserer_tas</span>(t, x):
+    t.append(x); i = <span class="nb">len</span>(t) - 1
+    <span class="kw">while</span> i &gt; 0 <span class="kw">and</span> t[(i-1)//2] &lt; t[i]:
+        p = (i-1)//2
+        t[i], t[p] = t[p], t[i]; i = p
+    <span class="kw">return</span> t</div>
+  <p>Support des <strong>files de priorité</strong> : insertion/extraction du max en $O(\log n)$.</p>
+  <span class="slide-number">10 / 12</span>
+</section>
+
+<section class="slide" id="s11">
+  <h2 class="frame-title">Complexités à retenir<span class="tag">BILAN</span></h2>
+  <table class="ref">
+    <tr><th>Opération</th><th>Coût</th></tr>
+    <tr><td>Parcours (DFS / BFS)</td><td>$O(n)$</td></tr>
+    <tr><td>Hauteur, nb de nœuds</td><td>$O(n)$</td></tr>
+    <tr><td>Recherche / insertion ABR (équilibré)</td><td>$O(\log n)$</td></tr>
+    <tr><td>Recherche / insertion ABR (pire cas)</td><td>$O(n)$</td></tr>
+    <tr><td>Insertion / extraction-max tas</td><td>$O(\log n)$</td></tr>
+  </table>
+  <span class="slide-number">11 / 12</span>
+</section>
+
+<section class="slide" id="s12">
+  <h2 class="frame-title">À retenir<span class="tag">SYNTHÈSE</span></h2>
+  <ul>
+    <li>Définition <strong>récursive</strong> : vide ou racine + 2 sous-arbres.</li>
+    <li>Parcours <strong>profondeur</strong> (préfixe/infixe/postfixe) et <strong>largeur</strong>.</li>
+    <li><strong>ABR</strong> : gauche &lt; nœud &lt; droite ; infixe trié ; $O(h)$.</li>
+    <li><strong>Tas</strong> : arbre complet en tableau ; file de priorité.</li>
+  </ul>
+  <div class="hl-box good"><strong>Idée centrale.</strong> La récursivité de la structure se traduit directement en récursivité des algorithmes.</div>
+  <span class="slide-number">12 / 12</span>
+</section>
+
+<div id="nav">
+  <button class="ghost" id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button class="ghost" id="btn-next" title="Suivant">&#8594;</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide');
+let current=0,slideshowMode=false;
+function enter(i){slides[current].classList.remove('active');current=(i+slides.length)%slides.length;slides[current].classList.add('active');slides[current].scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('btn-prev').addEventListener('click',()=>{if(slideshowMode)enter(current-1);});
+document.getElementById('btn-next').addEventListener('click',()=>{if(slideshowMode)enter(current+1);});
+document.getElementById('btn-scroll').addEventListener('click',()=>{slideshowMode=!slideshowMode;document.body.classList.toggle('slideshow',slideshowMode);document.getElementById('btn-scroll').textContent=slideshowMode?'Défiler':'Diaporama';if(slideshowMode)slides[current].classList.add('active');else slides.forEach(s=>s.classList.remove('active'));});
+document.addEventListener('keydown',e=>{if((e.key==='ArrowRight'||e.key==='ArrowDown')&&slideshowMode)enter(current+1);if((e.key==='ArrowLeft'||e.key==='ArrowUp')&&slideshowMode)enter(current-1);});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analyse des algorithmes sur les arbres binaires — correction, terminaison, complexité</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:920px;margin:0 auto;padding:1.2rem;background:#fff;}
+  code{background:#eef1f3;padding:1px 5px;border-radius:3px;font-family:Consolas,Monaco,monospace;}
+  pre code{background:none;padding:0;}
+  h2{font-size:1.55em;}
+  h3{margin-top:1.1em;}
+  .box{border-radius:4px;padding:12px 16px;margin:12px 0;}
+  .spec{background:#eef2f7;border-left:4px solid #34495e;}
+  .corr{background:#f4ecfb;border-left:4px solid #5b21b6;}
+  .term{background:#e7f6ef;border-left:4px solid #047857;}
+  .cplx{background:#e4f1f2;border-left:4px solid #026573;}
+  .warn{background:#fef9e7;border-left:4px solid #f39c12;}
+  .bad{background:#fdeef0;border-left:4px solid #e74c3c;}
+  .good{background:#eafaf1;border-left:4px solid #27ae60;}
+  .lab-c{color:#5b21b6;font-weight:bold;}
+  .lab-t{color:#047857;font-weight:bold;}
+  .lab-x{color:#026573;font-weight:bold;}
+  pre.code{background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;}
+  pre.calc{background:#f7fbfc;border:1px solid #ddd;border-radius:6px;padding:12px 16px;font-family:Consolas,monospace;font-size:0.92em;line-height:1.7;}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.94em;}
+  th{background:#2c3e50;color:#fff;padding:8px;text-align:left;border:1px solid #2c3e50;}
+  td{border:1px solid #ddd;padding:8px;}
+  tr:nth-child(even) td{background:#f7fbfc;}
+</style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.8em;">Analyse des algorithmes sur les arbres binaires</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6eef0;">Pour la hauteur, les parcours et l'insertion dans un ABR : spécification, <strong>correction</strong> (récurrence structurelle, invariant de boucle), <strong>terminaison</strong> (fonction de mesure, variant) et <strong>complexité</strong>.</p>
+  </div>
+
+  <!-- CADRE -->
+  <div class="box corr">
+    <span class="lab-c">📘 Cadre : correction totale</span>
+    <p style="margin:6px 0 0 0;">Un algorithme est <strong>correct</strong> (au sens total) s'il vérifie :</p>
+    <p style="text-align:center;margin:8px 0;">\[ \text{Correction totale} \;=\; \text{Correction partielle} \;+\; \text{Terminaison} \]</p>
+    <p style="margin:6px 0 0 0;">Les algorithmes sur les arbres sont presque tous <strong>récursifs</strong>, car la structure elle-même est récursive. L'outil naturel est donc la <strong>récurrence structurelle</strong> : on prouve la propriété sur l'arbre vide (cas de base), puis sur un arbre en supposant la propriété acquise sur ses deux sous-arbres (hérédité). La terminaison repose sur une <strong>fonction de mesure</strong> \(\mu \in \mathbb{N}\) qui décroît strictement à chaque appel.</p>
+  </div>
+
+  <div class="box cplx">
+    <span class="lab-x">🌳 Mesure de référence.</span>
+    Pour un arbre \(a\), on note \(n(a)\) son nombre de nœuds et \(h(a)\) sa hauteur. L'ensemble \((\mathbb{N},<)\) étant <strong>bien fondé</strong> (pas de suite infinie strictement décroissante), toute récursion dont la mesure décroît vers le cas de base s'arrête.
+  </div>
+
+  <!-- ============ 1. HAUTEUR ============ -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. Hauteur d'un arbre</h2>
+  <pre class="code">def hauteur(a):
+    if a is None:
+        return -1
+    return 1 + max(hauteur(a[1]), hauteur(a[2]))</pre>
+
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">Spécification.</span>
+    <strong>Précondition</strong> : \(a\) est un arbre binaire (None ou <code>[v, g, d]</code>).
+    <strong>Postcondition</strong> : <code>hauteur(a)</code> renvoie \(h(a)\), longueur du plus long chemin de la racine à une feuille, avec \(h(\varnothing) = -1\).
+  </div>
+
+  <div class="box corr">
+    <span class="lab-c">Correction (récurrence structurelle).</span>
+    Propriété \(P(a)\) : « <code>hauteur(a)</code> \(= h(a)\) ».
+    <p style="margin:6px 0 0 0;"><strong>Base.</strong> Si \(a = \varnothing\), la fonction renvoie \(-1 = h(\varnothing)\). \(P(\varnothing)\) est vraie.</p>
+    <p style="margin:6px 0 0 0;"><strong>Hérédité.</strong> Soit \(a = [v, g, d]\). On suppose \(P(g)\) et \(P(d)\). Par définition, \(h(a) = 1 + \max(h(g), h(d))\). Les appels renvoient respectivement \(h(g)\) et \(h(d)\) (hypothèse), donc la fonction renvoie \(1 + \max(h(g), h(d)) = h(a)\). \(P(a)\) est vraie.</p>
+  </div>
+
+  <div class="box term">
+    <span class="lab-t">Terminaison (mesure).</span>
+    On prend \(\mu(a) = n(a)\). À chaque appel non terminal sur \(a = [v,g,d]\), les appels récursifs portent sur \(g\) et \(d\), avec \(n(g) &lt; n(a)\) et \(n(d) &lt; n(a)\) (la racine \(v\) n'appartient à aucun sous-arbre). La mesure décroît strictement et reste dans \(\mathbb{N}\) : l'algorithme s'arrête.
+  </div>
+
+  <div class="box cplx">
+    <span class="lab-x">Complexité.</span>
+    Chaque nœud est visité exactement une fois et déclenche un travail \(O(1)\). D'où \(T(n) = \Theta(n)\), quelle que soit la forme de l'arbre. (En profondeur, la pile d'appels atteint \(O(h)\).)
+  </div>
+
+  <!-- ============ 2. PARCOURS ============ -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Parcours en profondeur (infixe)</h2>
+  <pre class="code">def infixe(a):
+    if a is None:
+        return []
+    return infixe(a[1]) + [a[0]] + infixe(a[2])</pre>
+
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">Spécification.</span>
+    <strong>Postcondition</strong> : <code>infixe(a)</code> renvoie la liste des valeurs de \(a\) dans l'ordre gauche → racine → droite.
+  </div>
+
+  <div class="box corr">
+    <span class="lab-c">Correction (récurrence structurelle).</span>
+    Propriété \(P(a)\) : « <code>infixe(a)</code> renvoie le parcours infixe de \(a\) ».
+    <p style="margin:6px 0 0 0;"><strong>Base.</strong> \(a = \varnothing\) : le parcours infixe est la liste vide, et la fonction renvoie <code>[]</code>.</p>
+    <p style="margin:6px 0 0 0;"><strong>Hérédité.</strong> \(a = [v,g,d]\). Par hypothèse, <code>infixe(g)</code> et <code>infixe(d)</code> renvoient les parcours infixes de \(g\) et \(d\). La concaténation <code>infixe(g) + [v] + infixe(d)</code> place exactement gauche, puis racine, puis droite : c'est la définition du parcours infixe de \(a\).</p>
+    <p style="margin:6px 0 0 0;">La même preuve s'adapte au préfixe (<code>[v] + ...</code>) et au postfixe (<code>... + [v]</code>) : seul change l'emplacement de la racine.</p>
+  </div>
+
+  <div class="box term">
+    <span class="lab-t">Terminaison (mesure).</span>
+    Mesure \(\mu(a) = n(a)\). Les appels portent sur \(g\) et \(d\), de tailles strictement inférieures. Décroissance stricte dans \(\mathbb{N}\) : arrêt garanti.
+  </div>
+
+  <div class="box cplx">
+    <span class="lab-x">Complexité.</span>
+    Chaque nœud est traité une fois. Attention toutefois : la concaténation <code>+</code> de listes en Python recopie, ce qui peut alourdir le coût. En comptant les concaténations, le pire cas (arbre filiforme) atteint \(O(n^2)\) ; avec un accumulateur (ou <code>list.append</code>), on retrouve \(O(n)\). Le nombre de <strong>visites</strong>, lui, reste \(\Theta(n)\).
+  </div>
+
+  <div class="box good">
+    <span style="color:#27ae60;font-weight:bold;">Propriété de l'ABR.</span>
+    Si \(a\) est un <strong>arbre binaire de recherche</strong>, le parcours infixe renvoie les valeurs <strong>triées par ordre croissant</strong>. Preuve par récurrence : par l'invariant d'ordre, toutes les valeurs de \(g\) sont \(&lt; v\) et toutes celles de \(d\) sont \(&gt; v\) ; par hypothèse \(g\) et \(d\) donnent des listes triées, donc \(\text{infixe}(g) \;\frown\; [v] \;\frown\; \text{infixe}(d)\) est triée.
+  </div>
+
+  <!-- ============ 3. PARCOURS LARGEUR ============ -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Parcours en largeur (itératif)</h2>
+  <pre class="code">def largeur(a):
+    if a is None:
+        return []
+    file = deque([a]); ordre = []
+    while file:
+        n = file.popleft()
+        ordre.append(n[0])
+        if n[1] is not None: file.append(n[1])
+        if n[2] is not None: file.append(n[2])
+    return ordre</pre>
+
+  <div class="box corr">
+    <span class="lab-c">Correction (invariant de boucle).</span>
+    <strong>Invariant \(I\)</strong> : « <code>ordre</code> contient, dans l'ordre des niveaux, les nœuds déjà défilés ; <code>file</code> contient les nœuds découverts mais pas encore traités, rangés par profondeur croissante (de gauche à droite à profondeur égale) ».
+    <p style="margin:6px 0 0 0;"><strong>Initialisation.</strong> Avant la boucle, <code>ordre = []</code> et <code>file = [racine]</code> : \(I\) est vraie.</p>
+    <p style="margin:6px 0 0 0;"><strong>Conservation.</strong> On défile le nœud le plus prioritaire \(n\) (le moins profond, le plus à gauche), on l'ajoute à <code>ordre</code> et on enfile ses fils <em>en queue</em>. Comme la file est FIFO et que les fils sont à profondeur \(+1\), ils sont traités après tous les nœuds du niveau courant : \(I\) est préservée.</p>
+    <p style="margin:6px 0 0 0;"><strong>Sortie.</strong> À l'arrêt, <code>file</code> est vide : tous les nœuds atteignables ont été défilés, donc <code>ordre</code> est le parcours en largeur complet.</p>
+  </div>
+
+  <div class="box term">
+    <span class="lab-t">Terminaison (variant).</span>
+    Chaque nœud de l'arbre est enfilé <strong>au plus une fois</strong> (il est atteint par son unique père). Variant : \(V = (\text{nœuds jamais enfilés}) + |\text{file}|\). Chaque tour défile un élément et enfile au plus 2 fils non encore vus ; \(V\) décroît strictement à chaque itération et reste \(\ge 0\). Par le théorème de Floyd, la boucle s'arrête après au plus \(n\) tours.
+  </div>
+
+  <div class="box cplx">
+    <span class="lab-x">Complexité.</span>
+    \(n\) défilements, \(n\) enfilements, chacun \(O(1)\) avec une <code>deque</code> : \(T(n) = \Theta(n)\). L'espace est \(O(\ell)\) où \(\ell\) est la largeur maximale d'un niveau (jusqu'à \(O(n)\) pour un arbre parfait).
+  </div>
+
+  <!-- ============ 4. INSERTION ABR ============ -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Insertion dans un ABR</h2>
+  <pre class="code">def inserer(a, x):
+    if a is None:
+        return [x, None, None]
+    if x &lt; a[0]:
+        a[1] = inserer(a[1], x)
+    elif x &gt; a[0]:
+        a[2] = inserer(a[2], x)
+    return a</pre>
+
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">Spécification.</span>
+    <strong>Précondition</strong> : \(a\) est un ABR. <strong>Postcondition</strong> : <code>inserer(a, x)</code> renvoie un ABR contenant les valeurs de \(a\) et \(x\) (sans doublon).
+  </div>
+
+  <div class="box corr">
+    <span class="lab-c">Correction (récurrence structurelle).</span>
+    Propriété \(P(a)\) : « le résultat est un ABR égal à \(a\) augmenté de \(x\) ».
+    <p style="margin:6px 0 0 0;"><strong>Base.</strong> \(a = \varnothing\) : on renvoie la feuille <code>[x,None,None]</code>, ABR ne contenant que \(x\). Correct.</p>
+    <p style="margin:6px 0 0 0;"><strong>Hérédité.</strong> \(a = [v,g,d]\). Si \(x = v\), rien n'est inséré (pas de doublon). Si \(x &lt; v\), par hypothèse <code>inserer(g, x)</code> renvoie un ABR \(g'\) contenant \(g \cup \{x\}\), avec toutes ses valeurs \(&lt; v\) (car \(x &lt; v\) et les valeurs de \(g\) aussi) : l'invariant d'ordre en \(v\) est préservé, et \([v, g', d]\) est un ABR. Le cas \(x &gt; v\) est symétrique.</p>
+  </div>
+
+  <div class="box term">
+    <span class="lab-t">Terminaison (mesure).</span>
+    Mesure \(\mu(a) = h(a)\) (ou \(n(a)\)). Chaque appel récursif descend dans un sous-arbre de hauteur strictement inférieure ; on atteint le cas de base \(a = \varnothing\) en au plus \(h(a)+1\) appels.
+  </div>
+
+  <div class="box cplx">
+    <span class="lab-x">Complexité.</span>
+    Le coût suit le chemin de la racine au point d'insertion : \(O(h)\). Donc \(O(\log n)\) pour un arbre <strong>équilibré</strong>.
+  </div>
+
+  <div class="box bad">
+    <span style="color:#e74c3c;font-weight:bold;">⚠ Pire des cas.</span>
+    Si l'on insère des valeurs <strong>déjà triées</strong>, chaque nouvelle valeur devient l'unique fils droit : l'arbre devient <em>filiforme</em>, \(h = n-1\), et l'insertion comme la recherche coûtent \(O(n)\). C'est la motivation des arbres <strong>équilibrés</strong> (AVL, rouge-noir), hors programme mais utiles à connaître.
+  </div>
+
+  <!-- BILAN -->
+  <h2 style="color:#27ae60;border-bottom:2px solid #27ae60;padding-bottom:6px;">5. Bilan</h2>
+  <table>
+    <tr><th>Algorithme</th><th>Correction</th><th>Terminaison</th><th>Complexité</th></tr>
+    <tr><td>hauteur</td><td>récurrence structurelle</td><td>\(\mu = n(a)\)</td><td>\(\Theta(n)\)</td></tr>
+    <tr><td>parcours DFS</td><td>récurrence structurelle</td><td>\(\mu = n(a)\)</td><td>\(\Theta(n)\) visites</td></tr>
+    <tr><td>parcours BFS</td><td>invariant (file FIFO)</td><td>variant \(\le n\) tours</td><td>\(\Theta(n)\)</td></tr>
+    <tr><td>insertion ABR</td><td>récurrence structurelle</td><td>\(\mu = h(a)\)</td><td>\(O(h)\) : \(\log n\) à \(n\)</td></tr>
+  </table>
+
+  <div class="box good">
+    <span style="color:#27ae60;font-weight:bold;">À retenir.</span>
+    La <strong>récursivité de la structure</strong> (un arbre = racine + deux sous-arbres) se transpose directement en <strong>récurrence structurelle</strong> pour la correction et en <strong>fonction de mesure</strong> (\(n\) ou \(h\)) pour la terminaison. La complexité d'un parcours est toujours \(\Theta(n)\) ; celle des opérations d'un ABR dépend de la <strong>hauteur</strong>, d'où l'enjeu de l'équilibrage.
+  </div>
+
+  <p style="text-align:center;color:#9aa7b2;font-size:0.85em;margin-top:30px;">CPGE MP / PSI · Informatique — Analyse : arbres binaires</p>
+</body>
+</html>

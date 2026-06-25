@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz><question type="coderunner"><name><text>Q1 — Sélection et tri</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q1 — SÉLECTION ET TRI&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;On dispose de la table des étudiants d'une université.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écris la requête &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; qui renvoie le &lt;strong&gt;nom&lt;/strong&gt; des étudiants dont l'âge est supérieur ou égal à 20, classés par ordre alphabétique de nom.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#02434c;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;age &amp;gt;= 20  →  ('Bennani',), ('Chraibi',), ...&lt;/pre&gt;
+&lt;/div&gt;&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Schéma de la base&amp;nbsp;:&lt;br&gt;
+&lt;code&gt;Departement(id, nom)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Etudiant(id, nom, prenom, age, id_dep)&lt;/code&gt; — &lt;code&gt;id_dep&lt;/code&gt; référence &lt;code&gt;Departement(id)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Module(code, intitule, credits)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Inscription(id_etudiant, code_module, note)&lt;/code&gt;&lt;/p&gt;
+&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Tu dois remplir la variable Python &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; avec une chaîne contenant ta requête SQL. Le test la lance sur la base et affiche les lignes obtenues.&lt;/p&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>requete = """
+    -- écris ta requête SQL ici
+"""
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>requete = """SELECT nom FROM Etudiant WHERE age &gt;= 20 ORDER BY nom;"""
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Alami', 'Sara', 19, 1), (2, 'Bennani', 'Karim', 20, 1), (3, 'Chraibi', 'Yasmine', 21, 2), (4, 'Daoudi', 'Omar', 18, 2)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Bennani',)
+('Chraibi',)
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Zerhouni', 'Lina', 22, 1), (2, 'Amrani', 'Hind', 20, 2), (3, 'Ouali', 'Reda', 19, 1)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Amrani',)
+('Zerhouni',)
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Idrissi', 'Nour', 17, 1), (2, 'Fassi', 'Sami', 23, 2), (3, 'Kabbaj', 'Aya', 20, 1), (4, 'Lahlou', 'Ilyas', 25, 2)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Fassi',)
+('Kabbaj',)
+('Lahlou',)
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q2 — Filtrage avec LIKE</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q2 — FILTRAGE AVEC LIKE&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;On cherche les étudiants dont le prénom contient la lettre « a ».&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écris la requête &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; qui renvoie le &lt;strong&gt;nom&lt;/strong&gt; des étudiants dont le &lt;strong&gt;prénom contient la lettre « a »&lt;/strong&gt; (motif &lt;code&gt;LIKE&lt;/code&gt;), classés par nom croissant.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#02434c;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;prenom contient 'a'  →  ('Alami',), ('Bennani',), ...&lt;/pre&gt;
+&lt;/div&gt;&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Schéma de la base&amp;nbsp;:&lt;br&gt;
+&lt;code&gt;Departement(id, nom)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Etudiant(id, nom, prenom, age, id_dep)&lt;/code&gt; — &lt;code&gt;id_dep&lt;/code&gt; référence &lt;code&gt;Departement(id)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Module(code, intitule, credits)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Inscription(id_etudiant, code_module, note)&lt;/code&gt;&lt;/p&gt;
+&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Tu dois remplir la variable Python &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; avec une chaîne contenant ta requête SQL. Le test la lance sur la base et affiche les lignes obtenues.&lt;/p&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>requete = """
+    -- écris ta requête SQL ici
+"""
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>requete = """SELECT nom FROM Etudiant WHERE prenom LIKE '%a%' ORDER BY nom;"""
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Alami', 'Sara', 19, 1), (2, 'Bennani', 'Karim', 20, 1), (3, 'Chraibi', 'Yasmine', 21, 2), (4, 'Daoudi', 'Omar', 18, 2)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Alami',)
+('Bennani',)
+('Chraibi',)
+('Daoudi',)
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Tazi', 'Reda', 20, 1), (2, 'Saidi', 'Nada', 22, 2), (3, 'Mansouri', 'Hugo', 19, 1)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Saidi',)
+('Tazi',)
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Berrada', 'Imane', 21, 1), (2, 'Cherkaoui', 'Othmane', 20, 2), (3, 'Naciri', 'Ines', 23, 1)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Berrada',)
+('Cherkaoui',)
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q3 — Jointure interne</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q3 — JOINTURE INTERNE&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Chaque étudiant appartient à un département via la clé étrangère &lt;code&gt;id_dep&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écris la requête &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; qui renvoie, pour chaque étudiant, son &lt;strong&gt;nom&lt;/strong&gt; et le &lt;strong&gt;nom de son département&lt;/strong&gt; (jointure interne), classés par nom d'étudiant.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#02434c;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;→  ('Alami','Maths'), ('Bennani','Info'), ...&lt;/pre&gt;
+&lt;/div&gt;&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Schéma de la base&amp;nbsp;:&lt;br&gt;
+&lt;code&gt;Departement(id, nom)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Etudiant(id, nom, prenom, age, id_dep)&lt;/code&gt; — &lt;code&gt;id_dep&lt;/code&gt; référence &lt;code&gt;Departement(id)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Module(code, intitule, credits)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Inscription(id_etudiant, code_module, note)&lt;/code&gt;&lt;/p&gt;
+&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Tu dois remplir la variable Python &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; avec une chaîne contenant ta requête SQL. Le test la lance sur la base et affiche les lignes obtenues.&lt;/p&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>requete = """
+    -- écris ta requête SQL ici
+"""
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>requete = """SELECT E.nom, D.nom FROM Etudiant E JOIN Departement D ON E.id_dep = D.id ORDER BY E.nom;"""
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Departement VALUES(?,?)', [(1, 'Maths'), (2, 'Info')])
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Alami', 'Sara', 19, 1), (2, 'Bennani', 'Karim', 20, 2), (3, 'Chraibi', 'Yasmine', 21, 1)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Alami', 'Maths')
+('Bennani', 'Info')
+('Chraibi', 'Maths')
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Departement VALUES(?,?)', [(1, 'Physique'), (2, 'Chimie'), (3, 'Info')])
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Ouali', 'Reda', 20, 3), (2, 'Amrani', 'Hind', 22, 1), (3, 'Fassi', 'Sami', 19, 2)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Amrani', 'Physique')
+('Fassi', 'Chimie')
+('Ouali', 'Info')
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Departement VALUES(?,?)', [(1, 'Maths'), (2, 'Info')])
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Zaki', 'Lina', 20, 2), (2, 'Hakimi', 'Adam', 23, 1)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Hakimi', 'Maths')
+('Zaki', 'Info')
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q4 — Agrégat et GROUP BY</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q4 — AGRÉGAT ET GROUP BY&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;La table &lt;code&gt;Inscription&lt;/code&gt; mémorise la note de chaque étudiant dans chaque module.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écris la requête &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; qui renvoie, pour chaque module, son &lt;strong&gt;code&lt;/strong&gt; et la &lt;strong&gt;moyenne de ses notes arrondie à 2 décimales&lt;/strong&gt; (&lt;code&gt;ROUND(AVG(note),2)&lt;/code&gt;), classés par code de module.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#02434c;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;→  ('INF1',15.0), ('MAT1',11.0), ...&lt;/pre&gt;
+&lt;/div&gt;&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Schéma de la base&amp;nbsp;:&lt;br&gt;
+&lt;code&gt;Departement(id, nom)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Etudiant(id, nom, prenom, age, id_dep)&lt;/code&gt; — &lt;code&gt;id_dep&lt;/code&gt; référence &lt;code&gt;Departement(id)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Module(code, intitule, credits)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Inscription(id_etudiant, code_module, note)&lt;/code&gt;&lt;/p&gt;
+&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Tu dois remplir la variable Python &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; avec une chaîne contenant ta requête SQL. Le test la lance sur la base et affiche les lignes obtenues.&lt;/p&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>requete = """
+    -- écris ta requête SQL ici
+"""
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>requete = """SELECT code_module, ROUND(AVG(note),2) FROM Inscription GROUP BY code_module ORDER BY code_module;"""
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Inscription VALUES(?,?,?)', [(1, 'INF1', 14.0), (2, 'INF1', 16.0), (3, 'MAT1', 10.0), (4, 'MAT1', 12.0)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('INF1', 15.0)
+('MAT1', 11.0)
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Inscription VALUES(?,?,?)', [(1, 'PHY1', 8.0), (2, 'PHY1', 12.0), (3, 'PHY1', 16.0), (4, 'INF2', 15.0)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('INF2', 15.0)
+('PHY1', 12.0)
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Inscription VALUES(?,?,?)', [(1, 'MAT2', 9.5), (2, 'MAT2', 10.5), (3, 'INF1', 18.0)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('INF1', 18.0)
+('MAT2', 10.0)
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q5 — Requête imbriquée</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q5 — REQUÊTE IMBRIQUÉE&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;On veut comparer l'âge de chaque étudiant à la moyenne générale.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écris la requête &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; qui renvoie le &lt;strong&gt;nom&lt;/strong&gt; des étudiants dont l'âge est &lt;strong&gt;strictement supérieur à la moyenne&lt;/strong&gt; des âges (sous-requête), classés par nom.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#02434c;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;age &amp;gt; moyenne(age)  →  ('Bennani',), ('Chraibi',), ...&lt;/pre&gt;
+&lt;/div&gt;&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Schéma de la base&amp;nbsp;:&lt;br&gt;
+&lt;code&gt;Departement(id, nom)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Etudiant(id, nom, prenom, age, id_dep)&lt;/code&gt; — &lt;code&gt;id_dep&lt;/code&gt; référence &lt;code&gt;Departement(id)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Module(code, intitule, credits)&lt;/code&gt;&lt;br&gt;
+&lt;code&gt;Inscription(id_etudiant, code_module, note)&lt;/code&gt;&lt;/p&gt;
+&lt;p style="font-family:Georgia,serif;font-size:14px;color:#334155;line-height:1.7;"&gt;Tu dois remplir la variable Python &lt;strong&gt;&lt;code&gt;requete&lt;/code&gt;&lt;/strong&gt; avec une chaîne contenant ta requête SQL. Le test la lance sur la base et affiche les lignes obtenues.&lt;/p&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>requete = """
+    -- écris ta requête SQL ici
+"""
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>requete = """SELECT nom FROM Etudiant WHERE age &gt; (SELECT AVG(age) FROM Etudiant) ORDER BY nom;"""
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Alami', 'Sara', 19, 1), (2, 'Bennani', 'Karim', 25, 1), (3, 'Chraibi', 'Yasmine', 21, 2), (4, 'Daoudi', 'Omar', 18, 2)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Bennani',)
+('Chraibi',)
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Ouali', 'Reda', 20, 1), (2, 'Amrani', 'Hind', 20, 2), (3, 'Fassi', 'Sami', 26, 1)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Fassi',)
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>import sqlite3
+con=sqlite3.connect(':memory:'); c=con.cursor()
+c.executescript('CREATE TABLE Departement(id INTEGER PRIMARY KEY, nom TEXT);\nCREATE TABLE Etudiant(id INTEGER PRIMARY KEY, nom TEXT, prenom TEXT, age INTEGER, id_dep INTEGER);\nCREATE TABLE Module(code TEXT PRIMARY KEY, intitule TEXT, credits INTEGER);\nCREATE TABLE Inscription(id_etudiant INTEGER, code_module TEXT, note REAL);')
+c.executemany('INSERT INTO Etudiant VALUES(?,?,?,?,?)', [(1, 'Zaki', 'Lina', 22, 1), (2, 'Hakimi', 'Adam', 23, 2), (3, 'Naciri', 'Ines', 17, 1), (4, 'Lahlou', 'Ilyas', 30, 2)])
+for row in c.execute(requete): print(row)
+</text></testcode><stdin><text /></stdin><expected><text>('Lahlou',)
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question></quiz>

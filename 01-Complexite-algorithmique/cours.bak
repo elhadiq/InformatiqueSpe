@@ -1,0 +1,272 @@
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <!-- ===================== HERO ===================== -->
+  <div style="background:#2c3e50;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#9bd1f0;text-transform:uppercase;margin-bottom:6px;">CPGE 2ᵉ année — MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.9em;">La complexité algorithmique</h1>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6e6f2;">Comment estimer les ressources (temps et mémoire) nécessaires à l'exécution d'un algorithme en fonction de la taille de l'entrée, pour évaluer ses performances et anticiper ses limites.</p>
+  </div>
+
+  <!-- ===================== OBJECTIFS ===================== -->
+  <div style="background:#eaf4fb;border-left:4px solid #3498db;padding:14px 18px;border-radius:4px;margin-bottom:26px;">
+    <strong style="color:#2c3e50;">🎯 Objectifs du chapitre</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Comprendre la notion de complexité et son intérêt.</li>
+      <li>Distinguer complexité <strong>temporelle</strong> et complexité <strong>spatiale</strong>.</li>
+      <li>Identifier les cas d'étude : <strong>meilleur</strong> et <strong>pire</strong> des cas.</li>
+      <li>Compter le nombre d'opérations élémentaires d'un programme itératif.</li>
+      <li>Maîtriser la notation asymptotique <strong>grand O</strong> et les ordres classiques.</li>
+      <li>Calculer la complexité d'un programme <strong>itératif</strong> et <strong>récursif</strong>.</li>
+    </ul>
+  </div>
+
+  <!-- ===================== SOMMAIRE ===================== -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:14px 18px;margin-bottom:30px;background:#fafbfc;">
+    <strong style="color:#2c3e50;">Sommaire</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>Pourquoi mesurer la complexité ?</li>
+      <li>Complexité temporelle et complexité spatiale</li>
+      <li>Les cas d'étude : meilleur et pire des cas</li>
+      <li>Compter les opérations élémentaires</li>
+      <li>La notation asymptotique grand O</li>
+      <li>Les ordres de grandeur classiques</li>
+      <li>Complexité des programmes itératifs</li>
+      <li>Complexité des programmes récursifs</li>
+      <li>Complexité spatiale</li>
+      <li>Récapitulatif et tableau de référence</li>
+    </ol>
+  </div>
+
+  <!-- ===================== 1 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">1. Pourquoi mesurer la complexité ?</h2>
+  <p>Un même problème peut être résolu par plusieurs algorithmes. Tous donnent le bon résultat, mais pas avec la même efficacité. Mesurer le temps d'exécution avec un chronomètre est trompeur : le résultat dépend de la machine, du langage, de la charge du système et des données utilisées.</p>
+  <p>La <strong>complexité algorithmique</strong> offre une mesure objective et indépendante de la machine. Elle exprime comment évoluent les ressources consommées (temps de calcul, mémoire) <strong>lorsque la taille de l'entrée augmente</strong>. On note traditionnellement n cette taille (nombre d'éléments d'une liste, valeur d'un entier, etc.).</p>
+
+  <div style="background:#eaf4fb;border-left:4px solid #3498db;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Idée clé.</strong> On ne cherche pas le temps exact en secondes, mais la <em>loi de croissance</em> : si je double la taille de l'entrée, le temps est-il doublé, quadruplé, ou pratiquement inchangé ?
+  </div>
+
+  <p>Un même <strong>problème</strong> admet plusieurs <strong>algorithmes</strong> corrects menant à la même <strong>solution</strong> ; la complexité sert à choisir le plus efficace :</p>
+  <div style="text-align:center;margin:14px 0;">
+    <svg viewBox="0 0 720 200" width="100%" style="max-width:680px" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="arc" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" fill="#3498db"/></marker></defs>
+      <rect x="20" y="74" width="150" height="52" rx="10" fill="#3498db"/><text x="95" y="105" text-anchor="middle" fill="#fff" font-size="19" font-weight="700">Problème</text>
+      <rect x="290" y="20" width="170" height="48" rx="10" fill="#eaf4fb" stroke="#3498db" stroke-width="2"/><text x="375" y="49" text-anchor="middle" fill="#3498db" font-size="16" font-weight="700">Algorithme 1</text>
+      <rect x="290" y="132" width="170" height="48" rx="10" fill="#eaf4fb" stroke="#3498db" stroke-width="2"/><text x="375" y="161" text-anchor="middle" fill="#3498db" font-size="16" font-weight="700">Algorithme 2</text>
+      <rect x="560" y="74" width="140" height="52" rx="10" fill="#27ae60"/><text x="630" y="105" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">Solution</text>
+      <line x1="172" y1="92" x2="288" y2="46" stroke="#3498db" stroke-width="2.4" marker-end="url(#arc)"/>
+      <line x1="172" y1="108" x2="288" y2="154" stroke="#3498db" stroke-width="2.4" marker-end="url(#arc)"/>
+      <line x1="462" y1="46" x2="600" y2="86" stroke="#3498db" stroke-width="2.4" marker-end="url(#arc)"/>
+      <line x1="462" y1="154" x2="600" y2="114" stroke="#3498db" stroke-width="2.4" marker-end="url(#arc)"/>
+    </svg>
+  </div>
+
+  <!-- ===================== taille n ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">2. La taille du problème n</h2>
+  <p>La complexité s'exprime toujours en fonction d'un entier <strong>n</strong> qui mesure la <strong>taille de l'entrée</strong>. Avant tout calcul, il faut <strong>préciser ce qu'est n</strong>.</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Entrée</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Taille n</th>
+    </tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Une liste / un tableau</td><td style="border:1px solid #ddd;padding:9px;">n = len(liste) (nombre d'éléments)</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">Un entier N</td><td style="border:1px solid #ddd;padding:9px;">n = N, ou n = log<sub>2</sub> N (nombre de bits)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Une matrice p × q</td><td style="border:1px solid #ddd;padding:9px;">n = p·q (nombre de cases)</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">Un graphe</td><td style="border:1px solid #ddd;padding:9px;">n = nombre de sommets (m = nombre d'arêtes)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Une chaîne de caractères</td><td style="border:1px solid #ddd;padding:9px;">n = longueur de la chaîne</td></tr>
+  </table>
+  <div style="background:#eaf4fb;border-left:4px solid #3498db;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>À retenir.</strong> Dans chaque calcul de ce chapitre, on précisera explicitement n (le plus souvent <strong>n = len(liste)</strong>).
+  </div>
+
+  <!-- ===================== 3 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">2. Complexité temporelle et complexité spatiale</h2>
+  <p>On distingue deux types de complexité :</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Type</th>
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Ce qu'elle mesure</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;"><strong>Complexité temporelle</strong></td>
+      <td style="border:1px solid #ddd;padding:10px;">Le nombre d'<strong>opérations élémentaires</strong> effectuées en fonction de n. C'est une estimation du <em>temps d'exécution</em>.</td>
+    </tr>
+    <tr style="background:#f7fbfe;">
+      <td style="border:1px solid #ddd;padding:10px;"><strong>Complexité spatiale</strong></td>
+      <td style="border:1px solid #ddd;padding:10px;">La quantité de <strong>mémoire</strong> supplémentaire utilisée en fonction de n (variables, tableaux, pile des appels récursifs).</td>
+    </tr>
+  </table>
+  <p>Une <strong>opération élémentaire</strong> est une instruction de base dont le coût est considéré constant : une affectation, une comparaison, une addition, un accès à une case de tableau, etc. On compte le nombre de ces opérations en fonction de n.</p>
+
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ Compromis temps / espace.</strong> Réduire le temps augmente souvent la mémoire utilisée (et inversement). Le bon algorithme dépend de la ressource la plus contrainte pour le problème traité.
+  </div>
+
+  <!-- ===================== 3 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">3. Les cas d'étude : meilleur et pire des cas</h2>
+  <p>Pour une même taille n, le nombre d'opérations peut varier selon le contenu précis des données. On distingue donc plusieurs scénarios. <strong>En classe préparatoire, on étudie seulement le meilleur et le pire des cas.</strong></p>
+  <ul style="padding-left:22px;">
+    <li><strong>Meilleur des cas</strong> : la configuration d'entrée la plus favorable (nombre minimal d'opérations).</li>
+    <li><strong>Pire des cas</strong> : la configuration la plus défavorable (nombre maximal d'opérations). C'est le scénario le plus important : il <em>garantit</em> une borne supérieure sur le temps d'exécution.</li>
+  </ul>
+  <p>Exemple — recherche séquentielle d'une valeur dans une liste de n éléments :</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">recherche</span>(liste, x):
+    <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">len</span>(liste)):
+        <span style="color:#ff7b72;">if</span> liste[i] == x:
+            <span style="color:#ff7b72;">return</span> i
+    <span style="color:#ff7b72;">return</span> -<span style="color:#79c0ff;">1</span></pre>
+
+  <ul style="padding-left:22px;">
+    <li><strong>Meilleur cas</strong> : <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">x</code> est en première position → 1 comparaison → complexité O(1).</li>
+    <li><strong>Pire cas</strong> : <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">x</code> est absent ou en dernière position → n comparaisons → complexité O(n).</li>
+  </ul>
+
+  <!-- ===================== 4 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">4. Compter les opérations élémentaires</h2>
+  <p>La méthode de base consiste à compter combien de fois chaque instruction est exécutée, puis à additionner. Considérons :</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">somme</span>(n):
+    s = <span style="color:#79c0ff;">0</span>          <span style="color:#8b949e;"># 1 affectation</span>
+    <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">1</span>, n+<span style="color:#79c0ff;">1</span>):   <span style="color:#8b949e;"># n itérations</span>
+        s = s + i      <span style="color:#8b949e;"># 1 addition + 1 affectation, n fois</span>
+    <span style="color:#ff7b72;">return</span> s        <span style="color:#8b949e;"># 1 opération</span></pre>
+
+  <p>Nombre total d'opérations : 1 + 2n + 1 = 2n + 2. Le temps d'exécution est de la forme T(n) = an + b : c'est une fonction <strong>affine</strong> de n. On dira que cet algorithme est de complexité <strong>linéaire</strong>.</p>
+
+  <div style="background:#eaf4fb;border-left:4px solid #3498db;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Boucles imbriquées.</strong> Le coût d'une boucle interne se <em>multiplie</em> par le nombre d'itérations de la boucle externe. Deux boucles imbriquées allant chacune jusqu'à n donnent n &times; n = n<sup>2</sup> opérations.
+  </div>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n):        <span style="color:#8b949e;"># n fois</span>
+    <span style="color:#ff7b72;">for</span> j <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n):    <span style="color:#8b949e;"># n fois</span>
+        traiter(i, j)    <span style="color:#8b949e;"># =&gt; n × n = n² opérations</span></pre>
+
+  <!-- ===================== 5 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">5. La notation asymptotique grand O</h2>
+  <p>Compter exactement les opérations est fastidieux et inutile : ce qui importe, c'est le <strong>comportement quand n devient grand</strong>. Les constantes et les termes de plus bas degré deviennent alors négligeables. La notation <strong>grand O</strong> formalise cette idée.</p>
+
+  <div style="background:#f4ecf7;border-left:4px solid #8e44ad;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Définition.</strong> On dit que T(n) = O(f(n)) s'il existe une constante C &gt; 0 et un rang n<sub>0</sub> tels que :
+    &forall; n &ge; n<sub>0</sub>, &nbsp;&nbsp; T(n) &le; C &middot; f(n).
+    Autrement dit, f(n) est une <em>borne supérieure</em> de la croissance de T(n), à une constante près.
+  </div>
+
+  <p>Règles pratiques pour passer de T(n) au grand O :</p>
+  <ul style="padding-left:22px;">
+    <li>On <strong>ignore les constantes multiplicatives</strong> : 5n<sup>2</sup> est un O(n<sup>2</sup>).</li>
+    <li>On ne garde que le <strong>terme dominant</strong> : 3n<sup>2</sup> + 7n + 4 est un O(n<sup>2</sup>).</li>
+    <li>La base d'un logarithme est sans importance : log<sub>2</sub> n et log<sub>10</sub> n sont des O(log n).</li>
+  </ul>
+
+  <p>Exemple : T(n) = 2n + 2 &rArr; O(n) ; T(n) = 3n<sup>2</sup> + 10n + 50 &rArr; O(n<sup>2</sup>).</p>
+
+  <!-- ===================== 6 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">6. Les ordres de grandeur classiques</h2>
+  <p>Voici les complexités les plus fréquentes, de la plus efficace à la moins efficace :</p>
+
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Notation</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Nom</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Exemple typique</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;">O(1)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Constante</td>
+      <td style="border:1px solid #ddd;padding:9px;">Accès à <code>liste[i]</code></td>
+    </tr>
+    <tr style="background:#f7fbfe;">
+      <td style="border:1px solid #ddd;padding:9px;">O(log n)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Logarithmique</td>
+      <td style="border:1px solid #ddd;padding:9px;">Recherche dichotomique</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;">O(n)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Linéaire</td>
+      <td style="border:1px solid #ddd;padding:9px;">Parcours d'une liste</td>
+    </tr>
+    <tr style="background:#f7fbfe;">
+      <td style="border:1px solid #ddd;padding:9px;">O(n log n)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Quasi-linéaire</td>
+      <td style="border:1px solid #ddd;padding:9px;">Tri fusion, tri rapide (moyenne)</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;">O(n<sup>2</sup>)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Quadratique</td>
+      <td style="border:1px solid #ddd;padding:9px;">Tris simples, boucles imbriquées</td>
+    </tr>
+    <tr style="background:#f7fbfe;">
+      <td style="border:1px solid #ddd;padding:9px;">O(n<sup>3</sup>)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Cubique</td>
+      <td style="border:1px solid #ddd;padding:9px;">Produit de matrices (naïf)</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;">O(2<sup>n</sup>)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Exponentielle</td>
+      <td style="border:1px solid #ddd;padding:9px;">Parties d'un ensemble, force brute</td>
+    </tr>
+    <tr style="background:#f7fbfe;">
+      <td style="border:1px solid #ddd;padding:9px;">O(n!)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Factorielle</td>
+      <td style="border:1px solid #ddd;padding:9px;">Permutations, voyageur de commerce naïf</td>
+    </tr>
+  </table>
+
+  <p>Hiérarchie de croissance (pour n grand) :</p>
+  <p style="text-align:center;font-size:1.05em;">O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n<sup>2</sup>) &lt; O(n<sup>3</sup>) &lt; O(2<sup>n</sup>) &lt; O(n!)</p>
+
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>📈 Concrètement.</strong> Pour n = 1 000 000, un algorithme en O(n) effectue un million d'opérations (instantané), un O(n<sup>2</sup>) en effectue 10<sup>12</sup> (plusieurs minutes à heures), et un O(2<sup>n</sup>) est totalement irréalisable. Le choix de la complexité détermine la <em>faisabilité</em> du programme.
+  </div>
+
+  <!-- ===================== 7 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">7. Complexité des programmes itératifs</h2>
+  <p>Méthode générale : on analyse les boucles de l'intérieur vers l'extérieur.</p>
+  <ul style="padding-left:22px;">
+    <li>Une instruction simple (hors boucle) : O(1).</li>
+    <li>Une boucle de n tours dont le corps est en O(1) : O(n).</li>
+    <li>Deux boucles imbriquées de n tours : O(n<sup>2</sup>).</li>
+    <li>Instructions successives : on garde le <strong>maximum</strong> (terme dominant).</li>
+  </ul>
+
+  <p><strong>Exemple — recherche dichotomique</strong> (liste triée). À chaque étape, on divise l'intervalle de recherche par deux :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">dichotomie</span>(liste, x):
+    g, d = <span style="color:#79c0ff;">0</span>, <span style="color:#79c0ff;">len</span>(liste) - <span style="color:#79c0ff;">1</span>
+    <span style="color:#ff7b72;">while</span> g &lt;= d:
+        m = (g + d) // <span style="color:#79c0ff;">2</span>
+        <span style="color:#ff7b72;">if</span> liste[m] == x:
+            <span style="color:#ff7b72;">return</span> m
+        <span style="color:#ff7b72;">elif</span> liste[m] &lt; x:
+            g = m + <span style="color:#79c0ff;">1</span>
+        <span style="color:#ff7b72;">else</span>:
+            d = m - <span style="color:#79c0ff;">1</span>
+    <span style="color:#ff7b72;">return</span> -<span style="color:#79c0ff;">1</span></pre>
+  <p>Le nombre de divisions par 2 nécessaires pour réduire n à 1 est log<sub>2</sub> n. La complexité est donc O(log n), bien meilleure que la recherche séquentielle en O(n).</p>
+
+  <!-- ===================== 8 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">8. Complexité des programmes récursifs</h2>
+  <p>Pour un programme récursif, on exprime la complexité par une <strong>relation de récurrence</strong> : le coût T(n) s'écrit en fonction du coût des appels plus petits. On peut passer par des approximations pour réduire les calculs.</p>
+
+  <p><strong>Exemple 1 — factorielle.</strong></p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">fact</span>(n):
+    <span style="color:#ff7b72;">if</span> n &lt;= <span style="color:#79c0ff;">1</span>:
+        <span style="color:#ff7b72;">return</span> <span style="color:#79c0ff;">1</span>
+    <span style="color:#ff7b72;">return</span> n * fact(n - <span style="color:#79c0ff;">1</span>)</pre>
+  <p>Chaque appel fait un travail en O(1) puis un appel sur n-1. D'où T(n) = T(n-1) + O(1). En déroulant : T(n) = O(1) + O(1) + \dots = n &middot; O(1). La complexité est <strong>linéaire</strong> : O(n).</p>
+
+  <p><strong>Exemple 2 — Fibonacci récursif naïf.</strong></p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">fibo</span>(n):
+    <span style="color:#ff7b72;">if</span> n &lt; <span style="color:#79c0ff;">2</span>:
+        <span style="color:#ff7b72;">return</span> n
+    <span style="color:#ff7b72;">return</span> fibo(n - <span style="color:#79c0ff;">1</span>) + fibo(n - <span style="color:#79c0ff;">2</span>)</pre>
+  <p>Ici chaque appel en engendre deux : T(n) = T(n-1) + T(n-2) + O(1). Le nombre d'appels croît comme la suite de Fibonacci elle-même, soit une complexité <strong>exponentielle</strong> O(2<sup>n</sup>) — d'où l'intérêt de la programmation dynamique pour ramener ce calcul à O(n).</p>
+
+  <div style="background:#fdeef0;border-left:4px solid #e74c3c;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Diviser pour régner.</strong> Quand un problème de taille n est scindé en deux moitiés résolues récursivement, puis recombinées en O(n) — comme le tri fusion — on obtient T(n) = 2 T(n/2) + O(n), dont la solution est O(n log n).
+  </div>
+
+  <!-- ===================== 9 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">9. Complexité spatiale</h2>
+  <p>La complexité spatiale mesure la mémoire <strong>supplémentaire</strong> nécessaire, au-delà des données d'entrée. On se limite au calcul asymptotique dans le meilleur et le pire des cas.</p>
+  <ul sty

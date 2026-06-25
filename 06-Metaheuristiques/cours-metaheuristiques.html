@@ -1,0 +1,375 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <!-- ===================== HERO ===================== -->
+  <div style="background:#2c3e50;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#9bd1f0;text-transform:uppercase;margin-bottom:6px;">CPGE 2ᵉ année — MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.9em;">Les métaheuristiques — le recuit simulé</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6e6f2;">Quand un problème d'optimisation est trop gros pour être résolu exactement, comment trouver rapidement une <strong>bonne solution approchée</strong> ? Les métaheuristiques explorent intelligemment l'espace des solutions ; le recuit simulé en est l'exemple au programme.</p>
+  </div>
+
+  <!-- ===================== OBJECTIFS ===================== -->
+  <div style="background:#eaf4fb;border-left:4px solid #3498db;padding:14px 18px;border-radius:4px;margin-bottom:26px;">
+    <strong style="color:#2c3e50;">🎯 Objectifs du chapitre</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Définir un <strong>problème d'optimisation</strong> : espace des solutions, fonction objectif (coût).</li>
+      <li>Comprendre ce qu'est une <strong>métaheuristique</strong> et pourquoi on l'utilise.</li>
+      <li>Connaître la notion de <strong>voisinage</strong> et de <strong>recherche locale</strong>.</li>
+      <li>Identifier le piège des <strong>optima locaux</strong> de la descente (<em>hill climbing</em>).</li>
+      <li>Expliquer le <strong>principe</strong> du recuit simulé et son analogie physique.</li>
+      <li>Comprendre le <strong>critère d'acceptation</strong> de Metropolis : P = e<sup>−ΔE/T</sup>.</li>
+      <li><strong>Implémenter</strong> l'algorithme du recuit simulé en Python.</li>
+    </ul>
+  </div>
+
+  <!-- ===================== SOMMAIRE ===================== -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:14px 18px;margin-bottom:30px;background:#fafbfc;">
+    <strong style="color:#2c3e50;">Sommaire</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>Les problèmes d'optimisation</li>
+      <li>Pourquoi les métaheuristiques ?</li>
+      <li>Qu'est-ce qu'une métaheuristique ?</li>
+      <li>Recherche locale et voisinage</li>
+      <li>La descente et le piège des optima locaux</li>
+      <li>Le principe du recuit simulé</li>
+      <li>Le critère d'acceptation de Metropolis</li>
+      <li>L'algorithme du recuit simulé</li>
+      <li>Le schéma de refroidissement</li>
+      <li>Exemple complet : le voyageur de commerce</li>
+      <li>Atouts, limites et réglages</li>
+      <li>Récapitulatif</li>
+    </ol>
+  </div>
+
+  <!-- ===================== 1 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">1. Les problèmes d'optimisation</h2>
+  <p>Un <strong>problème d'optimisation</strong> consiste à chercher, parmi un très grand nombre de solutions possibles, celle qui <strong>minimise</strong> (ou maximise) une certaine quantité. On le décrit par deux ingrédients :</p>
+  <ul style="padding-left:22px;">
+    <li>un <strong>espace des solutions</strong> (ou espace de recherche) S : l'ensemble de toutes les configurations admissibles ;</li>
+    <li>une <strong>fonction objectif</strong> f : S &rarr; ℝ, aussi appelée <strong>fonction de coût</strong> (ou énergie), qui mesure la qualité d'une solution.</li>
+  </ul>
+  <p>Résoudre le problème, c'est trouver une solution s* &isin; S telle que f(s*) soit minimale : &forall; s &isin; S, f(s*) &le; f(s). Une telle solution est dite <strong>optimale (globale)</strong>.</p>
+
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Problème</th>
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Une solution s</th>
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Coût f(s) à minimiser</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Voyageur de commerce</td>
+      <td style="border:1px solid #ddd;padding:10px;">Un ordre de visite des villes (un circuit)</td>
+      <td style="border:1px solid #ddd;padding:10px;">Longueur totale du circuit</td>
+    </tr>
+    <tr style="background:#f7fbfe;">
+      <td style="border:1px solid #ddd;padding:10px;">Sac à dos</td>
+      <td style="border:1px solid #ddd;padding:10px;">Un sous-ensemble d'objets choisis</td>
+      <td style="border:1px solid #ddd;padding:10px;">L'opposé de la valeur emportée (sous contrainte de poids)</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Emploi du temps</td>
+      <td style="border:1px solid #ddd;padding:10px;">Une affectation cours → créneaux</td>
+      <td style="border:1px solid #ddd;padding:10px;">Nombre de conflits</td>
+    </tr>
+  </table>
+
+  <div style="background:#eaf4fb;border-left:4px solid #3498db;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Maximiser, c'est minimiser.</strong> Chercher à maximiser g revient à minimiser f = &minus;g. On présente donc tout en <em>minimisation</em> sans perte de généralité.
+  </div>
+
+  <!-- ===================== 2 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">2. Pourquoi les métaheuristiques ?</h2>
+  <p>Pour beaucoup de problèmes intéressants, l'espace des solutions est <strong>gigantesque</strong>. Pour le voyageur de commerce à n villes, le nombre de circuits est de l'ordre de (n&minus;1)! / 2 : déjà plus de 60 000 milliards pour seulement 20 villes. Parcourir <em>toutes</em> les solutions (recherche exhaustive) est donc impossible en pratique.</p>
+  <p>Les méthodes vues précédemment ont leurs limites :</p>
+  <ul style="padding-left:22px;">
+    <li>l'<strong>approche gloutonne</strong> est rapide mais ne garantit pas l'optimum ;</li>
+    <li>la <strong>programmation dynamique</strong> donne l'optimum, mais seulement quand le problème a la bonne structure et une taille raisonnable ;</li>
+    <li>la <strong>recherche exhaustive</strong> donne l'optimum mais explose en temps (complexité exponentielle ou factorielle).</li>
+  </ul>
+
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ Le compromis fondamental.</strong> On échange la <em>garantie d'optimalité</em> contre la <em>rapidité</em>. Une métaheuristique ne promet pas la meilleure solution, mais une <strong>solution de bonne qualité en un temps raisonnable</strong>.
+  </div>
+
+  <!-- ===================== 3 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">3. Qu'est-ce qu'une métaheuristique ?</h2>
+  <p>Une <strong>heuristique</strong> est une méthode de résolution approchée, souvent conçue <em>sur mesure</em> pour un problème particulier (par exemple : « toujours aller vers la ville la plus proche »).</p>
+  <p>Une <strong>métaheuristique</strong> (le préfixe <em>méta</em> = « au-delà ») est une <strong>stratégie générale de haut niveau</strong>, indépendante du problème, qui pilote et coordonne des heuristiques pour explorer efficacement l'espace des solutions. On l'applique au voyageur de commerce, au sac à dos, à l'emploi du temps… avec la même mécanique, en changeant seulement la fonction de coût et la notion de voisinage.</p>
+
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Famille</th>
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Exemples</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Basées sur une <strong>solution unique</strong> qu'on améliore</td>
+      <td style="border:1px solid #ddd;padding:10px;"><strong>Recuit simulé</strong>, recherche tabou</td>
+    </tr>
+    <tr style="background:#f7fbfe;">
+      <td style="border:1px solid #ddd;padding:10px;">Basées sur une <strong>population</strong> de solutions</td>
+      <td style="border:1px solid #ddd;padding:10px;">Algorithmes génétiques, colonies de fourmis</td>
+    </tr>
+  </table>
+
+  <div style="background:#eaf4fb;border-left:4px solid #3498db;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Au programme MP/PSI.</strong> Le représentant étudié et à savoir <strong>implémenter</strong> est le <strong>recuit simulé</strong> (<em>simulated annealing</em>). Il ne garantit pas l'optimum, mais trouve une solution approchée de bonne qualité.
+  </div>
+
+  <!-- ===================== 4 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">4. Recherche locale et voisinage</h2>
+  <p>L'idée d'une <strong>recherche locale</strong> est de partir d'une solution puis de l'<strong>améliorer par petites modifications</strong>, sans jamais reconstruire une solution entière. Pour cela on définit le <strong>voisinage</strong> V(s) d'une solution s : l'ensemble des solutions obtenues par une petite transformation élémentaire.</p>
+  <ul style="padding-left:22px;">
+    <li>Voyageur de commerce : <strong>échanger deux villes</strong> du circuit, ou inverser un segment.</li>
+    <li>Sac à dos : <strong>ajouter ou retirer un objet</strong>.</li>
+    <li>Fonction numérique : <strong>déplacer x</strong> d'un petit pas &plusmn;&epsilon;.</li>
+  </ul>
+  <p>Un <strong>voisin</strong> s' &isin; V(s) est dit <em>améliorant</em> si f(s') &lt; f(s). La variation de coût se note :</p>
+  <div style="background:#f4ecf7;border-left:4px solid #8e44ad;padding:12px 16px;border-radius:4px;margin:16px 0;text-align:center;font-size:1.05em;">
+    &Delta;E = f(s') &minus; f(s)
+  </div>
+  <p>Si &Delta;E &lt; 0, le voisin est meilleur (le coût baisse) ; si &Delta;E &gt; 0, il est moins bon.</p>
+
+  <!-- ===================== 5 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">5. La descente et le piège des optima locaux</h2>
+  <p>La recherche locale la plus simple est la <strong>descente</strong> (ou <em>hill climbing</em>) : à chaque étape, on remplace la solution courante par un voisin <strong>strictement meilleur</strong> ; on s'arrête quand aucun voisin n'améliore plus.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">descente</span>(s):
+    <span style="color:#ff7b72;">while</span> <span style="color:#79c0ff;">True</span>:
+        voisins = generer_voisins(s)
+        meilleur = <span style="color:#79c0ff;">min</span>(voisins, key=cout)
+        <span style="color:#ff7b72;">if</span> cout(meilleur) &lt; cout(s):
+            s = meilleur          <span style="color:#8b949e;"># on descend</span>
+        <span style="color:#ff7b72;">else</span>:
+            <span style="color:#ff7b72;">return</span> s             <span style="color:#8b949e;"># aucun voisin meilleur : blocage</span></pre>
+
+  <p>Le problème : la descente <strong>n'accepte jamais de remonter</strong>. Elle se fige donc dans le premier <strong>optimum local</strong> rencontré — une solution meilleure que tous ses voisins, mais pas forcément la meilleure globalement.</p>
+
+  <div style="background:#fdeef0;border-left:4px solid #e74c3c;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>🏔️ L'image de la montagne.</strong> Imaginez un paysage de coûts avec des vallées. Une bille qui ne fait que descendre se bloque au fond de la <em>première</em> vallée (optimum local), même s'il existe une vallée plus profonde (optimum global) plus loin. Pour en sortir, il faut parfois accepter de <strong>remonter temporairement</strong>.
+  </div>
+
+  <!-- ===================== 6 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">6. Le principe du recuit simulé</h2>
+  <p>Le recuit simulé s'inspire d'un procédé de <strong>métallurgie</strong>, le <em>recuit</em> : pour obtenir un métal sans défaut, on le chauffe fortement (les atomes s'agitent librement) puis on le <strong>refroidit très lentement</strong>. Les atomes se réorganisent alors progressivement dans une structure d'<strong>énergie minimale</strong> (cristal régulier). Un refroidissement trop rapide (trempe) fige au contraire les défauts.</p>
+  <p>On transpose cette idée à l'optimisation :</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Physique (recuit)</th>
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Optimisation</th>
+    </tr>
+    <tr><td style="border:1px solid #ddd;padding:10px;">État du matériau</td><td style="border:1px solid #ddd;padding:10px;">Solution s</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:10px;">Énergie de l'état</td><td style="border:1px solid #ddd;padding:10px;">Coût f(s)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:10px;">Température T</td><td style="border:1px solid #ddd;padding:10px;">Paramètre de contrôle T</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:10px;">Refroidissement lent</td><td style="border:1px solid #ddd;padding:10px;">Décroissance progressive de T</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:10px;">État d'énergie minimale</td><td style="border:1px solid #ddd;padding:10px;">Solution (quasi) optimale</td></tr>
+  </table>
+
+  <p>L'idée maîtresse : pour échapper aux optima locaux, on <strong>autorise parfois des mouvements qui dégradent le coût</strong>. Cette tolérance est forte quand T est élevée (début : on explore largement) et devient faible quand T baisse (fin : on affine et on se stabilise).</p>
+
+  <!-- ===================== 7 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">7. Le critère d'acceptation de Metropolis</h2>
+  <p>À chaque étape, on tire un voisin s' au hasard et on calcule &Delta;E = f(s') &minus; f(s). La décision d'accepter s' suit la <strong>règle de Metropolis</strong> :</p>
+
+  <div style="background:#f4ecf7;border-left:4px solid #8e44ad;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Règle d'acceptation.</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Si &Delta;E &le; 0 (le voisin est meilleur ou égal) : on l'accepte <strong>toujours</strong>.</li>
+      <li>Si &Delta;E &gt; 0 (le voisin est moins bon) : on l'accepte <strong>avec la probabilité</strong> P = e<sup>&minus;&Delta;E/T</sup>.</li>
+    </ul>
+  </div>
+
+  <p>Analysons la probabilité P = e<sup>&minus;&Delta;E/T</sup> d'accepter une dégradation :</p>
+  <ul style="padding-left:22px;">
+    <li>Plus la dégradation &Delta;E est <strong>grande</strong>, plus P est <strong>petite</strong> : on accepte rarement les très mauvais mouvements.</li>
+    <li>Plus la température T est <strong>élevée</strong>, plus P est <strong>proche de 1</strong> : au début, on accepte facilement de remonter (exploration).</li>
+    <li>Quand T &rarr; 0, P &rarr; 0 : à la fin, on ne tolère presque plus de dégradation et l'algorithme se comporte comme une simple descente (exploitation).</li>
+  </ul>
+
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">&Delta;E</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">T élevée (T = 100)</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">T basse (T = 1)</th>
+    </tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">&Delta;E = 1</td><td style="border:1px solid #ddd;padding:9px;">P &asymp; 0,99</td><td style="border:1px solid #ddd;padding:9px;">P &asymp; 0,37</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">&Delta;E = 10</td><td style="border:1px solid #ddd;padding:9px;">P &asymp; 0,90</td><td style="border:1px solid #ddd;padding:9px;">P &asymp; 0,000045</td></tr>
+  </table>
+
+  <p>Concrètement, accepter « avec la probabilité P » se programme en tirant un nombre aléatoire u dans [0, 1[ : on accepte si u &lt; P.</p>
+
+  <!-- ===================== 8 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">8. L'algorithme du recuit simulé</h2>
+  <p>On part d'une solution initiale et d'une température élevée. On répète : tirer un voisin, calculer &Delta;E, décider selon Metropolis, puis <strong>refroidir</strong>. On garde en mémoire la meilleure solution rencontrée.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">import</span> math, random
+
+<span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">recuit_simule</span>(s0, cout, voisin, T0, alpha, n_iter):
+    s = s0                       <span style="color:#8b949e;"># solution courante</span>
+    c = cout(s)
+    meilleur, c_meilleur = s, c  <span style="color:#8b949e;"># meilleure solution vue</span>
+    T = T0
+    <span style="color:#ff7b72;">for</span> _ <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n_iter):
+        s2 = voisin(s)           <span style="color:#8b949e;"># un voisin au hasard</span>
+        c2 = cout(s2)
+        dE = c2 - c              <span style="color:#8b949e;"># variation de coût</span>
+        <span style="color:#ff7b72;">if</span> dE &lt;= <span style="color:#79c0ff;">0</span> <span style="color:#ff7b72;">or</span> random.random() &lt; math.exp(-dE / T):
+            s, c = s2, c2        <span style="color:#8b949e;"># on accepte le voisin</span>
+            <span style="color:#ff7b72;">if</span> c &lt; c_meilleur:
+                meilleur, c_meilleur = s, c
+        T = alpha * T            <span style="color:#8b949e;"># refroidissement (0 &lt; alpha &lt; 1)</span>
+    <span style="color:#ff7b72;">return</span> meilleur, c_meilleur</pre>
+
+  <div style="background:#eaf4fb;border-left:4px solid #3498db;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Pourquoi garder « meilleur » séparément ?</strong> La solution courante s peut <em>se dégrader</em> (on accepte des remontées). On conserve donc à part la meilleure solution jamais rencontrée, qui sera le résultat final.
+  </div>
+
+  <!-- ===================== 9 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">9. Le schéma de refroidissement</h2>
+  <p>Le <strong>schéma de refroidissement</strong> (<em>cooling schedule</em>) décrit comment T diminue. C'est le réglage le plus important. Le plus courant est la <strong>décroissance géométrique</strong> :</p>
+  <div style="background:#f4ecf7;border-left:4px solid #8e44ad;padding:12px 16px;border-radius:4px;margin:16px 0;text-align:center;font-size:1.05em;">
+    T<sub>k+1</sub> = &alpha; &middot; T<sub>k</sub>, &nbsp; avec 0 &lt; &alpha; &lt; 1 (souvent &alpha; entre 0,90 et 0,99)
+  </div>
+  <ul style="padding-left:22px;">
+    <li><strong>T<sub>0</sub> (température initiale)</strong> : assez grande pour accepter au départ la plupart des mouvements (phase d'exploration).</li>
+    <li><strong>&alpha; (facteur de refroidissement)</strong> : proche de 1 &rArr; refroidissement lent &rArr; meilleure qualité mais plus lent. Trop petit &rArr; on fige trop vite (comme une trempe) et on risque de rester coincé.</li>
+    <li><strong>Critère d'arrêt</strong> : un nombre d'itérations fixé, ou une température minimale T<sub>min</sub> atteinte.</li>
+  </ul>
+
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ Exploration puis exploitation.</strong> Début (T grande) : on parcourt largement l'espace et on franchit des « collines ». Fin (T petite) : on affine localement. Un bon réglage équilibre ces deux phases.
+  </div>
+
+  <!-- ===================== 10 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">10. Exemple complet : le voyageur de commerce</h2>
+  <p>On dispose de n villes de coordonnées connues. Une solution est un <strong>ordre de visite</strong> (une permutation des villes), le coût est la <strong>longueur totale</strong> du circuit fermé, et un voisin s'obtient en <strong>échangeant deux villes</strong> de la tournée.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">import</span> math, random
+
+<span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">distance</span>(a, b):
+    <span style="color:#ff7b72;">return</span> math.hypot(a[<span style="color:#79c0ff;">0</span>]-b[<span style="color:#79c0ff;">0</span>], a[<span style="color:#79c0ff;">1</span>]-b[<span style="color:#79c0ff;">1</span>])
+
+<span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">longueur</span>(tour, villes):           <span style="color:#8b949e;"># coût = circuit fermé</span>
+    n = <span style="color:#79c0ff;">len</span>(tour)
+    <span style="color:#ff7b72;">return</span> <span style="color:#79c0ff;">sum</span>(distance(villes[tour[i]], villes[tour[(i+<span style="color:#79c0ff;">1</span>)%n]])
+               <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n))
+
+<span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">voisin</span>(tour):                       <span style="color:#8b949e;"># échange de deux villes</span>
+    t = tour[:]
+    i, j = random.sample(<span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">len</span>(t)), <span style="color:#79c0ff;">2</span>)
+    t[i], t[j] = t[j], t[i]
+    <span style="color:#ff7b72;">return</span> t
+
+<span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">tsp_recuit</span>(villes, T0=<span style="color:#79c0ff;">100</span>, alpha=<span style="color:#79c0ff;">0.995</span>, n_iter=<span style="color:#79c0ff;">20000</span>):
+    s = <span style="color:#79c0ff;">list</span>(<span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">len</span>(villes)))
+    random.shuffle(s)
+    c = longueur(s, villes)
+    best, cbest = s[:], c
+    T = T0
+    <span style="color:#ff7b72;">for</span> _ <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n_iter):
+        s2 = voisin(s)
+        c2 = longueur(s2, villes)
+        dE = c2 - c
+        <span style="color:#ff7b72;">if</span> dE &lt;= <span style="color:#79c0ff;">0</span> <span style="color:#ff7b72;">or</span> random.random() &lt; math.exp(-dE / T):
+            s, c = s2, c2
+            <span style="color:#ff7b72;">if</span> c &lt; cbest:
+                best, cbest = s[:], c
+        T = alpha * T
+    <span style="color:#ff7b72;">return</span> best, cbest</pre>
+
+  <p>En quelques dizaines de milliers d'itérations, cet algorithme produit un circuit court — généralement très proche de l'optimal — là où l'énumération exhaustive serait totalement hors de portée.</p>
+
+  <!-- ===================== 11 ===================== -->
+  <h2 style="color:#3498db;border-bottom:2px solid #3498db;padding-bottom:6px;">11. Atouts, limites et réglages</h2>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Atouts ✅</th>
+      <th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Limites ⚠️</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Simple à implémenter, très général (change juste coût + voisinage).</td>
+      <td style="border:1px solid #ddd;padding:10px;">Aucune garantie d'atteindre l'optimum global.</td>
+    </tr>
+    <tr style="background:#f7fbfe;">
+      <td style="border:1px solid #ddd;padding:10px;">Capable de sortir des optima locaux.</td>
+      <td style="border:1px solid #ddd;padding:10px;">Résultat <strong>aléatoire</strong> : deux exécutions diffèrent.</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Bon rapport qualité / temps sur de gros problèmes.</td>
+      <td style="border:1px solid #ddd;padding:10px;">Sensible au réglage de T<sub>0</sub>, &alpha; et du nombre d'itérations.</td>
+    </tr>
+  </table>
+
+  <div style="background:#eaf4fb;border-left:4px solid #3498db;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Bonnes pratiques.</strong> Choisir T<sub>0</sub> pour qu'au départ ~80 % des mouvements soient acceptés ; prendre &alpha; proche de 1 (0,99) ; lancer plusieurs exécutions et garder la meilleure.
+  </div>
+
+  <!-- ===================== RECAP ===================== -->
+  <h2 style="color:#27ae60;border-bottom:2px solid #27ae60;padding-bottom:6px;">Récapitulatif</h2>
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:14px 18px;border-radius:4px;margin:14px 0;">
+    <ul style="margin:0;padding-left:20px;">
+      <li>Un <strong>problème d'optimisation</strong> = un espace de solutions S + une fonction de coût f à minimiser.</li>
+      <li>Une <strong>métaheuristique</strong> est une stratégie générale qui cherche une <strong>bonne solution approchée</strong> (sans garantie d'optimalité) en un temps raisonnable.</li>
+      <li>La <strong>recherche locale</strong> améliore une solution via son <strong>voisinage</strong> ; la <strong>descente</strong> reste piégée dans les <strong>optima locaux</strong>.</li>
+      <li>Le <strong>recuit simulé</strong> s'inspire du refroidissement des métaux : il accepte parfois des dégradations pour s'échapper des optima locaux.</li>
+      <li>Critère de <strong>Metropolis</strong> : on accepte un voisin meilleur (&Delta;E &le; 0) toujours ; un voisin pire avec P = e<sup>&minus;&Delta;E/T</sup>.</li>
+      <li>La <strong>température</strong> baisse géométriquement (T &larr; &alpha;T) : exploration au début, exploitation à la fin.</li>
+      <li>On <strong>mémorise la meilleure solution</strong> rencontrée car la solution courante peut se dégrader.</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#9aa7b2;font-size:0.85em;margin-top:30px;">CPGE MP / PSI — Informatique · Chapitre 1‑6 : Métaheuristiques (recuit simulé)</p>
+
+</div>

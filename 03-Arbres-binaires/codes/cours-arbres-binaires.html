@@ -1,0 +1,294 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <!-- HERO -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE 2ᵉ année — MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.9em;">Les arbres binaires</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6eef0;">Une structure de données hiérarchique fondamentale : terminologie, implémentation, parcours en profondeur et en largeur, arbres binaires de recherche et tas.</p>
+  </div>
+
+  <!-- OBJECTIFS -->
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:14px 18px;border-radius:4px;margin-bottom:26px;">
+    <strong style="color:#2c3e50;">🎯 Objectifs du chapitre</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Maîtriser la <strong>terminologie</strong> des arbres : nœud, racine, feuille, degré, profondeur, hauteur.</li>
+      <li>Calculer la <strong>hauteur</strong> d'un arbre et la <strong>profondeur</strong> d'un nœud.</li>
+      <li><strong>Représenter et implémenter</strong> un arbre binaire en Python (à l'aide de listes).</li>
+      <li>Parcourir un arbre en <strong>profondeur</strong> (préfixe, infixe, postfixe) et en <strong>largeur</strong>.</li>
+      <li>Manipuler deux variantes classiques : l'<strong>arbre binaire de recherche</strong> (ABR) et le <strong>tas</strong>.</li>
+    </ul>
+  </div>
+
+  <!-- SOMMAIRE -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:14px 18px;margin-bottom:30px;background:#fafbfc;">
+    <strong style="color:#2c3e50;">Sommaire</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>Terminologie de base</li>
+      <li>Hauteur d'un arbre et profondeur d'un nœud</li>
+      <li>Représentation et implémentation d'un arbre binaire</li>
+      <li>Parcours en profondeur : préfixe, infixe, postfixe</li>
+      <li>Parcours en largeur</li>
+      <li>L'arbre binaire de recherche (ABR)</li>
+      <li>Le tas (heap)</li>
+      <li>Récapitulatif</li>
+    </ol>
+  </div>
+
+  <!-- ===== 1 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. Terminologie de base</h2>
+  <p>Un <strong>arbre</strong> est une structure de données qui organise l'information de façon <strong>hiérarchique</strong>. On le retrouve partout : arborescence de fichiers, arbre généalogique, arbre syntaxique d'une expression, taxonomie en biologie… Un <strong>arbre binaire</strong> est un arbre dans lequel chaque nœud possède <strong>au plus deux fils</strong> : un fils gauche et un fils droit.</p>
+
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Terme</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Définition</th>
+    </tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Nœud</strong></td><td style="border:1px solid #ddd;padding:9px;">Élément de l'arbre contenant une valeur.</td></tr>
+    <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Racine</strong></td><td style="border:1px solid #ddd;padding:9px;">L'unique nœud sans parent ; point d'entrée de l'arbre.</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Feuille</strong></td><td style="border:1px solid #ddd;padding:9px;">Nœud sans fils (degré 0).</td></tr>
+    <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Nœud interne</strong></td><td style="border:1px solid #ddd;padding:9px;">Nœud possédant au moins un fils (tout nœud qui n'est pas une feuille).</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Degré</strong></td><td style="border:1px solid #ddd;padding:9px;">Nombre de fils d'un nœud. Dans un arbre binaire, le degré vaut 0, 1 ou 2.</td></tr>
+    <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Père / fils</strong></td><td style="border:1px solid #ddd;padding:9px;">Relation directe entre un nœud et celui qu'il porte juste en dessous.</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Chemin</strong></td><td style="border:1px solid #ddd;padding:9px;">Suite de nœuds reliés de père en fils. Entre deux nœuds, le chemin est unique.</td></tr>
+    <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Sous-arbre</strong></td><td style="border:1px solid #ddd;padding:9px;">Un nœud et tous ses descendants forment eux-mêmes un arbre.</td></tr>
+  </table>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Vision récursive.</strong> Un arbre binaire est soit <strong>vide</strong>, soit composé d'une racine portant une valeur, d'un <strong>sous-arbre gauche</strong> et d'un <strong>sous-arbre droit</strong> (eux-mêmes des arbres binaires). Cette définition récursive est la clé de presque tous les algorithmes du chapitre.
+  </div>
+
+  <!-- ===== 2 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Hauteur d'un arbre et profondeur d'un nœud</h2>
+  <p>Deux mesures décrivent la « forme verticale » d'un arbre.</p>
+  <ul style="padding-left:22px;">
+    <li>La <strong>profondeur</strong> d'un nœud est le nombre d'arêtes du chemin qui le relie à la racine. La racine est à la profondeur 0.</li>
+    <li>La <strong>hauteur</strong> d'un arbre est la profondeur maximale, c'est-à-dire la longueur du plus long chemin de la racine jusqu'à une feuille. Par convention, l'arbre vide a pour hauteur &minus;1 et un arbre réduit à sa racine a pour hauteur 0.</li>
+  </ul>
+
+  <p>Pour un arbre binaire de hauteur <em>h</em>, le nombre de nœuds <em>n</em> vérifie l'encadrement :</p>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;text-align:center;font-size:1.05em;">
+    h + 1 &le; n &le; 2<sup>h+1</sup> &minus; 1
+  </div>
+  <p>La borne inférieure correspond à un arbre <strong>filiforme</strong> (chaque nœud n'a qu'un fils), la borne supérieure à un arbre <strong>parfait</strong> (tous les niveaux sont pleins). On en déduit, pour un arbre équilibré à <em>n</em> nœuds, une hauteur de l'ordre de log<sub>2</sub>&nbsp;n.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"># Hauteur d'un arbre (convention : arbre vide -> -1)
+def hauteur(a):
+    if a is None:              # arbre vide
+        return -1
+    return 1 + max(hauteur(a[1]), hauteur(a[2]))</pre>
+  <p>La hauteur se calcule donc « de bas en haut » : on suppose connaître la hauteur des deux sous-arbres, on prend la plus grande et on ajoute 1 pour le niveau de la racine.</p>
+
+  <!-- ===== 3 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Représentation et implémentation</h2>
+  <p>Le programme demande de définir un arbre binaire <strong>à l'aide d'une liste</strong>. La représentation la plus directe en Python suit la définition récursive : un nœud est une liste à trois cases.</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"># Un arbre = None (vide)  OU  [valeur, sous_arbre_gauche, sous_arbre_droit]
+def feuille(v):
+    return [v, None, None]
+
+def noeud(v, g, d):
+    return [v, g, d]
+
+# Exemple :        4
+#                /   \
+#               2     6
+arbre = noeud(4, feuille(2), feuille(6))
+# arbre = [4, [2, None, None], [6, None, None]]</pre>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Accès aux composants.</strong> Avec cette convention, <code>a[0]</code> est la valeur de la racine, <code>a[1]</code> le sous-arbre gauche et <code>a[2]</code> le sous-arbre droit. L'arbre vide est représenté par <code>None</code>.
+  </div>
+
+  <p>On compte facilement les nœuds avec la même structure récursive :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def nb_noeuds(a):
+    if a is None:
+        return 0
+    return 1 + nb_noeuds(a[1]) + nb_noeuds(a[2])
+
+def nb_feuilles(a):
+    if a is None:
+        return 0
+    if a[1] is None and a[2] is None:   # aucun fils
+        return 1
+    return nb_feuilles(a[1]) + nb_feuilles(a[2])</pre>
+
+  <p>Une autre représentation, utile pour les arbres <em>complets</em>, range les valeurs dans une seule liste où le fils gauche du nœud d'indice <em>i</em> est en <strong>2i+1</strong> et le fils droit en <strong>2i+2</strong>. Cette représentation « par tableau » est précisément celle des tas (section 7).</p>
+
+  <!-- ===== 4 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Parcours en profondeur (DFS)</h2>
+  <p>Parcourir un arbre, c'est visiter chacun de ses nœuds une et une seule fois. Les parcours en <strong>profondeur</strong> explorent un sous-arbre entièrement avant de passer au suivant. Ils diffèrent par le <strong>moment où l'on traite la racine</strong> par rapport à ses sous-arbres.</p>
+
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Parcours</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Ordre</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Usage typique</th>
+    </tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Préfixe</strong></td><td style="border:1px solid #ddd;padding:9px;">Racine → Gauche → Droite</td><td style="border:1px solid #ddd;padding:9px;">Copie / sérialisation d'un arbre</td></tr>
+    <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Infixe</strong></td><td style="border:1px solid #ddd;padding:9px;">Gauche → Racine → Droite</td><td style="border:1px solid #ddd;padding:9px;">Renvoie un ABR <strong>trié</strong></td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Postfixe</strong></td><td style="border:1px solid #ddd;padding:9px;">Gauche → Droite → Racine</td><td style="border:1px solid #ddd;padding:9px;">Évaluation d'expressions, suppression</td></tr>
+  </table>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def prefixe(a):
+    if a is None:
+        return []
+    return [a[0]] + prefixe(a[1]) + prefixe(a[2])
+
+def infixe(a):
+    if a is None:
+        return []
+    return infixe(a[1]) + [a[0]] + infixe(a[2])
+
+def postfixe(a):
+    if a is None:
+        return []
+    return postfixe(a[1]) + postfixe(a[2]) + [a[0]]</pre>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Exemple.</strong> Pour l'arbre &nbsp;<code>[4, [2, [1,N,N], [3,N,N]], [6, [5,N,N], [7,N,N]]]</code>&nbsp; (où <code>N</code> = <code>None</code>) :<br>
+    préfixe = 4, 2, 1, 3, 6, 5, 7&nbsp;&middot;&nbsp; infixe = 1, 2, 3, 4, 5, 6, 7&nbsp;&middot;&nbsp; postfixe = 1, 3, 2, 5, 7, 6, 4.<br>
+    L'infixe est trié : ce n'est pas un hasard, l'arbre est un ABR (section 6).
+  </div>
+
+  <!-- ===== 5 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">5. Parcours en largeur (BFS)</h2>
+  <p>Le parcours en <strong>largeur</strong> visite les nœuds <strong>niveau par niveau</strong>, de gauche à droite. On ne peut plus utiliser la récursivité naturelle : on s'appuie sur une <strong>file</strong> (FIFO, « premier entré, premier sorti »). On enfile la racine, puis on défile un nœud, on le traite et on enfile ses fils.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">from collections import deque
+
+def largeur(a):
+    if a is None:
+        return []
+    file = deque([a])         # file initialisée avec la racine
+    ordre = []
+    while file:
+        n = file.popleft()    # on défile (FIFO)
+        ordre.append(n[0])
+        if n[1] is not None:
+            file.append(n[1])  # on enfile le fils gauche
+        if n[2] is not None:
+            file.append(n[2])  # puis le fils droit
+    return ordre</pre>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Profondeur vs largeur.</strong> Le parcours en <strong>profondeur</strong> utilise une <strong>pile</strong> (la pile d'appels récursifs), le parcours en <strong>largeur</strong> une <strong>file</strong>. Sur l'arbre exemple, la largeur donne&nbsp;: 4, 2, 6, 1, 3, 5, 7.
+  </div>
+
+  <!-- ===== 6 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. L'arbre binaire de recherche (ABR)</h2>
+  <p>Un <strong>arbre binaire de recherche</strong> est un arbre binaire qui respecte, en chaque nœud, la <strong>propriété d'ordre</strong> suivante :</p>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;text-align:center;">
+    toutes les valeurs du sous-arbre <strong>gauche</strong> &lt; valeur du nœud &lt; toutes les valeurs du sous-arbre <strong>droit</strong>
+  </div>
+  <p>Cette invariant rend la recherche très efficace : à chaque nœud, on élimine la moitié de l'arbre, exactement comme dans une recherche dichotomique. Le coût d'une recherche, d'une insertion ou d'une suppression est en O(h), donc O(log&nbsp;n) si l'arbre est équilibré, mais O(n) dans le pire des cas (arbre filiforme).</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def recherche(a, x):
+    if a is None:
+        return False
+    if x == a[0]:
+        return True
+    if x &lt; a[0]:
+        return recherche(a[1], x)   # on descend à gauche
+    else:
+        return recherche(a[2], x)   # on descend à droite
+
+def inserer(a, x):
+    if a is None:
+        return [x, None, None]      # on crée une nouvelle feuille
+    if x &lt; a[0]:
+        a[1] = inserer(a[1], x)
+    elif x &gt; a[0]:
+        a[2] = inserer(a[2], x)
+    return a                        # x déjà présent : on ne fait rien</pre>
+
+  <p>Construire un ABR par insertions successives, puis appliquer le parcours <strong>infixe</strong>, fournit une méthode de tri : c'est le principe du <em>tri par arbre</em>.</p>
+
+  <!-- ===== 7 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">7. Le tas (heap)</h2>
+  <p>Un <strong>tas</strong> est un arbre binaire <strong>complet</strong> (tous les niveaux remplis sauf éventuellement le dernier, rempli de gauche à droite) vérifiant une <strong>propriété de tas</strong>. Dans un <strong>tas-max</strong>, la valeur de chaque nœud est <strong>supérieure ou égale</strong> à celles de ses fils ; la racine contient donc le maximum.</p>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Représentation par tableau.</strong> Comme le tas est complet, on le range dans une simple liste <code>t</code> : la racine est en <code>t[0]</code>, et pour le nœud d'indice <em>i</em>, le fils gauche est en <code>t[2i+1]</code>, le fils droit en <code>t[2i+2]</code>, et le père en <code>t[(i-1)//2]</code>. Aucun pointeur n'est nécessaire.
+  </div>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"># Insertion dans un tas-max (remontée / "percolate up")
+def inserer_tas(t, x):
+    t.append(x)               # on ajoute en dernière position
+    i = len(t) - 1
+    while i &gt; 0 and t[(i-1)//2] &lt; t[i]:
+        pere = (i-1)//2
+        t[i], t[pere] = t[pere], t[i]   # on échange avec le père
+        i = pere
+    return t</pre>
+
+  <p>Le tas est la structure idéale d'une <strong>file de priorité</strong> : insertion et extraction du maximum coûtent O(log&nbsp;n). Il est au cœur du tri par tas (<em>heapsort</em>).</p>
+
+  <!-- ===== RÉCAP ===== -->
+  <h2 style="color:#27ae60;border-bottom:2px solid #27ae60;padding-bottom:6px;">8. Récapitulatif</h2>
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:14px 18px;border-radius:4px;margin:14px 0;">
+    <ul style="margin:0;padding-left:20px;">
+      <li>Un arbre binaire se définit <strong>récursivement</strong> : vide, ou racine + sous-arbre gauche + sous-arbre droit.</li>
+      <li>La <strong>hauteur</strong> mesure la profondeur maximale ; pour <em>n</em> nœuds : h+1 &le; n &le; 2<sup>h+1</sup>&minus;1.</li>
+      <li>Représentation Python : <code>[valeur, gauche, droite]</code> ou liste indexée (fils en 2i+1 et 2i+2).</li>
+      <li>Parcours en <strong>profondeur</strong> (pile/récursion) : préfixe, infixe, postfixe. Parcours en <strong>largeur</strong> (file).</li>
+      <li>L'<strong>ABR</strong> trie via le parcours infixe et offre recherche/insertion en O(h).</li>
+      <li>Le <strong>tas</strong> est un arbre complet rangé en tableau, support des files de priorité.</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#9aa7b2;font-size:0.85em;margin-top:30px;">CPGE MP / PSI · Informatique — Les arbres binaires</p>
+
+</div>

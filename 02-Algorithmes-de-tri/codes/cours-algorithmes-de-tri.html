@@ -1,0 +1,229 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <!-- HERO -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE 2ᵉ année — MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.9em;">Les algorithmes de tri</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6eef0;">Au-delà des tris simples vus en première année, deux méthodes efficaces fondées sur « diviser pour régner » : le tri rapide et le tri par fusion.</p>
+  </div>
+
+  <!-- OBJECTIFS -->
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:14px 18px;border-radius:4px;margin-bottom:26px;">
+    <strong style="color:#2c3e50;">🎯 Objectifs du chapitre</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Rappeler les tris simples de première année et leur complexité.</li>
+      <li>Comprendre les notions de tri <strong>en place</strong> et de <strong>stabilité</strong>.</li>
+      <li>Définir et implémenter le <strong>tri rapide</strong> ; discuter le choix du pivot.</li>
+      <li>Définir et implémenter le <strong>tri par fusion</strong>.</li>
+      <li>Comparer les complexités des différentes méthodes.</li>
+    </ul>
+  </div>
+
+  <!-- SOMMAIRE -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:14px 18px;margin-bottom:30px;background:#fafbfc;">
+    <strong style="color:#2c3e50;">Sommaire</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>Rappels : les tris simples de première année</li>
+      <li>Deux propriétés clés : tri en place et stabilité</li>
+      <li>Le tri rapide (quicksort)</li>
+      <li>Le tri par fusion (merge sort)</li>
+      <li>Comparaison des algorithmes de tri</li>
+    </ol>
+  </div>
+
+  <!-- ===== 1 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. Rappels : les tris simples de première année</h2>
+  <p>En première année, trois tris ont été étudiés. Tous ont une complexité <strong>quadratique</strong> O(n²) dans le pire des cas, ce qui les rend lents sur de grandes listes.</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Tri</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Principe</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Complexité (pire cas)</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Sélection</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Chercher le minimum et le placer en tête, puis recommencer sur le reste.</td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n²)</td>
+    </tr>
+    <tr style="background:#f7fbfc;">
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Insertion</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Insérer chaque élément à sa place dans la partie déjà triée.</td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n²)</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>À bulles</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Échanger les éléments adjacents mal ordonnés, en plusieurs passes.</td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n²)</td>
+    </tr>
+  </table>
+  <p>Le tri par sélection, par exemple, effectue (n−1) + (n−2) + … + 1 = n(n−1)/2 comparaisons, soit O(n²). L'objectif de ce chapitre est d'atteindre une complexité bien meilleure, O(n&nbsp;log&nbsp;n).</p>
+
+  <!-- ===== 2 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Deux propriétés clés : tri en place et stabilité</h2>
+  <p>Pour caractériser un algorithme de tri, deux propriétés sont importantes :</p>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Tri en place.</strong> Un tri est <em>en place</em> s'il n'utilise qu'une quantité de mémoire supplémentaire <strong>constante</strong> O(1), en réorganisant les éléments à l'intérieur du tableau d'origine (sans créer de copie de taille n).
+  </div>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Stabilité.</strong> Un tri est <em>stable</em> s'il conserve l'ordre relatif initial des éléments ayant une clé égale. Utile lorsqu'on trie selon plusieurs critères successifs.
+  </div>
+  <p>Exemple de stabilité : on trie une liste de personnes déjà triées par prénom, cette fois par âge. Un tri stable garde, parmi les personnes de même âge, l'ordre alphabétique acquis précédemment ; un tri non stable peut le détruire.</p>
+
+  <!-- ===== 3 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Le tri rapide (quicksort)</h2>
+  <p><strong>Principe (diviser pour régner).</strong> On choisit un élément appelé <strong>pivot</strong>. On réorganise la liste (étape de <em>partition</em>) de sorte que les éléments plus petits que le pivot soient à sa gauche et les plus grands à sa droite. Le pivot est alors à sa place définitive. On applique ensuite récursivement le même procédé aux deux sous-listes gauche et droite.</p>
+
+  <p>Une implémentation simple et lisible (non en place, qui construit deux sous-listes) :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">tri_rapide</span>(L):
+    <span style="color:#ff7b72;">if</span> <span style="color:#79c0ff;">len</span>(L) &lt;= <span style="color:#79c0ff;">1</span>:
+        <span style="color:#ff7b72;">return</span> L
+    pivot = L[<span style="color:#79c0ff;">0</span>]
+    petits = [x <span style="color:#ff7b72;">for</span> x <span style="color:#ff7b72;">in</span> L[<span style="color:#79c0ff;">1</span>:] <span style="color:#ff7b72;">if</span> x &lt;= pivot]
+    grands = [x <span style="color:#ff7b72;">for</span> x <span style="color:#ff7b72;">in</span> L[<span style="color:#79c0ff;">1</span>:] <span style="color:#ff7b72;">if</span> x &gt; pivot]
+    <span style="color:#ff7b72;">return</span> tri_rapide(petits) + [pivot] + tri_rapide(grands)</pre>
+
+  <div style="background:#fdeef0;border-left:4px solid #e74c3c;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Complexité.</strong> En <strong>moyenne</strong>, la partition équilibre les deux côtés et l'on obtient T(n) = 2 T(n/2) + O(n), soit <strong>O(n log n)</strong>. Dans le <strong>pire des cas</strong> (pivot toujours minimal ou maximal, par exemple sur une liste déjà triée avec ce choix de pivot), une seule sous-liste est non vide à chaque étape : T(n) = T(n-1) + O(n), soit <strong>O(n²)</strong>.
+  </div>
+
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Choix du pivot.</strong> Prendre systématiquement le premier élément rend le pire cas fréquent (listes déjà triées). On préfère un pivot <em>aléatoire</em>, ou la <em>médiane de trois</em> (premier, milieu, dernier), pour rendre le pire cas très improbable et garantir O(n log n) en pratique.
+  </div>
+  <p>Le tri rapide « classique » (avec partition à l'intérieur du tableau) est <strong>en place</strong> (O(1) d'espace auxiliaire, hormis la pile de récursion) mais <strong>non stable</strong>.</p>
+
+  <!-- ===== 4 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Le tri par fusion (merge sort)</h2>
+  <p><strong>Principe (diviser pour régner).</strong> On coupe la liste en deux moitiés, on trie récursivement chacune, puis on <strong>fusionne</strong> les deux moitiés triées en une seule liste triée. La fusion parcourt les deux listes en parallèle et choisit à chaque étape le plus petit élément de tête.</p>
+
+  <p>L'étape de fusion de deux listes déjà triées :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">fusion</span>(A, B):
+    C = []
+    i, j = <span style="color:#79c0ff;">0</span>, <span style="color:#79c0ff;">0</span>
+    <span style="color:#ff7b72;">while</span> i &lt; <span style="color:#79c0ff;">len</span>(A) <span style="color:#ff7b72;">and</span> j &lt; <span style="color:#79c0ff;">len</span>(B):
+        <span style="color:#ff7b72;">if</span> A[i] &lt;= B[j]:
+            C.append(A[i]); i += <span style="color:#79c0ff;">1</span>
+        <span style="color:#ff7b72;">else</span>:
+            C.append(B[j]); j += <span style="color:#79c0ff;">1</span>
+    <span style="color:#ff7b72;">return</span> C + A[i:] + B[j:]</pre>
+
+  <p>Le tri par fusion lui-même :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">tri_fusion</span>(L):
+    <span style="color:#ff7b72;">if</span> <span style="color:#79c0ff;">len</span>(L) &lt;= <span style="color:#79c0ff;">1</span>:
+        <span style="color:#ff7b72;">return</span> L
+    m = <span style="color:#79c0ff;">len</span>(L) // <span style="color:#79c0ff;">2</span>
+    gauche = tri_fusion(L[:m])
+    droite = tri_fusion(L[m:])
+    <span style="color:#ff7b72;">return</span> fusion(gauche, droite)</pre>
+
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Complexité.</strong> La liste est divisée en deux à chaque niveau (log<sub>2</sub> n niveaux) et la fusion d'un niveau coûte O(n). On a T(n) = 2 T(n/2) + O(n), soit <strong>O(n log n) garanti</strong>, y compris dans le pire des cas — contrairement au tri rapide.
+  </div>
+  <p>En contrepartie, le tri par fusion n'est <strong>pas en place</strong> : il nécessite O(n) de mémoire supplémentaire pour les listes fusionnées. Il est en revanche <strong>stable</strong> (à condition d'utiliser <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">&lt;=</code> dans la fusion).</p>
+
+  <!-- ===== 5 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">5. Comparaison des algorithmes de tri</h2>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.93em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Tri</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Moyenne</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Pire cas</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">En place</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Stable</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;">Sélection</td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n²)</td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n²)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Oui</td>
+      <td style="border:1px solid #ddd;padding:9px;">Non</td>
+    </tr>
+    <tr style="background:#f7fbfc;">
+      <td style="border:1px solid #ddd;padding:9px;">Insertion</td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n²)</td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n²)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Oui</td>
+      <td style="border:1px solid #ddd;padding:9px;">Oui</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Tri rapide</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n log n)</td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n²)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Oui</td>
+      <td style="border:1px solid #ddd;padding:9px;">Non</td>
+    </tr>
+    <tr style="background:#f7fbfc;">
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Tri fusion</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n log n)</td>
+      <td style="border:1px solid #ddd;padding:9px;">O(n log n)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Non</td>
+      <td style="border:1px solid #ddd;padding:9px;">Oui</td>
+    </tr>
+  </table>
+
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:12px 16px;border-radius:4px;margin:18px 0;">
+    <strong>✅ Points essentiels.</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Les tris simples sont en O(n²) ; tri rapide et tri fusion atteignent O(n log n).</li>
+      <li>Tri rapide : O(n log n) en moyenne, O(n²) au pire ; en place mais non stable ; le choix du pivot est crucial.</li>
+      <li>Tri fusion : O(n log n) garanti, stable, mais nécessite O(n) d'espace supplémentaire.</li>
+      <li>Les deux reposent sur le paradigme « diviser pour régner ».</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#7f8c8d;font-size:0.85em;margin-top:30px;border-top:1px solid #ddd;padding-top:14px;">CPGE MP/PSI — Informatique · Chapitre : Les algorithmes de tri · Conforme au programme officiel 2023</p>
+
+</div>

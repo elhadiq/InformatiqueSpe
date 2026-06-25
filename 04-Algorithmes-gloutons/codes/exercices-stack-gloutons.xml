@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <question type="stack">
+    <name><text>Gloutons Q1 - Rendu glouton (systeme 1,3,4)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>On considere le systeme de pieces \((1, 3, 4)\) et l'algorithme glouton (prendre a chaque etape la plus grande piece qui ne depasse pas la somme restante).</p><p>Combien de pieces l'algorithme <strong>glouton</strong> utilise-t-il pour rendre la somme \(S = 6\) ?</p><p>Nombre de pieces : [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Le glouton prend \(4\), puis \(1\), puis \(1\) : soit \(4+1+1=6\), donc <strong>3 pieces</strong>. Ce n'est pas optimal.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : 3;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>rendu glouton 1,3,4 S=6</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo !</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>numerical</type>
+      <tans>ta</tans>
+      <boxsize>10</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>3</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>0</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Correct : \(4+1+1\), soit 3 pieces.</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Le glouton prend d'abord la plus grande piece \(\le 6\), c'est-a-dire 4, puis complete avec des 1.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Gloutons Q2 - Rendu optimal (systeme 1,3,4)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Toujours avec le systeme \((1, 3, 4)\) et \(S = 6\).</p><p>Quel est le nombre <strong>minimal</strong> (optimal) de pieces pour rendre \(6\) ?</p><p>Nombre minimal de pieces : [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>La solution optimale est \(3 + 3 = 6\), soit <strong>2 pieces</strong>. Le glouton en utilisait 3 : il n'est donc pas optimal pour ce systeme.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : 2;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>rendu optimal 1,3,4 S=6</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo !</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>numerical</type>
+      <tans>ta</tans>
+      <boxsize>10</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>2</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>0</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Correct : \(3+3\), soit 2 pieces.</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Cherchez une combinaison avec moins de 3 pieces : pensez a utiliser deux fois la piece 3.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Gloutons Q3 - Sac a dos fractionnaire (valeur)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Trois objets : \(A(v=60, p=10)\), \(B(v=100, p=20)\), \(C(v=120, p=30)\). Sac a dos <strong>fractionnaire</strong> de capacite \(C = 50\).</p><p>Quelle est la valeur maximale transportable ?</p><p>Valeur maximale : [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Rapports valeur/poids : \(A=6\), \(B=5\), \(C=4\). On prend \(A\) entier (poids 10), \(B\) entier (poids 20), puis la fraction \(20/30\) de \(C\) : \(60 + 100 + 80 = 240\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : 240;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>sac fractionnaire C=50 -> 240</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo !</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>numerical</type>
+      <tans>ta</tans>
+      <boxsize>10</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>240</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>0</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Correct : \(60+100+80 = 240\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Triez par valeur/poids decroissant, remplissez, puis prenez une fraction du dernier objet.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Gloutons Q4 - Sac a dos 0/1 (valeur optimale)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Memes objets \(A(60,10)\), \(B(100,20)\), \(C(120,30)\), capacite \(C = 50\), mais cette fois le sac est <strong>0/1</strong> (objets indivisibles).</p><p>Quelle est la valeur <strong>optimale</strong> ? (Le glouton ne renvoie que 160.)</p><p>Valeur optimale : [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Le glouton prend \(A\) puis \(B\) (valeur 160) et ne peut plus prendre \(C\). Or \(B + C\) a un poids \(20+30=50\) et une valeur \(100+120 = 220\) : c'est l'optimum. Le glouton echoue pour le sac 0/1.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : 220;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>sac 0/1 C=50 -> 220</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo !</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>numerical</type>
+      <tans>ta</tans>
+      <boxsize>10</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>220</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>0</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Correct : la combinaison \(B+C\) donne 220.</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Essayez la combinaison \(B+C\) : poids \(20+30=50\), valeur \(100+120\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Gloutons Q5 - Cout d'un codage de Huffman</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Quatre caracteres de frequences \(A:5, B:2, C:1, D:1\). On construit l'arbre de Huffman (fusion repetee des deux plus petites frequences).</p><p>Quel est le cout total du codage (somme des frequences fois la longueur du code) ?</p><p>Cout total (en bits) : [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Codes : \(A:0\) (long. 1), \(B:11\) (long. 2), \(C:100\), \(D:101\) (long. 3). Cout \(= 5(1) + 2(2) + 1(3) + 1(3) = 15\). Somme des fusions : \(2+4+9=15\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : 15;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>huffman 5,2,1,1 -> 15</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo !</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>numerical</type>
+      <tans>ta</tans>
+      <boxsize>10</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>15</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>0</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Correct : 15 bits.</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Sommez frequence fois longueur (1,2,3,3), ou additionnez les frequences a chaque fusion.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+</quiz>

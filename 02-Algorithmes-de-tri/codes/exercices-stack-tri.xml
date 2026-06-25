@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <question type="stack">
+    <name><text>Tri Q1 — Comparaisons du tri par sélection</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Le tri par sélection compare, pour placer chaque élément, le reste de la liste&#8239;: \((n-1) + (n-2) + \dots + 1\) comparaisons au total.</p><p>Donner le nombre total de comparaisons \(C(n)\) en fonction de \(n\).</p><p>\(C(n) = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>\((n-1)+(n-2)+\dots+1 = \dfrac{n(n-1)}{2}\), soit une complexité \(O(n^2)\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : n*(n-1)/2;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>C(n)=n*(n-1)/2</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>n*(n-1)/2</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(\dfrac{n(n-1)}{2}\), donc \(O(n^2)\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>C'est la somme \(1+2+\dots+(n-1) = \dfrac{n(n-1)}{2}\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Tri Q2 — Coût de la fusion</text></name>
+    <questiontext format="html"><text><![CDATA[<p>On fusionne deux listes triées de tailles \(m\) et \(p\) en parcourant chaque élément une fois.</p><p>Donner le nombre d'éléments placés (le coût de la fusion) en fonction de \(m\) et \(p\).</p><p>Coût \(= \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Chaque élément des deux listes est placé exactement une fois&#8239;: coût \(m+p\), soit \(O(m+p)\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : m+p;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>T=m+p</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>m+p</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(m+p\), donc \(O(m+p)\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>On place tous les éléments des deux listes&#8239;: \(m+p\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Tri Q3 — Complexité du tri par fusion</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Le tri par fusion vérifie \(T(n) = 2\,T(n/2) + O(n)\).</p><p>Donner, sans constante, l'ordre de grandeur \(g(n)\) tel que \(T(n)=O(g(n))\). <em>(Écrire le logarithme&#8239;: <code>n*log(n)</code>.)</em></p><p>\(g(n) = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>La récurrence \(T(n)=2T(n/2)+O(n)\) a pour solution \(O(n\log n)\) — complexité <strong>garantie</strong>, même au pire des cas.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : n*log(n);</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>T(n)=n*log(n)</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>n*log(n)</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(n\log n\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>La solution de \(T(n)=2T(n/2)+O(n)\) est \(n\log n\). Écrivez <code>n*log(n)</code>.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Tri Q4 — Tri rapide, pire des cas</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Dans le <strong>pire des cas</strong> (pivot toujours extrémal), le tri rapide vérifie \(T(n) = T(n-1) + O(n)\).</p><p>Donner l'ordre de grandeur \(g(n)\) du pire cas tel que \(T(n)=O(g(n))\).</p><p>\(g(n) = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>\(T(n)=T(n-1)+O(n)\) donne \(n+(n-1)+\dots = \dfrac{n(n+1)}{2} = O(n^2)\). Un bon choix de pivot évite ce pire cas.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : n^2;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>pire=n^2</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>n^2</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: pire cas \(O(n^2)\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Une seule sous-liste décroît de 1 à chaque étape&#8239;: \(n+(n-1)+\dots = O(n^2)\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Tri Q5 — Complexité moyenne (paramétré)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Un tri « diviser pour régner » découpe la liste en \({@k@}\) parts égales et recombine en \(O(n)\)&#8239;: \(T(n) = {@k@}\,T(n/{@k@}) + O(n)\).</p><p>Donner l'ordre de grandeur \(g(n)\) (écrire <code>n*log(n)</code>).</p><p>\(g(n) = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Pour tout \(k\ge 2\), \(T(n)=k\,T(n/k)+O(n)\) a pour solution \(O(n\log n)\) (la base du logarithme ne change pas l'ordre de grandeur). C'est la complexité moyenne du tri rapide et celle, garantie, du tri par fusion.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>k : rand_with_step(2,4,1);
+ta : n*log(n);</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>moyenne=n*log(n)</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>n*log(n)</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(n\log n\), indépendamment de \(k\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Pour tout \(k\ge 2\), la solution est \(n\log n\). Écrivez <code>n*log(n)</code>.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+</quiz>

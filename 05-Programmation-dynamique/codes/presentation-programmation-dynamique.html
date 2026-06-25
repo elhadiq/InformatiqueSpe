@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La programmation dynamique — MP/PSI</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--teal:#026573;--dark:#2c3e50;--bg:#e8edf2;--border:#dce3ea;--hl:#e4f1f2;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 5rem;gap:2rem;}
+.slide{background:#fff;width:100%;max-width:940px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.10);padding:2.2rem 2.8rem 1.8rem;position:relative;}
+.slide-number{position:absolute;bottom:0.7rem;right:1.2rem;font-size:0.72rem;color:#aaa;}
+.slide.title-slide{background:linear-gradient(145deg,#f4f9fc 60%,#d9eef0);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;border-top:6px solid var(--teal);}
+.slide.title-slide h1{font-size:1.9rem;color:var(--dark);margin-bottom:0.4rem;}
+.slide.title-slide .subtitle{font-size:1.15rem;color:#555;}
+h2.frame-title{font-size:1.6rem;color:var(--teal);font-weight:700;margin-bottom:0.7rem;padding-bottom:0.35rem;border-bottom:2px solid #b7dadd;}
+h2.frame-title .tag{font-size:0.7em;font-weight:700;padding:2px 10px;border-radius:12px;color:#fff;vertical-align:middle;margin-left:0.4rem;background:var(--teal);}
+p{line-height:1.7;margin:0.45rem 0;} ul,ol{margin:0.5rem 0 0.5rem 1.4rem;line-height:1.85;}
+ul li::marker,ol li::marker{color:var(--teal);} strong{font-weight:700;} em{font-style:italic;}
+.cols{display:flex;gap:2rem;margin-top:0.8rem;align-items:flex-start;} .col-text{flex:1.1;} .col-side{flex:0.9;}
+.code{background:#0d1117;color:#e6edf3;font-family:'Consolas','Courier New',monospace;font-size:0.85rem;line-height:1.5;padding:0.9rem 1.1rem;border-radius:8px;overflow-x:auto;margin:0.6rem 0;white-space:pre;tab-size:4;}
+.code .kw{color:#ff7b72;} .code .fn{color:#d2a8ff;} .code .nb{color:#79c0ff;} .code .cm{color:#8b949e;}
+.hl-box{background:var(--hl);border-left:4px solid var(--teal);border-radius:0 6px 6px 0;padding:0.7rem 1rem;margin:0.8rem 0;font-size:0.97rem;}
+.hl-box.warn{background:#fef9e7;border-left-color:#f39c12;} .hl-box.bad{background:#fdeef0;border-left-color:#e74c3c;} .hl-box.good{background:#eafaf1;border-left-color:#27ae60;}
+table.ref{border-collapse:collapse;width:100%;margin:0.7rem 0;font-size:0.92rem;}
+table.ref th{background:var(--dark);color:#fff;padding:0.5rem 0.7rem;text-align:left;} table.ref td{border:1px solid var(--border);padding:0.45rem 0.7rem;} table.ref tr:nth-child(even) td{background:#f4f9fc;}
+#nav{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:0.4rem;z-index:100;}
+#nav button{background:var(--teal);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:background .2s;}
+#nav button:hover{background:#014a54;} #nav #btn-scroll{border-radius:20px;width:auto;padding:0 14px;font-size:0.78rem;font-weight:700;}
+body.slideshow .slide{display:none;} body.slideshow .slide.active{display:block;} body.slideshow .slide.active.title-slide{display:flex;}
+</style>
+</head>
+<body>
+
+<!-- ===== Slide de titre ===== -->
+<section class="slide title-slide" id="s1">
+  <h1>La programmation dynamique</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">CPGE MP/PSI — Informatique · Calculer chaque sous-problème une seule fois</p>
+  <span class="slide-number">1 / 12</span>
+</section>
+
+<section class="slide" id="s2">
+  <h2 class="frame-title">Le problème de la récursivité naïve<span class="tag">MOTIVATION</span></h2>
+  <p>La suite de Fibonacci : $F_0=0,\ F_1=1,\ F_n=F_{n-1}+F_{n-2}$.</p>
+  <div class="code"><span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">if</span> n &lt; <span class="nb">2</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> fib(n-<span class="nb">1</span>) + fib(n-<span class="nb">2</span>)</div>
+  <div class="hl-box bad"><strong>Catastrophe.</strong> Le même sous-problème est recalculé des milliers de fois. Complexité <strong>exponentielle</strong> $O(\varphi^n)$ avec $\varphi\approx 1{,}618$. Pourtant il n'y a que $n+1$ valeurs distinctes !</div>
+  <span class="slide-number">2 / 12</span>
+</section>
+
+<section class="slide" id="s3">
+  <h2 class="frame-title">L'idée centrale<span class="tag">PRINCIPE</span></h2>
+  <p class="hl-box"><strong>« Ne jamais recalculer deux fois la même chose. »</strong> On <strong>mémorise</strong> le résultat de chaque sous-problème, et on le réutilise.</p>
+  <p>Pour Fibonacci, la complexité tombe de $O(\varphi^n)$ à <strong>$O(n)$</strong>.</p>
+  <div class="hl-box good"><strong>Intérêt (programme officiel).</strong> La programmation dynamique sert à <strong>réduire la complexité temporelle</strong> de certains problèmes — souvent d'exponentielle à polynomiale.</div>
+  <span class="slide-number">3 / 12</span>
+</section>
+
+<section class="slide" id="s4">
+  <h2 class="frame-title">Les deux ingrédients<span class="tag">CONDITIONS</span></h2>
+  <div class="hl-box"><strong>1. Sous-structure optimale.</strong> La solution optimale se construit à partir des solutions optimales des sous-problèmes $\Rightarrow$ on peut écrire une <strong>formule de récurrence</strong>.</div>
+  <div class="hl-box"><strong>2. Chevauchement des sous-problèmes.</strong> Les mêmes sous-problèmes reviennent plusieurs fois $\Rightarrow$ la mémorisation est rentable.</div>
+  <div class="hl-box warn"><strong>PD vs diviser-pour-régner.</strong> Les deux découpent ; mais en « diviser pour régner » les sous-problèmes sont <strong>disjoints</strong>. La PD n'a d'intérêt qu'avec le <strong>chevauchement</strong>.</div>
+  <span class="slide-number">4 / 12</span>
+</section>
+
+<section class="slide" id="s5">
+  <h2 class="frame-title">Lien avec les algorithmes gloutons<span class="tag">COMPARAISON</span></h2>
+  <table class="ref">
+    <tr><th>Glouton</th><th>Programmation dynamique</th></tr>
+    <tr><td>Un <strong>seul</strong> choix, jamais remis en cause</td><td><strong>Examine tous</strong> les choix, garde le meilleur</td></tr>
+    <tr><td>Rapide</td><td>Plus coûteuse</td></tr>
+    <tr><td>Optimal <em>parfois</em></td><td><strong>Toujours optimal</strong></td></tr>
+  </table>
+  <div class="hl-box good">La PD résout exactement les problèmes où le glouton échoue — comme le <strong>sac à dos 0/1</strong>.</div>
+  <span class="slide-number">5 / 12</span>
+</section>
+
+<section class="slide" id="s6">
+  <h2 class="frame-title">Top-Down : la mémoïsation<span class="tag">APPROCHE 1</span></h2>
+  <p>Garder la récursion naturelle + un <strong>cache</strong>.</p>
+  <div class="code"><span class="kw">def</span> <span class="fn">fib_memo</span>(n, memo={}):
+    <span class="kw">if</span> n &lt; <span class="nb">2</span>: <span class="kw">return</span> n
+    <span class="kw">if</span> n <span class="kw">in</span> memo: <span class="kw">return</span> memo[n]   <span class="cm"># réutilise</span>
+    memo[n] = fib_memo(n-<span class="nb">1</span>) + fib_memo(n-<span class="nb">2</span>)
+    <span class="kw">return</span> memo[n]</div>
+  <div class="hl-box"><strong>= récursion + cache.</strong> On ne calcule que les sous-problèmes <strong>utiles</strong>. Attention à la profondeur de pile.</div>
+  <span class="slide-number">6 / 12</span>
+</section>
+
+<section class="slide" id="s7">
+  <h2 class="frame-title">Bottom-Up : la tabulation<span class="tag">APPROCHE 2</span></h2>
+  <p>Partir des plus petits sous-problèmes, remplir un <strong>tableau</strong> par des boucles.</p>
+  <div class="code"><span class="kw">def</span> <span class="fn">fib_tab</span>(n):
+    <span class="kw">if</span> n &lt; <span class="nb">2</span>: <span class="kw">return</span> n
+    f = [<span class="nb">0</span>]*(n+<span class="nb">1</span>); f[<span class="nb">1</span>] = <span class="nb">1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="nb">range</span>(<span class="nb">2</span>, n+<span class="nb">1</span>):
+        f[i] = f[i-<span class="nb">1</span>] + f[i-<span class="nb">2</span>]
+    <span class="kw">return</span> f[n]</div>
+  <div class="hl-box"><strong>= boucles + tableau.</strong> Pas de récursion (pas de limite de pile) ; calcule <strong>tous</strong> les sous-problèmes ; il faut le <strong>bon ordre</strong> de remplissage.</div>
+  <span class="slide-number">7 / 12</span>
+</section>
+
+<section class="slide" id="s8">
+  <h2 class="frame-title">Méthode générale<span class="tag">RECETTE</span></h2>
+  <p>Le cœur du travail = trouver la <strong>récurrence</strong> :</p>
+  <ol>
+    <li>définir l'<strong>état</strong> (que désigne le sous-problème ?) ;</li>
+    <li>écrire les <strong>cas de base</strong> ;</li>
+    <li>exprimer un sous-problème <strong>en fonction de plus petits</strong> ;</li>
+    <li>repérer la <strong>réponse finale</strong>.</li>
+  </ol>
+  <div class="hl-box">Ensuite, au choix : mémoïsation (Top-Down) <strong>ou</strong> tabulation (Bottom-Up). Même résultat, même complexité.</div>
+  <span class="slide-number">8 / 12</span>
+</section>
+
+<section class="slide" id="s9">
+  <h2 class="frame-title">Le sac à dos 0/1<span class="tag">EXEMPLE</span></h2>
+  <p>$n$ objets $(p_i,v_i)$, capacité $C$, objet pris en entier ou pas. $M(i,c)$ = valeur max avec les $i$ premiers objets et capacité $c$.</p>
+  <div class="hl-box">$$M(i,c)=\max\big(M(i{-}1,c),\ v_i+M(i{-}1,c{-}p_i)\big)$$ <span style="font-size:0.9em">(si $p_i\le c$ ; sinon $M(i,c)=M(i{-}1,c)$).</span></div>
+  <p><strong>Ne pas prendre</strong> vs <strong>prendre</strong> l'objet $i$. Complexité <strong>$O(nC)$</strong> (pseudo-polynomiale).</p>
+  <div class="hl-box good">Pour A(60,10), B(100,20), C(120,30), $C=50$ : la PD donne <strong>220</strong> (B+C), le glouton donnait 160.</div>
+  <span class="slide-number">9 / 12</span>
+</section>
+
+<section class="slide" id="s10">
+  <h2 class="frame-title">Plus longue sous-séquence commune<span class="tag">EXEMPLE</span></h2>
+  <p>$L(i,j)$ = longueur de la PLSSC des $i$ premiers caractères de $X$ et $j$ premiers de $Y$.</p>
+  <div class="hl-box">$$L(i,j)=\begin{cases}L(i{-}1,j{-}1)+1 & \text{si } X_i=Y_j\\[2pt]\max\big(L(i{-}1,j),L(i,j{-}1)\big)&\text{sinon}\end{cases}$$</div>
+  <p>Pour <code>ABCBDAB</code> et <code>BDCAB</code> : PLSSC = <code>BCAB</code>, longueur <strong>4</strong>. Complexité <strong>$O(nm)$</strong>.</p>
+  <p style="font-size:0.9em;color:#666">Utilisé par <code>diff</code>, Git, la bio-informatique.</p>
+  <span class="slide-number">10 / 12</span>
+</section>
+
+<section class="slide" id="s11">
+  <h2 class="frame-title">Distance de Levenshtein<span class="tag">EXEMPLE</span></h2>
+  <p>Nombre minimal d'<strong>insertions / suppressions / substitutions</strong> pour transformer $X$ en $Y$. $D(i,j)$ sur les préfixes.</p>
+  <div class="hl-box">Si $X_i=Y_j$ : $D(i,j)=D(i{-}1,j{-}1)$. Sinon : $$D(i,j)=1+\min\big(D(i{-}1,j),\,D(i,j{-}1),\,D(i{-}1,j{-}1)\big)$$</div>
+  <p>= suppression, insertion, substitution. Complexité <strong>$O(nm)$</strong>. Base des correcteurs orthographiques.</p>
+  <span class="slide-number">11 / 12</span>
+</section>
+
+<section class="slide" id="s12">
+  <h2 class="frame-title">À retenir<span class="tag">BILAN</span></h2>
+  <ul>
+    <li>PD = <strong>calculer chaque sous-problème une seule fois</strong> et le stocker.</li>
+    <li>Conditions : <strong>sous-structure optimale</strong> + <strong>chevauchement</strong>.</li>
+    <li>Tout repose sur la <strong>formule de récurrence</strong>.</li>
+    <li>Deux mises en œuvre : <strong>Top-Down</strong> (mémoïsation) / <strong>Bottom-Up</strong> (tabulation).</li>
+    <li>Toujours optimale : sac à dos 0/1, PLSSC, Levenshtein.</li>
+  </ul>
+  <span class="slide-number">12 / 12</span>
+</section>
+
+<div id="nav">
+  <button class="ghost" id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button class="ghost" id="btn-next" title="Suivant">&#8594;</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide');
+let current=0,slideshowMode=false;
+function enter(i){slides[current].classList.remove('active');current=(i+slides.length)%slides.length;slides[current].classList.add('active');slides[current].scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('btn-prev').addEventListener('click',()=>{if(slideshowMode)enter(current-1);});
+document.getElementById('btn-next').addEventListener('click',()=>{if(slideshowMode)enter(current+1);});
+document.getElementById('btn-scroll').addEventListener('click',()=>{slideshowMode=!slideshowMode;document.body.classList.toggle('slideshow',slideshowMode);document.getElementById('btn-scroll').textContent=slideshowMode?'Défiler':'Diaporama';if(slideshowMode)slides[current].classList.add('active');else slides.forEach(s=>s.classList.remove('active'));});
+document.addEventListener('keydown',e=>{if((e.key==='ArrowRight'||e.key==='ArrowDown')&&slideshowMode)enter(current+1);if((e.key==='ArrowLeft'||e.key==='ArrowUp')&&slideshowMode)enter(current-1);});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

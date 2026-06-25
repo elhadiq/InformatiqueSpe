@@ -1,0 +1,470 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <!-- ===================== HERO ===================== -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE 2ᵉ année — MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.9em;">Introduction à la théorie des graphes</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#e4f1f2;">Un graphe modélise un ensemble d'objets (les <strong>sommets</strong>) reliés par des <strong>relations</strong> (les arêtes ou arcs) : réseaux routiers, réseaux sociaux, pages web, circuits… Ce chapitre définit le vocabulaire, montre comment représenter un graphe en Python, puis présente les algorithmes de parcours et de plus court chemin.</p>
+  </div>
+
+  <!-- ===================== OBJECTIFS ===================== -->
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:14px 18px;border-radius:4px;margin-bottom:26px;">
+    <strong style="color:#2c3e50;">🎯 Objectifs du chapitre</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Maîtriser le <strong>vocabulaire</strong> des graphes : orienté/non orienté, sommets, arcs/arêtes, ordre, degré, chemin/chaîne, circuit/cycle, connexité.</li>
+      <li><strong>Implémenter</strong> un graphe par <strong>listes d'adjacence</strong> (liste ou dictionnaire) et par <strong>matrice d'adjacence</strong>.</li>
+      <li>Manipuler un graphe : ajout, suppression, test d'existence d'un arc/arête, liste des voisins.</li>
+      <li>Comprendre et coder le <strong>parcours en largeur (BFS)</strong> et le <strong>parcours en profondeur (DFS)</strong>.</li>
+      <li>Appliquer les parcours : <strong>détection de cycle</strong>, test de <strong>connexité</strong>.</li>
+      <li>Découvrir les <strong>graphes pondérés</strong> et l'algorithme de <strong>Dijkstra</strong> (plus court chemin), ainsi que l'idée de A* et de Floyd-Warshall.</li>
+    </ul>
+  </div>
+
+  <!-- ===================== SOMMAIRE ===================== -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:14px 18px;margin-bottom:30px;background:#fafbfc;">
+    <strong style="color:#2c3e50;">Sommaire</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>Qu'est-ce qu'un graphe ?</li>
+      <li>Vocabulaire des graphes</li>
+      <li>Degré d'un sommet</li>
+      <li>Chemins, chaînes, cycles et circuits</li>
+      <li>Connexité</li>
+      <li>Représentation : matrice d'adjacence</li>
+      <li>Représentation : listes d'adjacence</li>
+      <li>Manipulation d'un graphe en Python</li>
+      <li>Parcours en largeur (BFS)</li>
+      <li>Parcours en profondeur (DFS)</li>
+      <li>Applications des parcours : cycle et connexité</li>
+      <li>Graphes pondérés et plus court chemin (Dijkstra)</li>
+      <li>Pour aller plus loin : A* et Floyd-Warshall</li>
+      <li>Récapitulatif</li>
+    </ol>
+  </div>
+
+  <!-- ===================== 1 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. Qu'est-ce qu'un graphe ?</h2>
+  <p>Un <strong>graphe</strong> est une structure de données qui modélise des <strong>objets</strong> et les <strong>liens</strong> entre eux. Formellement, un graphe G est un couple G = (S, A) où :</p>
+  <ul style="padding-left:22px;">
+    <li>S est un ensemble fini de <strong>sommets</strong> (en anglais <em>vertices</em>, ou <em>nodes</em>) ;</li>
+    <li>A est un ensemble de <strong>liens</strong> entre sommets : des <strong>arêtes</strong> si le graphe est non orienté, des <strong>arcs</strong> s'il est orienté.</li>
+  </ul>
+  <p>De nombreuses situations se modélisent par un graphe :</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#026573;color:#fff;">
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Situation</th>
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Sommets</th>
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Liens</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Réseau routier</td>
+      <td style="border:1px solid #ddd;padding:10px;">Villes / carrefours</td>
+      <td style="border:1px solid #ddd;padding:10px;">Routes</td>
+    </tr>
+    <tr style="background:#f3f9f9;">
+      <td style="border:1px solid #ddd;padding:10px;">Réseau social</td>
+      <td style="border:1px solid #ddd;padding:10px;">Personnes</td>
+      <td style="border:1px solid #ddd;padding:10px;">Relations d'amitié</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Web</td>
+      <td style="border:1px solid #ddd;padding:10px;">Pages</td>
+      <td style="border:1px solid #ddd;padding:10px;">Liens hypertextes (orientés)</td>
+    </tr>
+    <tr style="background:#f3f9f9;">
+      <td style="border:1px solid #ddd;padding:10px;">Labyrinthe</td>
+      <td style="border:1px solid #ddd;padding:10px;">Cases</td>
+      <td style="border:1px solid #ddd;padding:10px;">Passages entre cases</td>
+    </tr>
+  </table>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ Cadre du programme.</strong> On se limite aux <strong>graphes simples</strong> : pas de <strong>boucle</strong> (arc/arête d'un sommet vers lui-même) ni de <strong>multi-arête</strong> (plusieurs liens entre les deux mêmes sommets).
+  </div>
+
+  <!-- ===================== 2 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Vocabulaire des graphes</h2>
+  <p>On distingue deux grandes familles selon que les liens ont un sens ou non.</p>
+
+  <h3 style="color:#014a54;">Graphe non orienté</h3>
+  <p>Les liens sont des <strong>arêtes</strong> : une arête {u, v} relie u et v <strong>sans privilégier de sens</strong>. Si u est relié à v, alors v est relié à u (relation symétrique). On dit que u et v sont <strong>adjacents</strong> (ou voisins) et que l'arête est <strong>incidente</strong> à u et à v.</p>
+
+  <h3 style="color:#014a54;">Graphe orienté</h3>
+  <p>Les liens sont des <strong>arcs</strong> : un arc (u, v) va de u <strong>vers</strong> v. Le sens compte : l'arc (u, v) n'implique pas l'arc (v, u). On dit que u est le sommet de départ (origine) et v le sommet d'arrivée. v est un <strong>successeur</strong> de u, et u un <strong>prédécesseur</strong> de v.</p>
+
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#026573;color:#fff;">
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Notion</th>
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Non orienté</th>
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Orienté</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Lien</td>
+      <td style="border:1px solid #ddd;padding:10px;">arête {u, v}</td>
+      <td style="border:1px solid #ddd;padding:10px;">arc (u, v)</td>
+    </tr>
+    <tr style="background:#f3f9f9;">
+      <td style="border:1px solid #ddd;padding:10px;">Sens</td>
+      <td style="border:1px solid #ddd;padding:10px;">aucun (symétrique)</td>
+      <td style="border:1px solid #ddd;padding:10px;">de u vers v</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Suite de sommets</td>
+      <td style="border:1px solid #ddd;padding:10px;">chaîne</td>
+      <td style="border:1px solid #ddd;padding:10px;">chemin</td>
+    </tr>
+    <tr style="background:#f3f9f9;">
+      <td style="border:1px solid #ddd;padding:10px;">Boucle fermée</td>
+      <td style="border:1px solid #ddd;padding:10px;">cycle</td>
+      <td style="border:1px solid #ddd;padding:10px;">circuit</td>
+    </tr>
+  </table>
+
+  <p><strong>Ordre du graphe.</strong> L'<strong>ordre</strong> d'un graphe est son <strong>nombre de sommets</strong>, noté n = |S|. On note souvent m = |A| le nombre d'arêtes (ou d'arcs). Pour un graphe simple non orienté, 0 &le; m &le; n(n&minus;1)/2 ; pour un graphe simple orienté, 0 &le; m &le; n(n&minus;1).</p>
+
+  <!-- ===================== 3 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Degré d'un sommet</h2>
+  <p>Le <strong>degré</strong> mesure le nombre de liens attachés à un sommet.</p>
+  <ul style="padding-left:22px;">
+    <li><strong>Graphe non orienté :</strong> le degré d'un sommet u, noté deg(u), est le nombre d'arêtes incidentes à u (c.-à-d. le nombre de ses voisins).</li>
+    <li><strong>Graphe orienté :</strong> on distingue le <strong>degré entrant</strong> d<sup>&minus;</sup>(u) (nombre d'arcs arrivant en u) et le <strong>degré sortant</strong> d<sup>+</sup>(u) (nombre d'arcs partant de u).</li>
+  </ul>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Lemme des poignées de main.</strong> Dans un graphe non orienté, la somme des degrés vaut deux fois le nombre d'arêtes : &sum;<sub>u&isin;S</sub> deg(u) = 2m. (Chaque arête contribue 1 au degré de ses deux extrémités.) Pour un graphe orienté : &sum; d<sup>+</sup>(u) = &sum; d<sup>&minus;</sup>(u) = m.
+  </div>
+
+  <!-- ===================== 4 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Chemins, chaînes, cycles et circuits</h2>
+  <p>Une <strong>chaîne</strong> (graphe non orienté) ou un <strong>chemin</strong> (graphe orienté) est une suite de sommets s<sub>0</sub>, s<sub>1</sub>, …, s<sub>k</sub> telle que deux sommets consécutifs sont reliés (par une arête, resp. un arc dans le bon sens). Sa <strong>longueur</strong> est le nombre de liens parcourus, soit k.</p>
+  <ul style="padding-left:22px;">
+    <li>Une chaîne/un chemin est <strong>simple</strong> si elle ne passe pas deux fois par le même sommet.</li>
+    <li>Un <strong>cycle</strong> (non orienté) ou un <strong>circuit</strong> (orienté) est une chaîne/un chemin qui revient à son point de départ (s<sub>0</sub> = s<sub>k</sub>) sans réutiliser de lien.</li>
+  </ul>
+  <p>On dit qu'un sommet v est <strong>accessible</strong> depuis u s'il existe un chemin de u vers v. La <strong>distance</strong> entre u et v est la longueur du plus court chemin les reliant (∞ s'il n'en existe aucun).</p>
+
+  <!-- ===================== 5 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">5. Connexité</h2>
+  <p>Un graphe <strong>non orienté</strong> est <strong>connexe</strong> s'il existe une chaîne entre toute paire de sommets : « on peut aller de n'importe où à n'importe où ». Sinon, le graphe se décompose en <strong>composantes connexes</strong>, chacune étant un sous-ensemble maximal de sommets deux à deux reliés.</p>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Test de connexité.</strong> Un graphe non orienté est connexe si et seulement si un parcours (BFS ou DFS) lancé depuis <em>un seul</em> sommet atteint <strong>tous</strong> les sommets. C'est l'application directe des algorithmes de la section 11.
+  </div>
+
+  <!-- ===================== 6 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. Représentation : matrice d'adjacence</h2>
+  <p>Numérotons les sommets de 0 à n&minus;1. La <strong>matrice d'adjacence</strong> M est une matrice n × n telle que :</p>
+  <p style="text-align:center;font-size:1.05em;">M[i][j] = 1 s'il existe un arc/arête de i vers j, &nbsp; M[i][j] = 0 sinon.</p>
+  <ul style="padding-left:22px;">
+    <li>Pour un graphe <strong>non orienté</strong>, la matrice est <strong>symétrique</strong> : M[i][j] = M[j][i].</li>
+    <li>La diagonale est nulle (pas de boucle dans un graphe simple).</li>
+  </ul>
+  <p>Exemple — graphe non orienté à 4 sommets avec les arêtes {0,1}, {0,2}, {1,2}, {2,3} :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">       0  1  2  3
+   0 [ 0  1  1  0 ]
+   1 [ 1  0  1  0 ]
+   2 [ 1  1  0  1 ]
+   3 [ 0  0  1  0 ]</pre>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"># Matrice d'adjacence en Python : liste de listes
+M = [
+    [0, 1, 1, 0],
+    [1, 0, 1, 0],
+    [1, 1, 0, 1],
+    [0, 0, 1, 0],
+]
+
+# Existe-t-il une arête entre 0 et 2 ?
+print(M[0][2] == 1)   # True</pre>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#026573;color:#fff;">
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Opération</th>
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Coût (matrice)</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Test d'existence d'un arc</td>
+      <td style="border:1px solid #ddd;padding:10px;">O(1)</td>
+    </tr>
+    <tr style="background:#f3f9f9;">
+      <td style="border:1px solid #ddd;padding:10px;">Liste des voisins d'un sommet</td>
+      <td style="border:1px solid #ddd;padding:10px;">O(n)</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Mémoire utilisée</td>
+      <td style="border:1px solid #ddd;padding:10px;">O(n<sup>2</sup>)</td>
+    </tr>
+  </table>
+  <p>La matrice est idéale pour un graphe <strong>dense</strong> (beaucoup d'arêtes) ou quand on teste souvent l'existence d'un lien, mais elle gaspille de la mémoire pour un graphe <strong>creux</strong>.</p>
+
+  <!-- ===================== 7 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">7. Représentation : listes d'adjacence</h2>
+  <p>Pour chaque sommet, on stocke la <strong>liste de ses voisins</strong>. On regroupe ces listes dans une liste (sommets numérotés) ou dans un dictionnaire (sommets quelconques).</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"># Listes d'adjacence dans une LISTE (sommets 0..n-1)
+G = [
+    [1, 2],     # voisins de 0
+    [0, 2],     # voisins de 1
+    [0, 1, 3],  # voisins de 2
+    [2],        # voisins de 3
+]
+
+# Listes d'adjacence dans un DICTIONNAIRE
+G = {
+    'A': ['B', 'C'],
+    'B': ['A', 'C'],
+    'C': ['A', 'B', 'D'],
+    'D': ['C'],
+}
+print(G['C'])   # ['A', 'B', 'D'] : voisins de C</pre>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#026573;color:#fff;">
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Opération</th>
+      <th style="border:1px solid #026573;padding:10px;text-align:left;">Coût (listes d'adj.)</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Test d'existence d'un arc</td>
+      <td style="border:1px solid #ddd;padding:10px;">O(deg(u))</td>
+    </tr>
+    <tr style="background:#f3f9f9;">
+      <td style="border:1px solid #ddd;padding:10px;">Liste des voisins d'un sommet</td>
+      <td style="border:1px solid #ddd;padding:10px;">O(deg(u))</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:10px;">Mémoire utilisée</td>
+      <td style="border:1px solid #ddd;padding:10px;">O(n + m)</td>
+    </tr>
+  </table>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Quel choix ?</strong> Listes d'adjacence pour un graphe <strong>creux</strong> (m petit devant n<sup>2</sup>, cas le plus fréquent) : peu de mémoire et parcours efficace des voisins. Matrice pour un graphe <strong>dense</strong> ou des tests d'arêtes répétés.
+  </div>
+
+  <!-- ===================== 8 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">8. Manipulation d'un graphe en Python</h2>
+  <p>Voici les opérations de base sur une représentation par dictionnaire de listes (graphe non orienté).</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def ajouter_sommet(G, u):
+    if u not in G:
+        G[u] = []
+
+def ajouter_arete(G, u, v):
+    ajouter_sommet(G, u)
+    ajouter_sommet(G, v)
+    if v not in G[u]:
+        G[u].append(v)
+        G[v].append(u)   # non orienté : on ajoute dans les deux sens
+
+def supprimer_arete(G, u, v):
+    if v in G[u]:
+        G[u].remove(v)
+        G[v].remove(u)
+
+def existe_arete(G, u, v):
+    return u in G and v in G[u]
+
+def voisins(G, u):
+    return G[u]</pre>
+  <p>Construire la liste des voisins d'un sommet <strong>à partir de la matrice d'adjacence</strong> est un grand classique :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def voisins_depuis_matrice(M, u):
+    return [j for j in range(len(M)) if M[u][j] == 1]
+
+M = [[0,1,1,0],[1,0,1,0],[1,1,0,1],[0,0,1,0]]
+print(voisins_depuis_matrice(M, 2))   # [0, 1, 3]</pre>
+
+  <!-- ===================== 9 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">9. Parcours en largeur (BFS)</h2>
+  <p>Le <strong>parcours en largeur</strong> (<em>Breadth-First Search</em>) explore le graphe « par cercles concentriques » : d'abord le sommet de départ, puis tous ses voisins (distance 1), puis les voisins des voisins (distance 2), etc. Il utilise une <strong>file</strong> (FIFO : premier entré, premier sorti).</p>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ Efficacité de la file.</strong> Une <code>list</code> Python est lente en tête (<code>pop(0)</code> est en O(n)). On utilise <strong><code>deque</code></strong> du module <code>collections</code> : <code>popleft()</code> et <code>append()</code> sont en O(1).
+  </div>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">from collections import deque
+
+def bfs(G, depart):
+    vus = {depart}
+    file = deque([depart])
+    ordre = []
+    while file:
+        u = file.popleft()        # défile en tête (FIFO)
+        ordre.append(u)
+        for v in G[u]:
+            if v not in vus:
+                vus.add(v)
+                file.append(v)    # enfile en queue
+    return ordre
+
+G = {'A':['B','C'], 'B':['A','D'], 'C':['A','D'], 'D':['B','C']}
+print(bfs(G, 'A'))   # ['A', 'B', 'C', 'D']</pre>
+  <p>Le BFS visite chaque sommet une fois et examine chaque arête une fois : sa complexité est <strong>O(n + m)</strong>. Propriété fondamentale : dans un graphe non pondéré, le BFS calcule le <strong>plus court chemin</strong> (en nombre d'arêtes) depuis le sommet de départ.</p>
+
+  <!-- ===================== 10 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">10. Parcours en profondeur (DFS)</h2>
+  <p>Le <strong>parcours en profondeur</strong> (<em>Depth-First Search</em>) explore « le plus loin possible » avant de revenir en arrière (<em>backtracking</em>). Il s'écrit naturellement de façon <strong>récursive</strong>, ou de façon itérative avec une <strong>pile</strong> (LIFO).</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"># Version récursive
+def dfs(G, u, vus=None):
+    if vus is None:
+        vus = set()
+    vus.add(u)
+    ordre = [u]
+    for v in G[u]:
+        if v not in vus:
+            ordre += dfs(G, v, vus)
+    return ordre
+
+# Version itérative (pile)
+def dfs_iter(G, depart):
+    vus = set()
+    pile = [depart]
+    ordre = []
+    while pile:
+        u = pile.pop()            # dépile au sommet (LIFO)
+        if u not in vus:
+            vus.add(u)
+            ordre.append(u)
+            for v in G[u]:
+                if v not in vus:
+                    pile.append(v)
+    return ordre</pre>
+  <p>Comme le BFS, le DFS est en <strong>O(n + m)</strong>. La différence est l'<strong>ordre de visite</strong> : le BFS privilégie la largeur (file), le DFS la profondeur (pile/récursion).</p>
+
+  <!-- ===================== 11 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">11. Applications des parcours : cycle et connexité</h2>
+
+  <h3 style="color:#014a54;">Test de connexité (non orienté)</h3>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def est_connexe(G):
+    if not G:
+        return True
+    depart = next(iter(G))        # un sommet quelconque
+    atteints = set(bfs(G, depart))
+    return len(atteints) == len(G)   # a-t-on atteint TOUS les sommets ?</pre>
+
+  <h3 style="color:#014a54;">Détection de cycle (non orienté)</h3>
+  <p>Lors d'un DFS, si on rencontre un voisin <strong>déjà visité</strong> qui n'est <strong>pas le père</strong> dont on vient, c'est qu'il existe un cycle.</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def a_un_cycle(G):
+    vus = set()
+    def explore(u, pere):
+        vus.add(u)
+        for v in G[u]:
+            if v not in vus:
+                if explore(v, u):
+                    return True
+            elif v != pere:      # voisin déjà vu, différent du père => cycle
+                return True
+        return False
+    for s in G:
+        if s not in vus:
+            if explore(s, None):
+                return True
+    return False</pre>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Cas orienté.</strong> Pour détecter un <strong>circuit</strong> dans un graphe orienté, on marque les sommets « en cours d'exploration » : rencontrer un sommet déjà « en cours » révèle un circuit (arc retour).
+  </div>
+
+  <!-- ===================== 12 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">12. Graphes pondérés et plus court chemin (Dijkstra)</h2>
+  <p>Un graphe est <strong>pondéré</strong> quand chaque arc/arête porte une <strong>étiquette</strong> numérique (un <strong>poids</strong> ou coût) : distance, temps, prix… Le problème du <strong>plus court chemin</strong> consiste à minimiser la somme des poids le long du chemin.</p>
+  <p>En Python, on stocke le poids à côté du voisin :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"># dictionnaire de listes de couples (voisin, poids)
+G = {
+    'A': [('B', 4), ('C', 1)],
+    'B': [('D', 1)],
+    'C': [('B', 2), ('D', 5)],
+    'D': [],
+}</pre>
+  <p>L'<strong>algorithme de Dijkstra</strong> calcule les plus courtes distances depuis une source, à condition que <strong>tous les poids soient positifs</strong>. Idée : à chaque étape, on « fige » le sommet non encore traité de plus petite distance estimée, puis on <strong>relâche</strong> ses arcs (on met à jour la distance de ses voisins). Une <strong>file de priorité</strong> (tas, module <code>heapq</code>) sélectionne efficacement ce minimum.</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">import heapq
+
+def dijkstra(G, source):
+    dist = {u: float('inf') for u in G}
+    dist[source] = 0
+    tas = [(0, source)]               # (distance, sommet)
+    while tas:
+        d, u = heapq.heappop(tas)     # sommet de plus petite distance
+        if d > dist[u]:
+            continue                  # entrée périmée
+        for v, poids in G[u]:
+            if dist[u] + poids < dist[v]:
+                dist[v] = dist[u] + poids     # relâchement
+                heapq.heappush(tas, (dist[v], v))
+    return dist
+
+print(dijkstra(G, 'A'))   # {'A': 0, 'B': 3, 'C': 1, 'D': 4}</pre>
+  <p>Avec un tas, Dijkstra s'exécute en <strong>O((n + m) log n)</strong>. Note : le plus court chemin A→B passe par C (1 + 2 = 3) plutôt que par l'arc direct A→B (de poids 4).</p>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ Poids négatifs.</strong> Dijkstra <strong>échoue</strong> en présence de poids négatifs : un sommet figé pourrait encore être amélioré plus tard. Il faut alors d'autres algorithmes (Bellman-Ford, hors programme principal).
+  </div>
+
+  <!-- ===================== 13 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">13. Pour aller plus loin : A* et Floyd-Warshall</h2>
+  <p><strong>Algorithme A*.</strong> C'est une variante <strong>heuristique</strong> de Dijkstra. À la distance déjà parcourue g(v) on ajoute une <strong>estimation</strong> h(v) du reste à parcourir jusqu'au but (par exemple la distance à vol d'oiseau). On explore en priorité les sommets de plus petit f(v) = g(v) + h(v). Si l'heuristique ne surestime jamais la distance réelle (heuristique <em>admissible</em>), A* trouve le plus court chemin tout en explorant <strong>moins de sommets</strong> que Dijkstra. Très utilisé en jeux vidéo et GPS.</p>
+  <p><strong>Floyd-Warshall.</strong> Calcule les plus courtes distances entre <strong>toutes les paires</strong> de sommets, par programmation dynamique. On améliore progressivement la distance d[i][j] en autorisant comme sommets intermédiaires 0, 1, …, k :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def floyd_warshall(d):     # d : matrice n x n des poids, inf si pas d'arc
+    n = len(d)
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if d[i][k] + d[k][j] < d[i][j]:
+                    d[i][j] = d[i][k] + d[k][j]
+    return d</pre>
+  <p>Sa complexité est <strong>O(n<sup>3</sup>)</strong>. La <strong>coloration de graphe</strong> (attribuer une couleur à chaque sommet pour que deux voisins n'aient jamais la même) est un autre classique d'application.</p>
+
+  <!-- ===================== RECAP ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">14. Récapitulatif</h2>
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:14px 18px;border-radius:4px;margin:16px 0;">
+    <ul style="margin:0;padding-left:20px;">
+      <li>Un <strong>graphe</strong> G = (S, A) modélise des objets et leurs liens : <strong>arêtes</strong> (non orienté) ou <strong>arcs</strong> (orienté). On se limite aux graphes <strong>simples</strong>.</li>
+      <li>Vocabulaire : <strong>ordre</strong> (n sommets), <strong>degré</strong> (entrant/sortant), <strong>chaîne/chemin</strong>, <strong>cycle/circuit</strong>, <strong>connexité</strong>.</li>
+      <li>Deux représentations : <strong>matrice d'adjacence</strong> (O(n<sup>2</sup>) mémoire, test d'arc O(1)) et <strong>listes d'adjacence</strong> (O(n + m) mémoire, idéales pour graphes creux).</li>
+      <li><strong>BFS</strong> (file, <code>deque</code>) et <strong>DFS</strong> (pile/récursion) parcourent un graphe en <strong>O(n + m)</strong> ; applications : <strong>connexité</strong>, <strong>détection de cycle</strong>, plus court chemin non pondéré (BFS).</li>
+      <li>Sur un graphe <strong>pondéré positivement</strong>, <strong>Dijkstra</strong> donne les plus courtes distances en O((n + m) log n). Extensions : <strong>A*</strong> (heuristique), <strong>Floyd-Warshall</strong> (toutes paires, O(n<sup>3</sup>)), coloration.</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#9bb;border-top:1px solid #e0e0e0;padding-top:14px;margin-top:30px;font-size:0.85em;">CPGE MP / PSI · Informatique — Introduction à la théorie des graphes</p>
+
+</div>

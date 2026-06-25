@@ -1,0 +1,131 @@
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <div style="background:#026573;color:#ffffff;padding:26px;border-radius:10px;margin-bottom:24px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.7em;">Exercices — Les algorithmes gloutons</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:10px 0 0 0;color:#d6eef0;">6 exercices Python progressifs : rendu de monnaie, contre-exemples d'optimalité, sac à dos fractionnaire, sélection d'activités et coût de Huffman. Solution modèle et complexité données pour chacun.</p>
+  </div>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:12px 16px;border-radius:4px;margin-bottom:26px;">
+    <strong>Conseil.</strong> Cherchez la solution seul(e) avant de comparer. Pour chaque problème, demandez-vous si le glouton est <strong>optimal</strong> ou si l'on peut exhiber un contre-exemple.
+  </div>
+
+  <!-- EX1 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 1 — Rendu de monnaie (glouton)</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">rendu_monnaie(systeme, S)</code> où <code>systeme</code> est trié par ordre décroissant ; renvoie la liste des pièces rendues pour la somme S.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">rendu_monnaie([50, 20, 10, 5, 2, 1], 68) → [50, 10, 5, 2, 1]
+rendu_monnaie([2, 1], 5)                 → [2, 2, 1]</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def rendu_monnaie(systeme, S):
+    rendu = []
+    for piece in systeme:
+        while S &gt;= piece:
+            rendu.append(piece)
+            S = S - piece
+    return rendu</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> O(nombre de pièces rendues) ; avec division entière, O(taille du système).</p>
+  </div>
+
+  <!-- EX2 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 2 — Nombre de pièces</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">nb_pieces(systeme, S)</code> qui renvoie le nombre de pièces rendues par le glouton, sans construire la liste.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">nb_pieces([50, 20, 10, 5, 2, 1], 68) → 5
+nb_pieces([1], 7)                    → 7</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def nb_pieces(systeme, S):
+    n = 0
+    for piece in systeme:
+        n = n + S // piece
+        S = S % piece
+    return n</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> O(taille du système) grâce à la division entière.</p>
+  </div>
+
+  <!-- EX3 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 3 — Le glouton est-il optimal ?</strong></div>
+    <p>Avec <code>opt(systeme, S)</code> (programmation dynamique, fournie) renvoyant le nombre minimal de pièces, écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">glouton_est_optimal(systeme, S)</code> comparant le glouton à l'optimum.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">glouton_est_optimal([4, 3, 1], 6) → False   # glouton 4+1+1, optimal 3+3
+glouton_est_optimal([5, 2, 1], 6) → True</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def opt(systeme, S):
+    INF = float('inf')
+    dp = [0] + [INF] * S
+    for m in range(1, S + 1):
+        for p in systeme:
+            if p &lt;= m and dp[m - p] + 1 &lt; dp[m]:
+                dp[m] = dp[m - p] + 1
+    return dp[S]
+
+def glouton_est_optimal(systeme, S):
+    return nb_pieces(systeme, S) == opt(systeme, S)</pre>
+    <p style="background:#fdeef0;border-left:4px solid #e74c3c;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Idée clé :</strong> le système (1, 3, 4) n'est pas canonique → le glouton n'est pas optimal pour S = 6.</p>
+  </div>
+
+  <!-- EX4 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 4 — Sac à dos fractionnaire</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">sac_fractionnaire(objets, C)</code> (objets = liste de (valeur, poids)) renvoyant la valeur maximale transportable, arrondie à 2 décimales.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">sac_fractionnaire([(60,10),(100,20),(120,30)], 50) → 240.0
+sac_fractionnaire([(60,10),(100,20),(120,30)], 25) → 135.0</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def sac_fractionnaire(objets, C):
+    objets = sorted(objets, key=lambda o: o[0] / o[1], reverse=True)
+    valeur = 0.0
+    for v, p in objets:
+        if C &gt;= p:
+            valeur += v; C -= p
+        else:
+            valeur += v * (C / p); C = 0; break
+    return round(valeur, 2)</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> dominée par le tri, <strong>O(n log n)</strong>. Le glouton est ici optimal.</p>
+  </div>
+
+  <!-- EX5 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 5 — Sélection d'activités</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">selection_activites(activites)</code> (activites = liste de (debut, fin)) renvoyant le nombre maximal d'activités compatibles. Glouton : trier par heure de fin croissante.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">selection_activites([(1,3),(2,5),(4,7),(1,8),(5,9),(8,10)]) → 3</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def selection_activites(activites):
+    activites = sorted(activites, key=lambda a: a[1])
+    fin = float('-inf')
+    n = 0
+    for debut, f in activites:
+        if debut &gt;= fin:
+            n += 1
+            fin = f
+    return n</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> tri en <strong>O(n log n)</strong>. Glouton optimal (preuve par échange sur l'heure de fin).</p>
+  </div>
+
+  <!-- EX6 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 6 — Coût d'un codage de Huffman</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">cout_huffman(freqs)</code> renvoyant le coût total (somme des fusions) avec le module <code>heapq</code>.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">cout_huffman([5, 2, 1, 1]) → 15
+cout_huffman([1, 1, 1, 1]) → 8</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">import heapq
+
+def cout_huffman(freqs):
+    if len(freqs) &lt;= 1:
+        return 0
+    tas = list(freqs)
+    heapq.heapify(tas)
+    cout = 0
+    while len(tas) &gt; 1:
+        a = heapq.heappop(tas)
+        b = heapq.heappop(tas)
+        cout += a + b
+        heapq.heappush(tas, a + b)
+    return cout</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> <strong>O(n log n)</strong> (n−1 fusions, chacune O(log n) sur le tas). Glouton optimal.</p>
+  </div>
+
+  <p style="text-align:center;color:#7f8c8d;font-size:0.85em;margin-top:30px;border-top:1px solid #ddd;padding-top:14px;">CPGE MP/PSI — Informatique · Exercices : algorithmes gloutons · Conforme au programme officiel 2023</p>
+
+</div>

@@ -1,0 +1,37 @@
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <div style="background:#026573;color:#ffffff;padding:24px 26px;border-radius:10px;margin-bottom:24px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.7em;">Arbres binaires — Exercices Python (CodeRunner)</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:10px 0 0 0;color:#d6eef0;">Cinq exercices auto-évalués. Convention : un arbre vaut <code>None</code> ou <code>[valeur, gauche, droite]</code>.</p>
+  </div>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:12px 16px;border-radius:4px;margin-bottom:24px;">
+    <strong>Rappel de la représentation.</strong> <code>a[0]</code> = valeur de la racine, <code>a[1]</code> = sous-arbre gauche, <code>a[2]</code> = sous-arbre droit. Exemple :<br>
+    <code>a = [4, [2, [1,None,None], [3,None,None]], [6, [5,None,None], [7,None,None]]]</code>
+  </div>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">Q1 — Nombre de nœuds</h2>
+  <p>Écrire <code>nb_noeuds(a)</code> renvoyant le nombre de nœuds de l'arbre <code>a</code>.</p>
+  <pre style="background:#f4f9fc;border-left:4px solid #026573;padding:10px 14px;border-radius:4px;">nb_noeuds([4,[2,None,None],[6,None,None]]) → 3</pre>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">Q2 — Hauteur</h2>
+  <p>Écrire <code>hauteur(a)</code> (arbre vide → &minus;1, feuille seule → 0).</p>
+  <pre style="background:#f4f9fc;border-left:4px solid #026573;padding:10px 14px;border-radius:4px;">hauteur([4,[2,None,None],[6,None,None]]) → 1</pre>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">Q3 — Parcours infixe</h2>
+  <p>Écrire <code>infixe(a)</code> renvoyant la liste des valeurs dans l'ordre gauche → racine → droite.</p>
+  <pre style="background:#f4f9fc;border-left:4px solid #026573;padding:10px 14px;border-radius:4px;">infixe([4,[2,None,None],[6,None,None]]) → [2, 4, 6]</pre>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">Q4 — Recherche dans un ABR</h2>
+  <p>Écrire <code>recherche(a, x)</code> qui exploite la propriété d'ordre (gauche &lt; nœud &lt; droite) pour ne descendre que d'un côté.</p>
+  <pre style="background:#f4f9fc;border-left:4px solid #026573;padding:10px 14px;border-radius:4px;">recherche([4,[2,None,None],[6,None,None]], 6) → True</pre>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">Q5 — Parcours en largeur</h2>
+  <p>Écrire <code>largeur(a)</code> (niveau par niveau, à l'aide d'une file <code>deque</code>).</p>
+  <pre style="background:#f4f9fc;border-left:4px solid #026573;padding:10px 14px;border-radius:4px;">largeur([4,[2,None,None],[6,None,None]]) → [4, 2, 6]</pre>
+
+  <p style="text-align:center;color:#9aa7b2;font-size:0.85em;margin-top:28px;">Importer <code>exercices-arbres-binaires.xml</code> dans la banque de questions Moodle (CodeRunner).</p>
+
+</div>

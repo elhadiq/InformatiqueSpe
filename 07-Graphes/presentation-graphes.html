@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction à la théorie des graphes</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--teal:#026573;--dark:#2c3e50;--bg:#e8edf2;--border:#dce3ea;--hl:#e4f1f2;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 5rem;gap:2rem;}
+.slide{background:#fff;width:100%;max-width:940px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.10);padding:2.2rem 2.8rem 1.8rem;position:relative;}
+.slide-number{position:absolute;bottom:0.7rem;right:1.2rem;font-size:0.72rem;color:#aaa;}
+.slide.title-slide{background:linear-gradient(145deg,#f4f9fc 60%,#d9eef0);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;border-top:6px solid var(--teal);}
+.slide.title-slide h1{font-size:1.9rem;color:var(--dark);margin-bottom:0.4rem;}
+.slide.title-slide .subtitle{font-size:1.15rem;color:#555;}
+h2.frame-title{font-size:1.6rem;color:var(--teal);font-weight:700;margin-bottom:0.7rem;padding-bottom:0.35rem;border-bottom:2px solid #b7dadd;}
+h2.frame-title .tag{font-size:0.7em;font-weight:700;padding:2px 10px;border-radius:12px;color:#fff;vertical-align:middle;margin-left:0.4rem;background:var(--teal);}
+p{line-height:1.7;margin:0.45rem 0;} ul,ol{margin:0.5rem 0 0.5rem 1.4rem;line-height:1.85;}
+ul li::marker,ol li::marker{color:var(--teal);} strong{font-weight:700;} em{font-style:italic;}
+.cols{display:flex;gap:2rem;margin-top:0.8rem;align-items:flex-start;} .col-text{flex:1.1;} .col-side{flex:0.9;}
+.code{background:#0d1117;color:#e6edf3;font-family:'Consolas','Courier New',monospace;font-size:0.85rem;line-height:1.5;padding:0.9rem 1.1rem;border-radius:8px;overflow-x:auto;margin:0.6rem 0;white-space:pre;tab-size:4;}
+.code .kw{color:#ff7b72;} .code .fn{color:#d2a8ff;} .code .nb{color:#79c0ff;} .code .cm{color:#8b949e;}
+.hl-box{background:var(--hl);border-left:4px solid var(--teal);border-radius:0 6px 6px 0;padding:0.7rem 1rem;margin:0.8rem 0;font-size:0.97rem;}
+.hl-box.warn{background:#fef9e7;border-left-color:#f39c12;} .hl-box.bad{background:#fdeef0;border-left-color:#e74c3c;} .hl-box.good{background:#eafaf1;border-left-color:#27ae60;}
+table.ref{border-collapse:collapse;width:100%;margin:0.7rem 0;font-size:0.92rem;}
+table.ref th{background:var(--dark);color:#fff;padding:0.5rem 0.7rem;text-align:left;} table.ref td{border:1px solid var(--border);padding:0.45rem 0.7rem;} table.ref tr:nth-child(even) td{background:#f4f9fc;}
+svg{display:block;margin:0.6rem auto;}
+#nav{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:0.4rem;z-index:100;}
+#nav button{background:var(--teal);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:background .2s;}
+#nav button:hover{background:#014a54;} #nav #btn-scroll{border-radius:20px;width:auto;padding:0 14px;font-size:0.78rem;font-weight:700;}
+body.slideshow .slide{display:none;} body.slideshow .slide.active{display:block;} body.slideshow .slide.active.title-slide{display:flex;}
+</style>
+</head>
+<body>
+
+<!-- ===== 1. Titre ===== -->
+<section class="slide title-slide" id="s1">
+  <h1>Introduction à la théorie des graphes</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">CPGE 2ᵉ année — MP / PSI · Informatique</p>
+  <span class="slide-number">1 / 16</span>
+</section>
+
+<!-- ===== 2 ===== -->
+<section class="slide" id="s2">
+  <h2 class="frame-title">Qu'est-ce qu'un graphe ?<span class="tag">DÉFINITION</span></h2>
+  <p>Un <strong>graphe</strong> $G = (S, A)$ modélise des objets et leurs liens :</p>
+  <ul>
+    <li>$S$ : ensemble fini de <strong>sommets</strong> ;</li>
+    <li>$A$ : ensemble de <strong>liens</strong> — <strong>arêtes</strong> (non orienté) ou <strong>arcs</strong> (orienté).</li>
+  </ul>
+  <div class="cols">
+    <div class="col-text">
+      <p>Exemples : réseaux routiers, réseaux sociaux, pages web, labyrinthes…</p>
+      <div class="hl-box warn"><strong>Graphes simples.</strong> Au programme : ni boucle, ni multi-arête.</div>
+    </div>
+    <div class="col-side">
+      <svg width="220" height="150" viewBox="0 0 220 150">
+        <line x1="40" y1="40" x2="110" y2="30" stroke="#026573" stroke-width="2"/>
+        <line x1="40" y1="40" x2="70" y2="110" stroke="#026573" stroke-width="2"/>
+        <line x1="110" y1="30" x2="70" y2="110" stroke="#026573" stroke-width="2"/>
+        <line x1="110" y1="30" x2="180" y2="90" stroke="#026573" stroke-width="2"/>
+        <circle cx="40" cy="40" r="16" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+        <circle cx="110" cy="30" r="16" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+        <circle cx="70" cy="110" r="16" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+        <circle cx="180" cy="90" r="16" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+        <text x="40" y="45" text-anchor="middle" font-size="14" fill="#026573">0</text>
+        <text x="110" y="35" text-anchor="middle" font-size="14" fill="#026573">1</text>
+        <text x="70" y="115" text-anchor="middle" font-size="14" fill="#026573">2</text>
+        <text x="180" y="95" text-anchor="middle" font-size="14" fill="#026573">3</text>
+      </svg>
+    </div>
+  </div>
+  <span class="slide-number">2 / 16</span>
+</section>
+
+<!-- ===== 3 ===== -->
+<section class="slide" id="s3">
+  <h2 class="frame-title">Orienté ou non orienté ?<span class="tag">VOCABULAIRE</span></h2>
+  <table class="ref">
+    <tr><th>Notion</th><th>Non orienté</th><th>Orienté</th></tr>
+    <tr><td>Lien</td><td>arête {u, v}</td><td>arc (u, v)</td></tr>
+    <tr><td>Sens</td><td>aucun (symétrique)</td><td>de u vers v</td></tr>
+    <tr><td>Suite de sommets</td><td>chaîne</td><td>chemin</td></tr>
+    <tr><td>Boucle fermée</td><td>cycle</td><td>circuit</td></tr>
+  </table>
+  <ul>
+    <li><strong>Ordre</strong> du graphe : nombre de sommets $n = |S|$.</li>
+    <li>$m = |A|$ : nombre d'arêtes / d'arcs.</li>
+  </ul>
+  <span class="slide-number">3 / 16</span>
+</section>
+
+<!-- ===== 4 ===== -->
+<section class="slide" id="s4">
+  <h2 class="frame-title">Degré d'un sommet<span class="tag">VOCABULAIRE</span></h2>
+  <ul>
+    <li><strong>Non orienté :</strong> $\deg(u)$ = nombre d'arêtes incidentes à $u$ (= nombre de voisins).</li>
+    <li><strong>Orienté :</strong> degré entrant $d^{-}(u)$ et degré sortant $d^{+}(u)$.</li>
+  </ul>
+  <div class="hl-box"><strong>Lemme des poignées de main.</strong> $\displaystyle\sum_{u\in S}\deg(u) = 2m$ : chaque arête compte 1 pour chacune de ses deux extrémités.</div>
+  <span class="slide-number">4 / 16</span>
+</section>
+
+<!-- ===== 5 ===== -->
+<section class="slide" id="s5">
+  <h2 class="frame-title">Chemins, cycles, connexité<span class="tag">VOCABULAIRE</span></h2>
+  <ul>
+    <li>Une <strong>chaîne/chemin</strong> $s_0, s_1, \dots, s_k$ : sommets consécutifs reliés. <strong>Longueur</strong> = $k$.</li>
+    <li><strong>Cycle/circuit</strong> : revient au départ ($s_0 = s_k$) sans réutiliser de lien.</li>
+    <li><strong>Connexe</strong> : il existe une chaîne entre toute paire de sommets.</li>
+  </ul>
+  <div class="hl-box good"><strong>Test.</strong> Un graphe non orienté est connexe ⟺ un parcours depuis <em>un seul</em> sommet atteint <strong>tous</strong> les sommets.</div>
+  <span class="slide-number">5 / 16</span>
+</section>
+
+<!-- ===== 6 ===== -->
+<section class="slide" id="s6">
+  <h2 class="frame-title">Matrice d'adjacence<span class="tag">REPRÉSENTATION</span></h2>
+  <div class="cols">
+    <div class="col-text">
+      <p>$M[i][j] = 1$ s'il existe un arc/arête $i \to j$, sinon $0$.</p>
+      <ul>
+        <li>Non orienté ⟹ matrice <strong>symétrique</strong>.</li>
+        <li>Test d'arc en $O(1)$, voisins en $O(n)$.</li>
+        <li>Mémoire $O(n^2)$ — bon pour graphes <strong>denses</strong>.</li>
+      </ul>
+    </div>
+    <div class="col-side">
+      <div class="code">     0  1  2  3
+0 [ 0  1  1  0 ]
+1 [ 1  0  1  0 ]
+2 [ 1  1  0  1 ]
+3 [ 0  0  1  0 ]</div>
+    </div>
+  </div>
+  <span class="slide-number">6 / 16</span>
+</section>
+
+<!-- ===== 7 ===== -->
+<section class="slide" id="s7">
+  <h2 class="frame-title">Listes d'adjacence<span class="tag">REPRÉSENTATION</span></h2>
+  <div class="code"><span class="cm"># liste de listes              # dictionnaire</span>
+G = [[1, 2],                  G = {<span class="nb">'A'</span>: [<span class="nb">'B'</span>,<span class="nb">'C'</span>],
+     [0, 2],                       <span class="nb">'B'</span>: [<span class="nb">'A'</span>,<span class="nb">'C'</span>],
+     [0, 1, 3],                    <span class="nb">'C'</span>: [<span class="nb">'A'</span>,<span class="nb">'B'</span>,<span class="nb">'D'</span>],
+     [2]]                          <span class="nb">'D'</span>: [<span class="nb">'C'</span>]}</div>
+  <ul>
+    <li>Mémoire $O(n + m)$ — idéal pour graphes <strong>creux</strong>.</li>
+    <li>Voisins en $O(\deg u)$, test d'arc en $O(\deg u)$.</li>
+  </ul>
+  <span class="slide-number">7 / 16</span>
+</section>
+
+<!-- ===== 8 ===== -->
+<section class="slide" id="s8">
+  <h2 class="frame-title">Manipulations de base<span class="tag">PYTHON</span></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">ajouter_arete</span>(G, u, v):
+    <span class="kw">if</span> v <span class="kw">not in</span> G[u]:
+        G[u].append(v)
+        G[v].append(u)        <span class="cm"># non orienté</span>
+
+<span class="kw">def</span> <span class="fn">voisins_depuis_matrice</span>(M, u):
+    <span class="kw">return</span> [j <span class="kw">for</span> j <span class="kw">in</span> <span class="nb">range</span>(<span class="nb">len</span>(M)) <span class="kw">if</span> M[u][j] == 1]</div>
+  <p>Opérations clés : ajout / suppression / test d'un arc, liste des voisins.</p>
+  <span class="slide-number">8 / 16</span>
+</section>
+
+<!-- ===== 9 ===== -->
+<section class="slide" id="s9">
+  <h2 class="frame-title">Parcours en largeur — BFS<span class="tag">ALGORITHME</span></h2>
+  <div class="cols">
+    <div class="col-text">
+      <p>Explore par <strong>cercles concentriques</strong> : départ, puis voisins, puis voisins des voisins… avec une <strong>file (FIFO)</strong>.</p>
+      <div class="hl-box warn"><strong>deque !</strong> <span style="font-family:monospace">list.pop(0)</span> est en $O(n)$. On utilise <span style="font-family:monospace">collections.deque</span> ($O(1)$).</div>
+      <p>Complexité $O(n + m)$. Donne le plus court chemin <strong>non pondéré</strong>.</p>
+    </div>
+    <div class="col-side">
+      <div class="code"><span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="kw">def</span> <span class="fn">bfs</span>(G, s):
+  vus = {s}
+  f = deque([s])
+  <span class="kw">while</span> f:
+    u = f.popleft()
+    <span class="kw">for</span> v <span class="kw">in</span> G[u]:
+      <span class="kw">if</span> v <span class="kw">not in</span> vus:
+        vus.add(v)
+        f.append(v)</div>
+    </div>
+  </div>
+  <span class="slide-number">9 / 16</span>
+</section>
+
+<!-- ===== 10 ===== -->
+<section class="slide" id="s10">
+  <h2 class="frame-title">Parcours en profondeur — DFS<span class="tag">ALGORITHME</span></h2>
+  <div class="cols">
+    <div class="col-text">
+      <p>Explore <strong>le plus loin possible</strong> avant de revenir en arrière (<em>backtracking</em>). Naturellement <strong>récursif</strong>, ou itératif avec une <strong>pile (LIFO)</strong>.</p>
+      <p>Complexité $O(n + m)$. Diffère du BFS par l'<strong>ordre de visite</strong>.</p>
+    </div>
+    <div class="col-side">
+      <div class="code"><span class="kw">def</span> <span class="fn">dfs</span>(G, u, vus=<span class="nb">None</span>):
+  <span class="kw">if</span> vus <span class="kw">is</span> <span class="nb">None</span>:
+    vus = <span class="nb">set</span>()
+  vus.add(u)
+  <span class="kw">for</span> v <span class="kw">in</span> G[u]:
+    <span class="kw">if</span> v <span class="kw">not in</span> vus:
+      dfs(G, v, vus)</div>
+    </div>
+  </div>
+  <span class="slide-number">10 / 16</span>
+</section>
+
+<!-- ===== 11 ===== -->
+<section class="slide" id="s11">
+  <h2 class="frame-title">Application : connexité &amp; cycle<span class="tag">APPLICATION</span></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">est_connexe</span>(G):
+    depart = <span class="nb">next</span>(<span class="nb">iter</span>(G))
+    <span class="kw">return</span> <span class="nb">len</span>(<span class="nb">set</span>(bfs(G, depart))) == <span class="nb">len</span>(G)</div>
+  <div class="hl-box"><strong>Cycle (non orienté).</strong> En DFS, un voisin déjà vu différent du <strong>père</strong> ⟹ il existe un cycle. (Cas orienté : sommet « en cours » ⟹ circuit.)</div>
+  <span class="slide-number">11 / 16</span>
+</section>
+
+<!-- ===== 12 ===== -->
+<section class="slide" id="s12">
+  <h2 class="frame-title">Graphes pondérés<span class="tag">PONDÉRATION</span></h2>
+  <p>Chaque arc/arête porte une <strong>étiquette</strong> numérique (poids) : distance, temps, prix…</p>
+  <div class="code">G = {<span class="nb">'A'</span>: [(<span class="nb">'B'</span>, 4), (<span class="nb">'C'</span>, 1)],
+     <span class="nb">'B'</span>: [(<span class="nb">'D'</span>, 1)],
+     <span class="nb">'C'</span>: [(<span class="nb">'B'</span>, 2), (<span class="nb">'D'</span>, 5)],
+     <span class="nb">'D'</span>: []}</div>
+  <p>Problème du <strong>plus court chemin</strong> : minimiser la somme des poids.</p>
+  <span class="slide-number">12 / 16</span>
+</section>
+
+<!-- ===== 13 ===== -->
+<section class="slide" id="s13">
+  <h2 class="frame-title">Algorithme de Dijkstra<span class="tag">ALGORITHME</span></h2>
+  <div class="cols">
+    <div class="col-text">
+      <p>Plus courts chemins depuis une source, <strong>poids positifs</strong>. À chaque étape : figer le sommet de plus petite distance, puis <strong>relâcher</strong> ses arcs.</p>
+      <p>File de priorité (<span style="font-family:monospace">heapq</span>) ⟹ $O((n+m)\log n)$.</p>
+      <div class="hl-box bad"><strong>Poids négatifs : échoue !</strong> Un sommet figé pourrait encore être amélioré.</div>
+    </div>
+    <div class="col-side">
+      <div class="code"><span class="kw">import</span> heapq
+<span class="kw">def</span> <span class="fn">dijkstra</span>(G, src):
+  d = {u:<span class="nb">float</span>(<span class="nb">'inf'</span>) <span class="kw">for</span> u <span class="kw">in</span> G}
+  d[src] = 0
+  t = [(0, src)]
+  <span class="kw">while</span> t:
+    du,u = heapq.heappop(t)
+    <span class="kw">for</span> v,w <span class="kw">in</span> G[u]:
+      <span class="kw">if</span> d[u]+w &lt; d[v]:
+        d[v] = d[u]+w
+        heapq.heappush(t,(d[v],v))
+  <span class="kw">return</span> d</div>
+    </div>
+  </div>
+  <span class="slide-number">13 / 16</span>
+</section>
+
+<!-- ===== 14 ===== -->
+<section class="slide" id="s14">
+  <h2 class="frame-title">A* et Floyd-Warshall<span class="tag">APPLICATIONS</span></h2>
+  <ul>
+    <li><strong>A*</strong> : variante <strong>heuristique</strong> de Dijkstra. Priorité $f(v) = g(v) + h(v)$ avec $h$ = estimation du reste. Heuristique admissible ⟹ optimal, moins de sommets explorés.</li>
+    <li><strong>Floyd-Warshall</strong> : plus courts chemins <strong>toutes paires</strong> par programmation dynamique, $O(n^3)$.</li>
+    <li><strong>Coloration</strong> de graphe : deux voisins jamais de la même couleur.</li>
+  </ul>
+  <span class="slide-number">14 / 16</span>
+</section>
+
+<!-- ===== 15 ===== -->
+<section class="slide" id="s15">
+  <h2 class="frame-title">Complexités à retenir<span class="tag">SYNTHÈSE</span></h2>
+  <table class="ref">
+    <tr><th>Opération / algo</th><th>Matrice</th><th>Listes d'adj.</th></tr>
+    <tr><td>Mémoire</td><td>$O(n^2)$</td><td>$O(n+m)$</td></tr>
+    <tr><td>Test d'arc</td><td>$O(1)$</td><td>$O(\deg u)$</td></tr>
+    <tr><td>Voisins</td><td>$O(n)$</td><td>$O(\deg u)$</td></tr>
+    <tr><td>BFS / DFS</td><td>$O(n^2)$</td><td>$O(n+m)$</td></tr>
+    <tr><td>Dijkstra (tas)</td><td colspan="2">$O((n+m)\log n)$</td></tr>
+    <tr><td>Floyd-Warshall</td><td colspan="2">$O(n^3)$</td></tr>
+  </table>
+  <span class="slide-number">15 / 16</span>
+</section>
+
+<!-- ===== 16 ===== -->
+<section class="slide" id="s16">
+  <h2 class="frame-title">Récapitulatif<span class="tag">BILAN</span></h2>
+  <div class="hl-box good">
+    <ul style="margin-left:1rem;">
+      <li>Graphe $G=(S,A)$ : arêtes (non orienté) ou arcs (orienté), simples.</li>
+      <li>Vocabulaire : ordre, degré, chaîne/chemin, cycle/circuit, connexité.</li>
+      <li>Représentations : <strong>matrice</strong> ($O(n^2)$) vs <strong>listes d'adjacence</strong> ($O(n+m)$).</li>
+      <li><strong>BFS</strong> (file) &amp; <strong>DFS</strong> (pile) en $O(n+m)$ ⟹ connexité, cycle.</li>
+      <li><strong>Dijkstra</strong> pour le plus court chemin pondéré positif ; A*, Floyd-Warshall.</li>
+    </ul>
+  </div>
+  <span class="slide-number">16 / 16</span>
+</section>
+
+<div id="nav">
+  <button class="ghost" id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button class="ghost" id="btn-next" title="Suivant">&#8594;</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide');
+let current=0,slideshowMode=false;
+function enter(i){slides[current].classList.remove('active');current=(i+slides.length)%slides.length;slides[current].classList.add('active');slides[current].scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('btn-prev').addEventListener('click',()=>{if(slideshowMode)enter(current-1);});
+document.getElementById('btn-next').addEventListener('click',()=>{if(slideshowMode)enter(current+1);});
+document.getElementById('btn-scroll').addEventListener('click',()=>{slideshowMode=!slideshowMode;document.body.classList.toggle('slideshow',slideshowMode);document.getElementById('btn-scroll').textContent=slideshowMode?'Défiler':'Diaporama';if(slideshowMode)slides[current].classList.add('active');else slides.forEach(s=>s.classList.remove('active'));});
+document.addEventListener('keydown',e=>{if((e.key==='ArrowRight'||e.key==='ArrowDown')&&slideshowMode)enter(current+1);if((e.key==='ArrowLeft'||e.key==='ArrowUp')&&slideshowMode)enter(current-1);});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

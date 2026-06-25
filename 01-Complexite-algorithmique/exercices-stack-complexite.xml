@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <question type="stack">
+    <name><text>Complexité Q1 — Nombre d&#x27;opérations de somme(n)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>On considère la fonction&#8239;:</p><pre style="background:#0d1117;color:#e6edf3;padding:10px;border-radius:6px;">def somme(n):
+    s = 0
+    for i in range(1, n+1):
+        s = s + i
+    return s</pre><p>En comptant <strong>1</strong> opération pour <code>s=0</code>, <strong>1</strong> pour le <code>return</code>, et <strong>2</strong> opérations (une addition + une affectation) à chacun des \(n\) tours de boucle, donner le nombre total d'opérations \(T(n)\) en fonction de \(n\).</p><p>\(T(n) = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Détail&#8239;: \(1\) (initialisation) \(+\ 2n\) (boucle) \(+\ 1\) (retour) \(=\ 2n+2\). C'est une fonction <strong>affine</strong> de \(n\), d'où une complexité \(O(n)\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : 2*n+2;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>T(n)=2*n+2</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>2*n+2</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(T(n)=2n+2\), soit une complexité linéaire \(O(n)\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Comptez&#8239;: \(1+2n+1\). Pensez aux 2 opérations par tour de boucle.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Complexité Q2 — Exécutions d&#x27;une double boucle</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Combien de fois le corps de la double boucle suivante est-il exécuté, en fonction de \(n\)&#8239;?</p><pre style="background:#0d1117;color:#e6edf3;padding:10px;border-radius:6px;">for i in range(n):
+    for j in range(n):
+        traiter(i, j)</pre><p>Nombre d'exécutions \(=\) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>La boucle interne tourne \(n\) fois, pour chacun des \(n\) tours de la boucle externe&#8239;: \(n\times n = n^2\). Complexité <strong>quadratique</strong> \(O(n^2)\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : n^2;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>T(n)=n^2</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>n^2</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Exact&#8239;: \(n\times n = n^2\), complexité \(O(n^2)\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Multipliez le nombre de tours de chaque boucle&#8239;: \(n\times n\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Complexité Q3 — Terme dominant (grand O)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Le nombre d'opérations d'un programme est \(T(n) = 3n^2 + 10n + 50\).</p><p>On écrit \(T(n) = O\big(g(n)\big)\). Donner la fonction \(g(n)\) <strong>la plus simple</strong> (sans constante multiplicative, terme dominant uniquement).</p><p>\(g(n) = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>On ignore les constantes multiplicatives et on ne garde que le terme de plus haut degré&#8239;: \(3n^2 + 10n + 50 = O(n^2)\). Donc \(g(n)=n^2\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : n^2;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>g(n)=n^2</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>n^2</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(T(n)=O(n^2)\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Gardez seulement le terme de plus haut degré, sans son coefficient&#8239;: \(n^2\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Complexité Q4 — Boucle triangulaire</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Combien de fois le corps est-il exécuté, en fonction de \(n\)&#8239;?</p><pre style="background:#0d1117;color:#e6edf3;padding:10px;border-radius:6px;">for i in range(n):
+    for j in range(i):
+        traiter(i, j)</pre><p>Nombre d'exécutions \(=\) [[input:ans1]] [[validation:ans1]]</p><p><em>Indication&#8239;: c'est \(0+1+2+\dots+(n-1)\).</em></p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>La boucle interne tourne \(0,1,2,\dots,(n-1)\) fois&#8239;: la somme vaut \(\dfrac{n(n-1)}{2}\). Comme \(\dfrac{n(n-1)}{2} = \dfrac{n^2-n}{2}\), la complexité reste \(O(n^2)\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : n*(n-1)/2;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>T(n)=n*(n-1)/2</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>n*(n-1)/2</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Exact&#8239;: \(\dfrac{n(n-1)}{2}\), soit \(O(n^2)\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Sommez \(0+1+\dots+(n-1) = \dfrac{n(n-1)}{2}\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Complexité Q5 — Terme dominant (paramétré)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Le nombre d'opérations d'un programme est&#8239;:</p><p>\(T(n) = {@T@}\)</p><p>On écrit \(T(n) = O\big(g(n)\big)\). Donner \(g(n)\) la plus simple (terme dominant, sans coefficient).</p><p>\(g(n) = \) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>On ne garde que le terme de plus haut degré, sans son coefficient&#8239;: \(T(n) = {@T@} = O(n^{@p@})\). Donc \(g(n) = n^{@p@}\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>p : rand_with_step(2,3,1);
+a : rand_with_step(2,9,1);
+b : rand_with_step(1,9,1);
+T : a*n^p + b*n + 7;
+ta : n^p;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>g(n)=n^{@p@}</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>n^2</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(g(n)=n^{@p@}\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Gardez le terme de plus haut degré sans son coefficient&#8239;: \(n^{@p@}\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+</quiz>

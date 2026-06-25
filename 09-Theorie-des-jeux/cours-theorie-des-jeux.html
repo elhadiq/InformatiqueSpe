@@ -1,0 +1,264 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<div style="font-family:'Segoe UI',system-ui,Arial,sans-serif;max-width:920px;margin:0 auto;color:#1f2d3d;line-height:1.65;">
+
+<!-- Hero -->
+<div style="background:#026573;color:#fff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+  <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;">CPGE MP / PSI · Informatique · 2ᵉ période</div>
+  <h1 style="margin:6px 0 0 0;font-size:1.9em;">Introduction à la théorie des jeux</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p style="margin:12px 0 0 0;color:#d6eef0;">Jeux d'accessibilité à deux joueurs sur un graphe biparti : positions gagnantes, attracteurs, stratégies gagnantes et algorithme Minimax.</p>
+</div>
+
+<!-- Objectifs -->
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:14px 18px;border-radius:4px;margin:18px 0;">
+  <strong style="color:#026573;">Objectifs du chapitre</strong>
+  <ul style="margin:10px 0 0 0;padding-left:22px;">
+    <li>Modéliser un <strong>jeu d'accessibilité à deux joueurs</strong> par un graphe biparti.</li>
+    <li>Définir : état initial, états gagnants, partie, position, stratégie.</li>
+    <li>Calculer les <strong>positions gagnantes</strong> de chaque joueur par la méthode de l'<strong>attracteur</strong>.</li>
+    <li>Construire une <strong>stratégie gagnante</strong> sur les positions contrôlées par un joueur.</li>
+    <li>Appliquer l'algorithme <strong>Minimax</strong> avec une <strong>heuristique</strong> quand le graphe est trop grand.</li>
+  </ul>
+</div>
+
+<!-- Sommaire -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">Sommaire</h2>
+<ol style="padding-left:22px;">
+  <li>Théorie des jeux et lien avec les graphes</li>
+  <li>Jeux d'accessibilité à deux joueurs</li>
+  <li>Modélisation par un graphe biparti</li>
+  <li>Positions gagnantes : l'attracteur</li>
+  <li>Construction des stratégies gagnantes</li>
+  <li>Détermination du jeu &amp; partition des positions</li>
+  <li>L'algorithme Minimax avec heuristique</li>
+  <li>Récapitulatif</li>
+</ol>
+
+<!-- 1 -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. Théorie des jeux et lien avec les graphes</h2>
+<p>La <strong>théorie des jeux</strong> étudie les situations où plusieurs <em>joueurs</em> prennent des décisions qui s'influencent mutuellement, chacun cherchant à atteindre son propre objectif. On se limite ici à une famille particulièrement liée à la théorie des graphes : les <strong>jeux d'accessibilité (reachability games) à deux joueurs</strong>.</p>
+<p>L'idée clé : la situation du jeu à un instant donné est une <strong>position</strong> (un sommet d'un graphe), et un coup consiste à se déplacer le long d'un arc vers une nouvelle position. Le déroulement d'une partie est donc un <strong>chemin</strong> dans un graphe orienté. Résoudre le jeu revient à étudier ce graphe.</p>
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Idée clé.</strong> Un jeu d'accessibilité = un graphe orienté + une partition des sommets entre les deux joueurs + un ensemble de positions à atteindre. Tout le vocabulaire « jeu » se traduit en vocabulaire « graphe ».
+</div>
+
+<!-- 2 -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Jeux d'accessibilité à deux joueurs</h2>
+<p>On considère deux joueurs : le <strong>Joueur 0</strong> (appelons-le <em>Atteignant</em>) et le <strong>Joueur 1</strong> (<em>Adversaire</em>). Le Joueur 0 cherche à <strong>atteindre</strong> un ensemble de positions cibles ; le Joueur 1 cherche à l'en <strong>empêcher</strong> (éviter indéfiniment ces positions).</p>
+<p>Les ingrédients du jeu :</p>
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#026573;color:#fff;">
+    <th style="border:1px solid #026573;padding:9px;text-align:left;">Notion (jeu)</th>
+    <th style="border:1px solid #026573;padding:9px;text-align:left;">Définition</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Position (état)</strong></td><td style="border:1px solid #ddd;padding:9px;">Un sommet du graphe. C'est l'état courant du jeu.</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><strong>État initial</strong></td><td style="border:1px solid #ddd;padding:9px;">La position v<sub>0</sub> où commence la partie.</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>États gagnants (cible)</strong></td><td style="border:1px solid #ddd;padding:9px;">L'ensemble F des positions à atteindre. Si la partie y arrive, le Joueur 0 gagne.</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Coup</strong></td><td style="border:1px solid #ddd;padding:9px;">Un arc (u &rarr; v). Le joueur qui contrôle u choisit le successeur v.</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Partie</strong></td><td style="border:1px solid #ddd;padding:9px;">Une suite v<sub>0</sub>, v<sub>1</sub>, v<sub>2</sub>, … de positions reliées par des arcs (un chemin).</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Stratégie</strong></td><td style="border:1px solid #ddd;padding:9px;">Une règle indiquant, pour chaque position contrôlée par un joueur, le coup à jouer.</td></tr>
+</table>
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Convention.</strong> Le Joueur 0 <em>gagne</em> une partie si elle atteint une position de F. Sinon (la partie reste hors de F pour toujours), c'est le Joueur 1 qui gagne.
+</div>
+
+<!-- 3 -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Modélisation par un graphe biparti</h2>
+<p>Comme les deux joueurs jouent à tour de rôle, on partitionne les positions selon le joueur qui doit jouer. On obtient une <strong>arène</strong> (graphe du jeu) :</p>
+<p style="text-align:center;font-size:1.05em;margin:10px 0;">G = (V<sub>0</sub> &cup; V<sub>1</sub>, E)&nbsp;&nbsp;avec&nbsp;&nbsp;V<sub>0</sub> &cap; V<sub>1</sub> = &empty;</p>
+<ul style="padding-left:22px;">
+  <li><strong>V<sub>0</sub></strong> : positions contrôlées par le <strong>Joueur 0</strong> (c'est à lui de jouer ; on les dessine souvent en <em>cercles</em>).</li>
+  <li><strong>V<sub>1</sub></strong> : positions contrôlées par le <strong>Joueur 1</strong> (on les dessine en <em>carrés</em>).</li>
+  <li><strong>E &sube; V &times; V</strong> : les arcs (coups possibles).</li>
+</ul>
+<p>Lorsque les joueurs alternent strictement (chaque arc va de V<sub>0</sub> vers V<sub>1</sub> ou de V<sub>1</sub> vers V<sub>0</sub>), le graphe est <strong>biparti</strong> : aucun arc ne relie deux positions du même joueur. C'est le cadre étudié dans ce chapitre.</p>
+<div style="background:#fff8e1;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Hypothèse de jeu infini.</strong> Pour simplifier, on suppose qu'il y a toujours au moins un coup possible (pas de cul-de-sac), ou bien on convient qu'un joueur bloqué perd. Une partie est alors un chemin (potentiellement infini) dans G.
+</div>
+
+<!-- 4 -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Positions gagnantes : l'attracteur</h2>
+<p>Une position est <strong>gagnante pour le Joueur 0</strong> si, en partant de cette position, le Joueur 0 possède une manière de jouer qui <em>force</em> l'arrivée dans F, quoi que fasse le Joueur 1. L'ensemble de ces positions est l'<strong>attracteur</strong> de F pour le Joueur 0, noté <strong>Attr<sub>0</sub>(F)</strong>.</p>
+
+<h3 style="color:#014a54;">Construction par couches (point fixe)</h3>
+<p>On construit l'attracteur de proche en proche. On note Attr<sup>k</sup> l'ensemble des positions à partir desquelles le Joueur 0 peut forcer l'arrivée dans F en <strong>au plus k coups</strong>.</p>
+<p style="margin:10px 0;"><strong>Initialisation :</strong> Attr<sup>0</sup> = F (on y est déjà).</p>
+<p style="margin:10px 0;"><strong>Récurrence :</strong> on ajoute une position u à la couche suivante si :</p>
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#026573;color:#fff;">
+    <th style="border:1px solid #026573;padding:9px;text-align:left;">u appartient à…</th>
+    <th style="border:1px solid #026573;padding:9px;text-align:left;">Condition pour ajouter u</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>V<sub>0</sub></strong> (le Joueur 0 choisit)</td><td style="border:1px solid #ddd;padding:9px;"><strong>il existe</strong> un successeur déjà dans Attr<sup>k</sup>. (&exist;)</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><strong>V<sub>1</sub></strong> (le Joueur 1 choisit)</td><td style="border:1px solid #ddd;padding:9px;"><strong>tous</strong> les successeurs sont déjà dans Attr<sup>k</sup>. (&forall;)</td></tr>
+</table>
+<p>Formellement :</p>
+<p style="text-align:center;margin:10px 0;">Attr<sup>k+1</sup> = Attr<sup>k</sup> &cup; { u &isin; V<sub>0</sub> : &exist; (u&rarr;v) &isin; E, v &isin; Attr<sup>k</sup> } &cup; { u &isin; V<sub>1</sub> : &forall; (u&rarr;v) &isin; E, v &isin; Attr<sup>k</sup> }</p>
+<p>La suite (Attr<sup>k</sup>) est croissante et bornée par V : elle se stabilise. La limite est l'attracteur :</p>
+<p style="text-align:center;font-size:1.05em;margin:10px 0;"><strong>Attr<sub>0</sub>(F) = &bigcup;<sub>k &ge; 0</sub> Attr<sup>k</sup></strong></p>
+
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Lecture.</strong> Sur une position du Joueur 0, <em>il suffit d'UNE bonne issue</em> (il choisit). Sur une position du Joueur 1, <em>il faut que TOUTES les issues</em> soient déjà gagnantes (il choisira la pire pour le Joueur 0).
+</div>
+
+<h3 style="color:#014a54;">Algorithme (induction arrière)</h3>
+<p>On parcourt le graphe « à l'envers » depuis F. On maintient pour chaque position du Joueur 1 un compteur de successeurs restant à valider.</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def attracteur(V0, V1, succ, pred, F):
+    """V0, V1 : ensembles de positions ; succ[u], pred[u] : listes ;
+       F : ensemble cible. Renvoie l'attracteur du Joueur 0."""
+    attr = set(F)                 # Attr^0 = F
+    file = list(F)                # positions à traiter
+    # nb de successeurs encore hors de attr, pour les positions du Joueur 1
+    reste = {u: len(succ[u]) for u in V1}
+    while file:
+        v = file.pop()            # v est déjà gagnant
+        for u in pred[v]:         # on remonte vers les prédécesseurs
+            if u in attr:
+                continue
+            if u in V0:           # Joueur 0 : UN successeur gagnant suffit
+                attr.add(u); file.append(u)
+            else:                 # Joueur 1 : il faut TOUS les successeurs
+                reste[u] -= 1
+                if reste[u] == 0:
+                    attr.add(u); file.append(u)
+    return attr</pre>
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Complexité.</strong> Chaque arc est examiné une seule fois (lorsque son extrémité entre dans l'attracteur). L'algorithme est en <strong>O(|V| + |E|)</strong>, comme un parcours de graphe.
+</div>
+<p>Les positions <strong>hors</strong> de Attr<sub>0</sub>(F) sont exactement les positions <strong>gagnantes pour le Joueur 1</strong> : à partir de là, le Joueur 1 peut éviter F pour toujours. C'est la <strong>détermination</strong> du jeu : chaque position est gagnante pour exactement l'un des deux joueurs.</p>
+
+<!-- 5 -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">5. Construction des stratégies gagnantes</h2>
+<p>Calculer Attr<sub>0</sub>(F) ne dit pas seulement <em>qui</em> gagne : il fournit aussi <em>comment</em> gagner. On lit la stratégie directement sur les couches de l'attracteur.</p>
+
+<h3 style="color:#014a54;">Stratégie gagnante du Joueur 0</h3>
+<p>Notons <strong>rang(u)</strong> le plus petit k tel que u &isin; Attr<sup>k</sup> (le nombre minimal de coups pour forcer F). Sur chaque position <strong>u &isin; V<sub>0</sub> &cap; Attr<sub>0</sub>(F)</strong>, la stratégie consiste à jouer vers un successeur de rang strictement inférieur :</p>
+<p style="text-align:center;margin:10px 0;">&sigma;<sub>0</sub>(u) = un successeur v tel que rang(v) = rang(u) &minus; 1</p>
+<p>À chaque coup du Joueur 0, le rang diminue d'au moins 1 ; le Joueur 1, depuis une position de l'attracteur, ne peut que rester dans l'attracteur (tous ses successeurs y sont). Le rang, entier positif, décroît : la partie atteint F en au plus rang(v<sub>0</sub>) coups. La stratégie est <strong>sans mémoire</strong> (elle ne dépend que de la position courante).</p>
+
+<h3 style="color:#014a54;">Stratégie gagnante du Joueur 1</h3>
+<p>Sur chaque position <strong>u &isin; V<sub>1</sub></strong> <em>hors</em> de l'attracteur, le Joueur 1 dispose forcément d'au moins un successeur lui aussi hors de l'attracteur (sinon u y serait entré par la règle du &forall;). Sa stratégie : toujours jouer vers une position hors de Attr<sub>0</sub>(F). La partie ne touche alors jamais F.</p>
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Résumé.</strong> L'attracteur découpe les positions en deux : depuis Attr<sub>0</sub>(F) le Joueur 0 force F (stratégie : « baisser le rang ») ; depuis le complémentaire le Joueur 1 évite F (stratégie : « rester dehors »).
+</div>
+
+<!-- 6 -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. Détermination du jeu &amp; partition des positions</h2>
+<p>Le résultat fondamental des jeux d'accessibilité (cas fini) est le <strong>théorème de détermination</strong> :</p>
+<div style="background:#f3effa;border-left:4px solid #5b21b6;padding:12px 16px;border-radius:4px;margin:14px 0;">
+  <strong style="color:#5b21b6;">Théorème (détermination).</strong> Dans un jeu d'accessibilité fini, l'ensemble des positions se partitionne en
+  W<sub>0</sub> = Attr<sub>0</sub>(F) (gagnantes pour le Joueur 0) et W<sub>1</sub> = V \ Attr<sub>0</sub>(F) (gagnantes pour le Joueur 1).
+  Sur sa zone, chaque joueur possède une stratégie gagnante <strong>sans mémoire</strong>.
+</div>
+<p>Pour savoir qui gagne la partie : on regarde simplement si l'état initial v<sub>0</sub> appartient à Attr<sub>0</sub>(F).</p>
+
+<!-- 7 -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">7. L'algorithme Minimax avec heuristique</h2>
+<p>Le calcul exact de l'attracteur suppose qu'on peut explorer <strong>tout</strong> le graphe du jeu. Pour des jeux réels (échecs, dames, Puissance 4…), ce graphe est <strong>gigantesque</strong> : on ne peut pas le construire. On utilise alors l'algorithme <strong>Minimax</strong>, qui explore l'arbre des coups sur une <strong>profondeur limitée</strong> et évalue les positions atteintes par une <strong>heuristique</strong>.</p>
+
+<h3 style="color:#014a54;">Principe</h3>
+<p>On déroule l'arbre des parties depuis la position courante. Les deux joueurs sont supposés jouer au mieux de leur intérêt, mesuré par une valeur :</p>
+<ul style="padding-left:22px;">
+  <li>Le Joueur <strong>MAX</strong> (notre joueur) choisit le coup de valeur <strong>maximale</strong>.</li>
+  <li>Le Joueur <strong>MIN</strong> (l'adversaire) choisit le coup de valeur <strong>minimale</strong>.</li>
+</ul>
+<p>Les valeurs sont calculées au fond de l'arbre :</p>
+<ul style="padding-left:22px;">
+  <li>sur une position <strong>terminale</strong> (victoire / défaite / nul) : un score exact (+&infin;, &minus;&infin;, 0) ;</li>
+  <li>sur une position de <strong>profondeur maximale</strong> non terminale : la valeur de l'<strong>heuristique</strong> h(position), une estimation rapide de « à quel point la position est bonne pour MAX ».</li>
+</ul>
+
+<h3 style="color:#014a54;">Pseudo-code</h3>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def minimax(position, profondeur, joueurMax):
+    if profondeur == 0 or terminale(position):
+        return heuristique(position)      # estimation ou score exact
+    if joueurMax:                          # le joueur MAX maximise
+        valeur = -infini
+        for coup in coups(position):
+            valeur = max(valeur, minimax(jouer(position, coup),
+                                         profondeur - 1, False))
+        return valeur
+    else:                                  # le joueur MIN minimise
+        valeur = +infini
+        for coup in coups(position):
+            valeur = min(valeur, minimax(jouer(position, coup),
+                                         profondeur - 1, True))
+        return valeur</pre>
+<p>Le coup effectivement joué par MAX à la racine est celui qui réalise le <code>max</code>.</p>
+
+<h3 style="color:#014a54;">Le rôle de l'heuristique</h3>
+<p>L'<strong>heuristique</strong> h estime la valeur d'une position sans explorer la suite du jeu. Elle privilégie certaines positions plutôt que d'autres. Exemples : aux échecs, la différence de matériel (somme des pièces pondérées) ; au morpion, le nombre d'alignements encore possibles. Une bonne heuristique permet de jouer correctement avec une profondeur faible, donc peu de calcul.</p>
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Lien avec l'attracteur.</strong> Si on pouvait dérouler l'arbre <em>entièrement</em> (profondeur infinie, scores exacts &plusmn;&infin;), Minimax retrouverait exactement la réponse de l'attracteur : « cette position est-elle gagnante ? ». L'heuristique n'est qu'une <strong>approximation</strong> rendue nécessaire par la taille du graphe.
+</div>
+
+<h3 style="color:#014a54;">Élagage &alpha;-&beta; (pour aller plus loin)</h3>
+<p>L'élagage <strong>alpha-bêta</strong> est une amélioration de Minimax qui coupe les branches dont on sait déjà qu'elles ne changeront pas la décision. Il renvoie la même valeur que Minimax mais explore beaucoup moins de positions, ce qui permet d'augmenter la profondeur à temps de calcul égal.</p>
+
+<!-- Récapitulatif -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">8. Récapitulatif</h2>
+<div style="background:#eafaf1;border-left:4px solid #27ae60;padding:14px 18px;border-radius:4px;margin:14px 0;">
+  <ul style="margin:0;padding-left:22px;">
+    <li>Un <strong>jeu d'accessibilité</strong> = graphe biparti G = (V<sub>0</sub> &cup; V<sub>1</sub>, E) + cible F. Le Joueur 0 veut atteindre F, le Joueur 1 veut l'éviter.</li>
+    <li>L'<strong>attracteur</strong> Attr<sub>0</sub>(F) = positions d'où le Joueur 0 force F. Règle : &exist; un successeur gagnant sur V<sub>0</sub>, &forall; les successeurs gagnants sur V<sub>1</sub>.</li>
+    <li>Calcul par induction arrière en <strong>O(|V| + |E|)</strong> ; les positions hors attracteur sont gagnantes pour le Joueur 1.</li>
+    <li>La <strong>stratégie gagnante</strong> du Joueur 0 : « baisser le rang » ; celle du Joueur 1 : « rester hors de l'attracteur ». Le jeu est <strong>déterminé</strong>.</li>
+    <li><strong>Minimax</strong> + <strong>heuristique</strong> : quand le graphe est trop gros, on explore en profondeur limitée (MAX maximise, MIN minimise) en évaluant les feuilles par une heuristique.</li>
+  </ul>
+</div>
+
+<p style="text-align:center;color:#9aa7b2;font-size:0.85em;margin-top:30px;">Informatique CPGE MP/PSI · Introduction à la théorie des jeux</p>
+
+</div>

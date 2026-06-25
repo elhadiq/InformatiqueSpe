@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <question type="stack">
+    <name><text>Arbres Q1 — Nœuds d'un arbre parfait</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Un arbre binaire <strong>parfait</strong> de hauteur \(h={@h@}\) a tous ses niveaux remplis.</p><p>Donner son nombre total de nœuds (valeur numérique).</p><p>Nombre de nœuds \(=\) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Niveau \(k\) contient \(2^k\) nœuds&#8239;: total \(\sum_{k=0}^{h} 2^k = 2^{h+1}-1\). Ici \(2^{ {@h@}+1}-1 = {@ta@}\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>h : rand_with_step(2,5,1);
+ta : 2^(h+1)-1;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>noeuds=2^(h+1)-1</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>{@ta@}</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(2^{h+1}-1 = {@ta@}\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Sommez les niveaux&#8239;: \(1+2+4+\dots+2^{h} = 2^{h+1}-1\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Arbres Q2 — Feuilles d'un arbre parfait</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Dans un arbre binaire <strong>parfait</strong> de hauteur \(h={@h@}\), combien y a-t-il de feuilles&#8239;?</p><p>Nombre de feuilles \(=\) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Toutes les feuilles sont au dernier niveau \(h\)&#8239;: il y en a \(2^{h}\). Ici \(2^{ {@h@} } = {@ta@}\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>h : rand_with_step(2,5,1);
+ta : 2^h;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>feuilles=2^h</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>{@ta@}</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(2^{h} = {@ta@}\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Le dernier niveau \(h\) contient \(2^{h}\) feuilles.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Arbres Q3 — Nombre minimal de nœuds</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Quel est le nombre <strong>minimal</strong> de nœuds d'un arbre binaire de hauteur \(h={@h@}\)&#8239;?</p><p>\(n_{\min} =\) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Le minimum est atteint par un arbre <em>filiforme</em> (un seul fils par nœud)&#8239;: \(h+1\) nœuds. Ici \({@h@}+1 = {@ta@}\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>h : rand_with_step(2,5,1);
+ta : h+1;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>min=h+1</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>{@ta@}</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: un arbre filiforme a \(h+1\) nœuds.</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Un nœud par niveau, de 0 à \(h\)&#8239;: cela fait \(h+1\) nœuds.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Arbres Q4 — Indice du fils gauche (tableau)</text></name>
+    <questiontext format="html"><text><![CDATA[<p>Un arbre complet est stocké dans une liste. Le nœud d'indice \(i={@i@}\) a son fils gauche à l'indice \(2i+1\).</p><p>Donner cet indice (valeur numérique).</p><p>Indice du fils gauche \(=\) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Fils gauche de \(i\)&#8239;: \(2i+1\)&#8239;; fils droit&#8239;: \(2i+2\)&#8239;; père&#8239;: \(\lfloor (i-1)/2\rfloor\). Ici \(2\cdot {@i@}+1 = {@ta@}\).</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>i : rand_with_step(1,6,1);
+ta : 2*i+1;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>filsG=2*i+1</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>{@ta@}</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(2i+1 = {@ta@}\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>La formule est \(2i+1\) pour le fils gauche.</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+  <question type="stack">
+    <name><text>Arbres Q5 — Hauteur d'un arbre filiforme</text></name>
+    <questiontext format="html"><text><![CDATA[<p>On insère \(n\) valeurs déjà triées dans un ABR initialement vide&#8239;: l'arbre obtenu est <strong>filiforme</strong>.</p><p>Donner sa hauteur \(h\) en fonction de \(n\).</p><p>\(h =\) [[input:ans1]] [[validation:ans1]]</p>]]></text></questiontext>
+    <generalfeedback format="html"><text><![CDATA[<p>Chaque nouvelle valeur devient l'unique fils droit&#8239;: l'arbre est une « branche » de \(n\) nœuds, de hauteur \(n-1\). La recherche y coûte alors \(O(n)\)&#8239;: c'est le pire cas de l'ABR.</p>]]></text></generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>0.1000000</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+    <stackversion><text>2023100900</text></stackversion>
+    <questionvariables><text>ta : n-1;</text></questionvariables>
+    <specificfeedback format="html"><text><![CDATA[<p>[[feedback:prt1]]</p>]]></text></specificfeedback>
+    <questionnote><text>h=n-1</text></questionnote>
+    <questiondescription format="html"><text></text></questiondescription>
+    <questionsimplify>1</questionsimplify>
+    <assumepositive>0</assumepositive>
+    <assumereal>0</assumereal>
+    <prtcorrect format="html"><text><![CDATA[<p>Correct, bravo&#8239;!</p>]]></text></prtcorrect>
+    <prtpartiallycorrect format="html"><text><![CDATA[<p>Partiellement correct.</p>]]></text></prtpartiallycorrect>
+    <prtincorrect format="html"><text><![CDATA[<p>Incorrect.</p>]]></text></prtincorrect>
+    <multiplicationsign>dot</multiplicationsign>
+    <sqrtsign>1</sqrtsign>
+    <complexno>i</complexno>
+    <inversetrig>cos-1</inversetrig>
+    <logicsymbol>lang</logicsymbol>
+    <matrixparens>[</matrixparens>
+    <variantsselectionseed></variantsselectionseed>
+    <input>
+      <name>ans1</name>
+      <type>algebraic</type>
+      <tans>ta</tans>
+      <boxsize>15</boxsize>
+      <strictsyntax>0</strictsyntax>
+      <insertstars>1</insertstars>
+      <syntaxhint>n-1</syntaxhint>
+      <syntaxattribute>0</syntaxattribute>
+      <forbidwords></forbidwords>
+      <allowwords></allowwords>
+      <forbidfloat>1</forbidfloat>
+      <requirelowestterms>0</requirelowestterms>
+      <checkanswertype>0</checkanswertype>
+      <mustverify>1</mustverify>
+      <showvalidation>1</showvalidation>
+      <options></options>
+    </input>
+    <prt>
+      <name>prt1</name>
+      <value>1.0000000</value>
+      <autosimplify>1</autosimplify>
+      <feedbackstyle>1</feedbackstyle>
+      <feedbackvariables><text></text></feedbackvariables>
+      <node>
+        <name>0</name>
+        <answertest>AlgEquiv</answertest>
+        <sans>ans1</sans>
+        <tans>ta</tans>
+        <testoptions></testoptions>
+        <quiet>0</quiet>
+        <truescoremode>=</truescoremode>
+        <truescore>1.0000000</truescore>
+        <truepenalty></truepenalty>
+        <truenextnode>-1</truenextnode>
+        <trueanswernote>prt1-1-T</trueanswernote>
+        <truefeedback format="html"><text><![CDATA[<p>Oui&#8239;: \(h = n-1\), d'où une recherche en \(O(n)\).</p>]]></text></truefeedback>
+        <falsescoremode>=</falsescoremode>
+        <falsescore>0.0000000</falsescore>
+        <falsepenalty></falsepenalty>
+        <falsenextnode>-1</falsenextnode>
+        <falseanswernote>prt1-1-F</falseanswernote>
+        <falsefeedback format="html"><text><![CDATA[<p>Un arbre filiforme à \(n\) nœuds a une hauteur de \(n-1\).</p>]]></text></falsefeedback>
+      </node>
+    </prt>
+  </question>
+</quiz>

@@ -1,0 +1,297 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <!-- HERO -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE 2ᵉ année — MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.9em;">La programmation dynamique</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6eef0;">Résoudre un problème en le découpant en sous-problèmes qui se <strong>répètent</strong> — et en ne calculant chaque sous-problème <strong>qu'une seule fois</strong>. La technique qui transforme un algorithme exponentiel en algorithme polynomial.</p>
+  </div>
+
+  <!-- OBJECTIFS -->
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:14px 18px;border-radius:4px;margin-bottom:26px;">
+    <strong style="color:#2c3e50;">🎯 Objectifs du chapitre</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Comprendre l'<strong>intérêt</strong> de la programmation dynamique : réduire la complexité temporelle de certains problèmes.</li>
+      <li>Reconnaître les deux ingrédients : <strong>sous-structure optimale</strong> et <strong>chevauchement des sous-problèmes</strong>.</li>
+      <li>Savoir <strong>extraire une formule de récurrence</strong> à partir d'un problème d'optimisation.</li>
+      <li>Maîtriser les <strong>deux approches</strong> : <em>Top-Down</em> (mémoïsation) et <em>Bottom-Up</em> (tabulation).</li>
+      <li>Appliquer la technique aux exemples classiques : <strong>sac à dos 0/1</strong>, <strong>plus longue sous-séquence commune</strong>, <strong>distance de Levenshtein</strong>.</li>
+    </ul>
+  </div>
+
+  <!-- SOMMAIRE -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:14px 18px;margin-bottom:30px;background:#fafbfc;">
+    <strong style="color:#2c3e50;">Sommaire</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>De la récursivité naïve à la programmation dynamique (Fibonacci)</li>
+      <li>Les deux ingrédients : sous-structure optimale et chevauchement</li>
+      <li>Les deux approches : Top-Down (mémoïsation) et Bottom-Up (tabulation)</li>
+      <li>Le sac à dos 0/1</li>
+      <li>La plus longue sous-séquence commune</li>
+      <li>La distance de Levenshtein</li>
+      <li>Récapitulatif</li>
+    </ol>
+  </div>
+
+  <!-- ===== 1 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. De la récursivité naïve à la programmation dynamique</h2>
+  <p>Partons d'un exemple familier : la suite de <strong>Fibonacci</strong>, définie par F<sub>0</sub> = 0, F<sub>1</sub> = 1 et F<sub>n</sub> = F<sub>n−1</sub> + F<sub>n−2</sub>. La traduction récursive directe est immédiate :</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">fib</span>(n):
+    <span style="color:#ff7b72;">if</span> n &lt; <span style="color:#79c0ff;">2</span>:
+        <span style="color:#ff7b72;">return</span> n
+    <span style="color:#ff7b72;">return</span> fib(n - <span style="color:#79c0ff;">1</span>) + fib(n - <span style="color:#79c0ff;">2</span>)</pre>
+
+  <p>Cette fonction est correcte, mais <strong>catastrophiquement lente</strong>. Pour calculer <code>fib(5)</code>, elle appelle <code>fib(4)</code> et <code>fib(3)</code> ; or <code>fib(4)</code> rappelle <code>fib(3)</code>… Le même sous-problème est recalculé encore et encore. Le nombre d'appels croît comme F<sub>n</sub> lui-même, soit de façon <strong>exponentielle</strong> : la complexité est en O(φ<sup>n</sup>) avec φ ≈ 1,618.</p>
+
+  <div style="background:#fdeef0;border-left:4px solid #e74c3c;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>❌ Le gaspillage.</strong> Pour <code>fib(5)</code>, <code>fib(2)</code> est calculé <strong>3 fois</strong>, <code>fib(1)</code> <strong>5 fois</strong>. Plus n grandit, plus le nombre de recalculs explose. Pourtant il n'y a que n+1 valeurs distinctes à connaître (F<sub>0</sub>, …, F<sub>n</sub>) !
+  </div>
+
+  <p>L'idée de la <strong>programmation dynamique</strong> tient en une phrase : <em>« ne jamais recalculer deux fois la même chose »</em>. On <strong>mémorise</strong> le résultat de chaque sous-problème la première fois qu'on le rencontre, et on le réutilise ensuite. La complexité tombe alors de O(φ<sup>n</sup>) à <strong>O(n)</strong> : c'est tout l'intérêt annoncé par le programme — <strong>réduire la complexité temporelle</strong>.</p>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Définition.</strong> La <strong>programmation dynamique</strong> est une méthode de résolution qui décompose un problème en sous-problèmes, résout chaque sous-problème <strong>une seule fois</strong> et <strong>stocke</strong> sa solution pour la réutiliser, évitant ainsi tout recalcul.
+  </div>
+
+  <!-- ===== 2 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Les deux ingrédients</h2>
+  <p>La programmation dynamique ne s'applique pas à n'importe quel problème. Il en faut <strong>deux propriétés</strong>.</p>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>1. Sous-structure optimale.</strong> Une solution optimale du problème se construit à partir des solutions optimales de ses <strong>sous-problèmes</strong>. C'est ce qui permet d'écrire une <strong>formule de récurrence</strong> reliant la solution d'un problème à celles de problèmes plus petits.
+  </div>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>2. Chevauchement des sous-problèmes.</strong> Les mêmes sous-problèmes reviennent <strong>plusieurs fois</strong> au cours du calcul. C'est ce qui rend la mémorisation <em>rentable</em> : on paie une fois, on réutilise souvent.
+  </div>
+
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ PD ou « diviser pour régner » ?</strong> Les deux découpent en sous-problèmes. La différence est le <strong>chevauchement</strong> : dans « diviser pour régner » (tri fusion, tri rapide), les sous-problèmes sont <strong>disjoints</strong> — inutile de mémoriser. La programmation dynamique n'a d'intérêt que lorsque les sous-problèmes se <strong>recoupent</strong>.
+  </div>
+
+  <p><strong>Lien avec les algorithmes gloutons.</strong> La sous-structure optimale est <em>commune</em> aux deux approches. La différence est dans le choix : un <strong>glouton</strong> fait <strong>un seul</strong> choix (le plus prometteur) et ne le remet jamais en cause ; la <strong>programmation dynamique</strong> <strong>examine tous les choix</strong> possibles à chaque étape et garde le meilleur. La PD est donc plus coûteuse mais <strong>toujours optimale</strong> — elle résout exactement les problèmes où le glouton échoue (comme le sac à dos 0/1).</p>
+
+  <h3 style="color:#026573;">2.1 — La méthode : extraire la formule de récurrence</h3>
+  <p>Le cœur du travail, en programmation dynamique, est de trouver la <strong>relation de récurrence</strong>. La démarche est toujours la même :</p>
+  <ol style="padding-left:22px;">
+    <li>définir précisément ce que désigne le sous-problème (l'<strong>état</strong>) ;</li>
+    <li>écrire les <strong>cas de base</strong> (les plus petits sous-problèmes, résolus directement) ;</li>
+    <li>exprimer la solution d'un sous-problème <strong>en fonction de sous-problèmes plus petits</strong> (le « cas général ») ;</li>
+    <li>identifier la réponse finale parmi les sous-problèmes calculés.</li>
+  </ol>
+
+  <!-- ===== 3 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Les deux approches : Top-Down et Bottom-Up</h2>
+  <p>Une fois la récurrence écrite, deux manières de la mettre en œuvre. Elles donnent le <strong>même résultat</strong> avec la <strong>même complexité</strong> ; elles diffèrent par le sens du calcul.</p>
+
+  <h3 style="color:#026573;">3.1 — Top-Down : la mémoïsation</h3>
+  <p>On garde la formulation <strong>récursive</strong> naturelle (« de haut en bas », du gros problème vers les petits), mais on ajoute un <strong>cache</strong> (dictionnaire ou tableau) : avant de calculer, on regarde si le résultat est déjà connu ; après l'avoir calculé, on le range dans le cache.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">fib_memo</span>(n, memo=<span style="color:#79c0ff;">None</span>):
+    <span style="color:#ff7b72;">if</span> memo <span style="color:#ff7b72;">is</span> <span style="color:#79c0ff;">None</span>:
+        memo = {}
+    <span style="color:#ff7b72;">if</span> n &lt; <span style="color:#79c0ff;">2</span>:
+        <span style="color:#ff7b72;">return</span> n
+    <span style="color:#ff7b72;">if</span> n <span style="color:#ff7b72;">in</span> memo:                <span style="color:#8b949e;"># déjà calculé : on réutilise</span>
+        <span style="color:#ff7b72;">return</span> memo[n]
+    memo[n] = fib_memo(n-<span style="color:#79c0ff;">1</span>, memo) + fib_memo(n-<span style="color:#79c0ff;">2</span>, memo)
+    <span style="color:#ff7b72;">return</span> memo[n]</pre>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Mémoïsation.</strong> = récursion + cache. On ne calcule que les sous-problèmes <strong>réellement utiles</strong>. Code proche de la définition mathématique, mais attention à la <strong>profondeur de récursion</strong> (limite de pile pour de grands n).
+  </div>
+
+  <h3 style="color:#026573;">3.2 — Bottom-Up : la tabulation</h3>
+  <p>On part au contraire <strong>des plus petits sous-problèmes</strong> (« de bas en haut ») et on <strong>remplit un tableau</strong> dans le bon ordre, jusqu'au problème complet. Aucune récursion : juste des boucles.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">fib_tab</span>(n):
+    <span style="color:#ff7b72;">if</span> n &lt; <span style="color:#79c0ff;">2</span>:
+        <span style="color:#ff7b72;">return</span> n
+    f = [<span style="color:#79c0ff;">0</span>] * (n + <span style="color:#79c0ff;">1</span>)
+    f[<span style="color:#79c0ff;">1</span>] = <span style="color:#79c0ff;">1</span>
+    <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">2</span>, n + <span style="color:#79c0ff;">1</span>):
+        f[i] = f[i-<span style="color:#79c0ff;">1</span>] + f[i-<span style="color:#79c0ff;">2</span>]   <span style="color:#8b949e;"># les deux cases sont déjà remplies</span>
+    <span style="color:#ff7b72;">return</span> f[n]</pre>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Tabulation.</strong> = remplissage itératif d'un tableau, du plus petit au plus grand. Pas de récursion (pas de limite de pile), souvent un peu plus rapide ; en revanche on calcule <strong>tous</strong> les sous-problèmes, même inutiles, et il faut trouver le <strong>bon ordre</strong> de remplissage.
+  </div>
+
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Critère</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Top-Down (mémoïsation)</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Bottom-Up (tabulation)</th>
+    </tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Sens du calcul</td><td style="border:1px solid #ddd;padding:9px;">Récursif, du gros vers le petit</td><td style="border:1px solid #ddd;padding:9px;">Itératif, du petit vers le gros</td></tr>
+    <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:9px;">Sous-problèmes calculés</td><td style="border:1px solid #ddd;padding:9px;">Seulement les utiles</td><td style="border:1px solid #ddd;padding:9px;">Tous</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Risque</td><td style="border:1px solid #ddd;padding:9px;">Débordement de pile</td><td style="border:1px solid #ddd;padding:9px;">Trouver le bon ordre</td></tr>
+    <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:9px;">Code</td><td style="border:1px solid #ddd;padding:9px;">Proche de la récurrence</td><td style="border:1px solid #ddd;padding:9px;">Des boucles</td></tr>
+  </table>
+
+  <!-- ===== 4 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Le sac à dos 0/1</h2>
+  <p><strong>Problème.</strong> n objets, chacun de poids p<sub>i</sub> et de valeur v<sub>i</sub> ; un sac de capacité C. Chaque objet est <strong>pris en entier ou pas du tout</strong>. Maximiser la valeur totale sans dépasser C. (On a vu au chapitre précédent que le <strong>glouton échoue</strong> ici : la PD donne la solution exacte.)</p>
+
+  <p><strong>État.</strong> Soit M(i, c) = la valeur maximale atteignable en n'utilisant que les <strong>i premiers objets</strong> avec une capacité <strong>c</strong>. La réponse cherchée est M(n, C).</p>
+
+  <p><strong>Récurrence.</strong> Pour décider du sort de l'objet i, deux possibilités :</p>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <p style="margin:0;">M(i, c) = M(i−1, c) &nbsp;&nbsp; si p<sub>i</sub> &gt; c &nbsp;<em>(objet trop lourd : on ne le prend pas)</em></p>
+    <p style="margin:6px 0 0 0;">M(i, c) = max( M(i−1, c) , &nbsp; v<sub>i</sub> + M(i−1, c − p<sub>i</sub>) ) &nbsp; sinon</p>
+    <p style="margin:6px 0 0 0;">avec les cas de base M(0, c) = 0 pour tout c.</p>
+  </div>
+  <p>Le <code>max</code> compare les deux décisions : <strong>ne pas prendre</strong> l'objet i (on garde M(i−1, c)) ou <strong>le prendre</strong> (on gagne v<sub>i</sub> mais on perd p<sub>i</sub> de capacité). C'est exactement le « examiner tous les choix » de la programmation dynamique.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">sac_a_dos</span>(poids, valeurs, C):
+    n = <span style="color:#79c0ff;">len</span>(poids)
+    M = [[<span style="color:#79c0ff;">0</span>] * (C + <span style="color:#79c0ff;">1</span>) <span style="color:#ff7b72;">for</span> _ <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n + <span style="color:#79c0ff;">1</span>)]
+    <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">1</span>, n + <span style="color:#79c0ff;">1</span>):
+        <span style="color:#ff7b72;">for</span> c <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(C + <span style="color:#79c0ff;">1</span>):
+            <span style="color:#ff7b72;">if</span> poids[i-<span style="color:#79c0ff;">1</span>] &gt; c:
+                M[i][c] = M[i-<span style="color:#79c0ff;">1</span>][c]
+            <span style="color:#ff7b72;">else</span>:
+                M[i][c] = <span style="color:#79c0ff;">max</span>(M[i-<span style="color:#79c0ff;">1</span>][c],
+                             valeurs[i-<span style="color:#79c0ff;">1</span>] + M[i-<span style="color:#79c0ff;">1</span>][c - poids[i-<span style="color:#79c0ff;">1</span>]])
+    <span style="color:#ff7b72;">return</span> M[n][C]</pre>
+
+  <p>On remplit le tableau M de taille (n+1) × (C+1), d'où une complexité en <strong>O(n · C)</strong>. C'est ce qu'on appelle une complexité <strong>pseudo-polynomiale</strong> (elle dépend de la <em>valeur</em> C, pas seulement du nombre d'objets). Pour C = 50 et les objets A(60,10), B(100,20), C(120,30) du contre-exemple glouton, on obtient bien la valeur optimale <strong>220</strong> (B + C), là où le glouton donnait 160.</p>
+
+  <!-- ===== 5 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">5. La plus longue sous-séquence commune (PLSSC)</h2>
+  <p><strong>Problème.</strong> Une <strong>sous-séquence</strong> d'une chaîne s'obtient en supprimant des caractères <em>sans changer l'ordre</em> des restants (ils ne sont pas forcément contigus). Étant données deux chaînes X et Y, trouver la <strong>longueur</strong> de leur plus longue sous-séquence commune. Exemple : pour <code>ABCBDAB</code> et <code>BDCAB</code>, la PLSSC est <code>BCAB</code>, de longueur <strong>4</strong>. (En anglais : <em>LCS, Longest Common Subsequence</em> ; utilisé par <code>diff</code>, Git, la bio-informatique…)</p>
+
+  <p><strong>État.</strong> Soit L(i, j) = la longueur de la PLSSC des <strong>i premiers caractères de X</strong> et des <strong>j premiers caractères de Y</strong>.</p>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <p style="margin:0;">L(i, j) = 0 &nbsp; si i = 0 ou j = 0 &nbsp;<em>(une chaîne vide n'a aucune sous-séquence commune)</em></p>
+    <p style="margin:6px 0 0 0;">L(i, j) = L(i−1, j−1) + 1 &nbsp; si X<sub>i</sub> = Y<sub>j</sub> &nbsp;<em>(caractères égaux : on les apparie)</em></p>
+    <p style="margin:6px 0 0 0;">L(i, j) = max( L(i−1, j) , L(i, j−1) ) &nbsp; si X<sub>i</sub> ≠ Y<sub>j</sub></p>
+  </div>
+  <p>Quand les deux derniers caractères coïncident, ils font partie de la sous-séquence commune : on les prend et on continue sur le reste. Sinon, on essaie de <strong>retirer</strong> le dernier caractère de l'une <em>ou</em> de l'autre chaîne, et on garde le meilleur des deux essais.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">plssc</span>(X, Y):
+    n, m = <span style="color:#79c0ff;">len</span>(X), <span style="color:#79c0ff;">len</span>(Y)
+    L = [[<span style="color:#79c0ff;">0</span>] * (m + <span style="color:#79c0ff;">1</span>) <span style="color:#ff7b72;">for</span> _ <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n + <span style="color:#79c0ff;">1</span>)]
+    <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">1</span>, n + <span style="color:#79c0ff;">1</span>):
+        <span style="color:#ff7b72;">for</span> j <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">1</span>, m + <span style="color:#79c0ff;">1</span>):
+            <span style="color:#ff7b72;">if</span> X[i-<span style="color:#79c0ff;">1</span>] == Y[j-<span style="color:#79c0ff;">1</span>]:
+                L[i][j] = L[i-<span style="color:#79c0ff;">1</span>][j-<span style="color:#79c0ff;">1</span>] + <span style="color:#79c0ff;">1</span>
+            <span style="color:#ff7b72;">else</span>:
+                L[i][j] = <span style="color:#79c0ff;">max</span>(L[i-<span style="color:#79c0ff;">1</span>][j], L[i][j-<span style="color:#79c0ff;">1</span>])
+    <span style="color:#ff7b72;">return</span> L[n][m]</pre>
+
+  <p>Complexité <strong>O(n · m)</strong> (produit des longueurs), au lieu de l'explosion exponentielle d'une recherche naïve sur toutes les sous-séquences.</p>
+
+  <!-- ===== 6 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. La distance de Levenshtein (distance d'édition)</h2>
+  <p><strong>Problème.</strong> Combien d'opérations élémentaires faut-il, au minimum, pour transformer une chaîne X en une chaîne Y ? Les opérations autorisées sont : <strong>insérer</strong> un caractère, <strong>supprimer</strong> un caractère, <strong>substituer</strong> un caractère par un autre (chacune coûte 1). C'est le cœur des correcteurs orthographiques et de la suggestion « vouliez-vous dire… ? ».</p>
+
+  <p><strong>État.</strong> Soit D(i, j) = le nombre minimal d'opérations pour transformer les <strong>i premiers caractères de X</strong> en les <strong>j premiers caractères de Y</strong>.</p>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <p style="margin:0;">D(0, j) = j &nbsp; et &nbsp; D(i, 0) = i &nbsp;<em>(tout insérer / tout supprimer)</em></p>
+    <p style="margin:6px 0 0 0;">si X<sub>i</sub> = Y<sub>j</sub> : &nbsp; D(i, j) = D(i−1, j−1) &nbsp;<em>(rien à faire)</em></p>
+    <p style="margin:6px 0 0 0;">sinon : &nbsp; D(i, j) = 1 + min( D(i−1, j) , &nbsp; D(i, j−1) , &nbsp; D(i−1, j−1) )</p>
+    <p style="margin:6px 0 0 0;font-size:0.93em;color:#0a3a40;">les trois termes = <strong>suppression</strong>, <strong>insertion</strong>, <strong>substitution</strong>.</p>
+  </div>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">levenshtein</span>(X, Y):
+    n, m = <span style="color:#79c0ff;">len</span>(X), <span style="color:#79c0ff;">len</span>(Y)
+    D = [[<span style="color:#79c0ff;">0</span>] * (m + <span style="color:#79c0ff;">1</span>) <span style="color:#ff7b72;">for</span> _ <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n + <span style="color:#79c0ff;">1</span>)]
+    <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n + <span style="color:#79c0ff;">1</span>):
+        D[i][<span style="color:#79c0ff;">0</span>] = i
+    <span style="color:#ff7b72;">for</span> j <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(m + <span style="color:#79c0ff;">1</span>):
+        D[<span style="color:#79c0ff;">0</span>][j] = j
+    <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">1</span>, n + <span style="color:#79c0ff;">1</span>):
+        <span style="color:#ff7b72;">for</span> j <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">1</span>, m + <span style="color:#79c0ff;">1</span>):
+            <span style="color:#ff7b72;">if</span> X[i-<span style="color:#79c0ff;">1</span>] == Y[j-<span style="color:#79c0ff;">1</span>]:
+                D[i][j] = D[i-<span style="color:#79c0ff;">1</span>][j-<span style="color:#79c0ff;">1</span>]
+            <span style="color:#ff7b72;">else</span>:
+                D[i][j] = <span style="color:#79c0ff;">1</span> + <span style="color:#79c0ff;">min</span>(D[i-<span style="color:#79c0ff;">1</span>][j], D[i][j-<span style="color:#79c0ff;">1</span>], D[i-<span style="color:#79c0ff;">1</span>][j-<span style="color:#79c0ff;">1</span>])
+    <span style="color:#ff7b72;">return</span> D[n][m]</pre>
+
+  <p>Complexité <strong>O(n · m)</strong>. Par exemple, la distance entre <code>CHIEN</code> et <code>NICHE</code> se calcule en remplissant un tableau 6 × 6. La même structure de récurrence (sur deux indices, avec un <code>min</code>/<code>max</code>) revient dans tous les problèmes « sur deux chaînes » : c'est un patron à reconnaître.</p>
+
+  <!-- ===== 7 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">7. Récapitulatif</h2>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Problème</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">État</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Complexité PD</th>
+    </tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Fibonacci</strong></td><td style="border:1px solid #ddd;padding:9px;">F(n)</td><td style="border:1px solid #ddd;padding:9px;">O(n) au lieu de O(φ<sup>n</sup>)</td></tr>
+    <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Sac à dos 0/1</strong></td><td style="border:1px solid #ddd;padding:9px;">M(i, c)</td><td style="border:1px solid #ddd;padding:9px;">O(n · C)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;"><strong>PLSSC</strong></td><td style="border:1px solid #ddd;padding:9px;">L(i, j)</td><td style="border:1px solid #ddd;padding:9px;">O(n · m)</td></tr>
+    <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Levenshtein</strong></td><td style="border:1px solid #ddd;padding:9px;">D(i, j)</td><td style="border:1px solid #ddd;padding:9px;">O(n · m)</td></tr>
+  </table>
+
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:12px 16px;border-radius:4px;margin:18px 0;">
+    <strong>✅ Points essentiels.</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>La programmation dynamique <strong>calcule chaque sous-problème une seule fois</strong> et stocke le résultat : elle fait chuter la complexité (souvent d'exponentielle à polynomiale).</li>
+      <li>Elle s'applique quand le problème a une <strong>sous-structure optimale</strong> et des <strong>sous-problèmes qui se chevauchent</strong>.</li>
+      <li>Tout repose sur la <strong>formule de récurrence</strong> : état, cas de base, cas général, réponse finale.</li>
+      <li>Deux mises en œuvre : <strong>Top-Down</strong> (récursion + cache = mémoïsation) et <strong>Bottom-Up</strong> (boucles + tableau = tabulation).</li>
+      <li>Contrairement au glouton, elle <strong>examine tous les choix</strong> : elle résout exactement le <strong>sac à dos 0/1</strong>, la <strong>PLSSC</strong>, la <strong>distance de Levenshtein</strong>…</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#7f8c8d;font-size:0.85em;margin-top:30px;border-top:1px solid #ddd;padding-top:14px;">CPGE MP/PSI — Informatique · Chapitre : La programmation dynamique · Conforme au programme officiel 2023</p>
+
+</div>

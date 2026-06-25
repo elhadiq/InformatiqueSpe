@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz><question type="coderunner"><name><text>Q1 — Vérifier qu'une liste est triée</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q1 — Liste triée ?&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Avant de trier, on vérifie souvent si une liste est déjà ordonnée — cela se fait en un seul parcours O(n).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;est_trie(L)&lt;/code&gt;&lt;/strong&gt; qui renvoie &lt;code&gt;True&lt;/code&gt; si la liste L est triée par ordre croissant, &lt;code&gt;False&lt;/code&gt; sinon.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;est_trie([1, 2, 2, 5]) &amp;rarr; True
+est_trie([3, 1, 2])    &amp;rarr; False
+est_trie([])           &amp;rarr; True&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def est_trie(L):
+    for i in range(len(L) - 1):
+        # Completer : comparer L[i] et L[i+1]
+        ...
+    return True
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def est_trie(L):
+    for i in range(len(L) - 1):
+        if L[i] &gt; L[i + 1]:
+            return False
+    return True
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(est_trie([1, 2, 2, 5]))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(est_trie([3, 1, 2]))
+</text></testcode><stdin><text /></stdin><expected><text>False
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(est_trie([]))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(est_trie([5]))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q2 — Tri par sélection (rappel, O(n^2))</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q2 — Tri par sélection&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Rappel de première année : on cherche le minimum du reste de la liste et on l'échange avec l'élément courant. Complexité O(n^2).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;tri_selection(L)&lt;/code&gt;&lt;/strong&gt; qui renvoie une nouvelle liste triée par ordre croissant (sans utiliser &lt;code&gt;sorted&lt;/code&gt; ni &lt;code&gt;.sort()&lt;/code&gt;).&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;tri_selection([5, 2, 8, 1]) &amp;rarr; [1, 2, 5, 8]
+tri_selection([3, 3, 1])    &amp;rarr; [1, 3, 3]
+tri_selection([])           &amp;rarr; []&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def tri_selection(L):
+    L = list(L)
+    n = len(L)
+    for i in range(n):
+        imin = i
+        # Completer : trouver l'indice du minimum dans L[i:]
+        ...
+        L[i], L[imin] = L[imin], L[i]
+    return L
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def tri_selection(L):
+    L = list(L)
+    n = len(L)
+    for i in range(n):
+        imin = i
+        for j in range(i + 1, n):
+            if L[j] &lt; L[imin]:
+                imin = j
+        L[i], L[imin] = L[imin], L[i]
+    return L
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_selection([5, 2, 8, 1]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2, 5, 8]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_selection([3, 3, 1]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 3, 3]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_selection([]))
+</text></testcode><stdin><text /></stdin><expected><text>[]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_selection([9, 7, 5, 3, 1]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 3, 5, 7, 9]
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q3 — Fusion de deux listes triées (O(m+p))</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q3 — Fusion&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Étape centrale du tri par fusion : fusionner deux listes déjà triées en une seule liste triée, en un parcours O(m+p).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;fusion(A, B)&lt;/code&gt;&lt;/strong&gt; qui, pour deux listes A et B &lt;strong&gt;déjà triées&lt;/strong&gt;, renvoie une liste triée contenant tous leurs éléments.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;fusion([1, 3, 5], [2, 4]) &amp;rarr; [1, 2, 3, 4, 5]
+fusion([], [1, 2])        &amp;rarr; [1, 2]
+fusion([1, 1], [1])       &amp;rarr; [1, 1, 1]&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def fusion(A, B):
+    C = []
+    i, j = 0, 0
+    while i &lt; len(A) and j &lt; len(B):
+        # Completer : comparer A[i] et B[j], ajouter le plus petit
+        ...
+    return C + A[i:] + B[j:]
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def fusion(A, B):
+    C = []
+    i, j = 0, 0
+    while i &lt; len(A) and j &lt; len(B):
+        if A[i] &lt;= B[j]:
+            C.append(A[i]); i += 1
+        else:
+            C.append(B[j]); j += 1
+    return C + A[i:] + B[j:]
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fusion([1, 3, 5], [2, 4]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2, 3, 4, 5]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fusion([], [1, 2]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fusion([1, 1], [1]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 1, 1]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(fusion([2, 6, 7], [1, 3, 4, 9]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2, 3, 4, 6, 7, 9]
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q4 — Tri par fusion (O(n log n))</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q4 — Tri par fusion&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Diviser pour régner : couper la liste en deux, trier chaque moitié récursivement, puis fusionner. Complexité O(n log n) garantie.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;En réutilisant &lt;code&gt;fusion&lt;/code&gt;, écrire &lt;strong&gt;&lt;code&gt;tri_fusion(L)&lt;/code&gt;&lt;/strong&gt; qui renvoie L triée. On suppose &lt;code&gt;fusion(A, B)&lt;/code&gt; déjà définie ci-dessus.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;tri_fusion([5, 2, 8, 1, 3]) &amp;rarr; [1, 2, 3, 5, 8]
+tri_fusion([2, 1])          &amp;rarr; [1, 2]
+tri_fusion([7])             &amp;rarr; [7]&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def fusion(A, B):
+    C = []
+    i, j = 0, 0
+    while i &lt; len(A) and j &lt; len(B):
+        if A[i] &lt;= B[j]:
+            C.append(A[i]); i += 1
+        else:
+            C.append(B[j]); j += 1
+    return C + A[i:] + B[j:]
+
+def tri_fusion(L):
+    if len(L) &lt;= 1:
+        return list(L)
+    m = len(L) // 2
+    # Completer : trier les deux moities et les fusionner
+    return ...
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def fusion(A, B):
+    C = []
+    i, j = 0, 0
+    while i &lt; len(A) and j &lt; len(B):
+        if A[i] &lt;= B[j]:
+            C.append(A[i]); i += 1
+        else:
+            C.append(B[j]); j += 1
+    return C + A[i:] + B[j:]
+
+def tri_fusion(L):
+    if len(L) &lt;= 1:
+        return list(L)
+    m = len(L) // 2
+    return fusion(tri_fusion(L[:m]), tri_fusion(L[m:]))
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_fusion([5, 2, 8, 1, 3]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2, 3, 5, 8]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_fusion([2, 1]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_fusion([7]))
+</text></testcode><stdin><text /></stdin><expected><text>[7]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_fusion([9, 7, 5, 3, 1, 2, 4, 6, 8]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2, 3, 4, 5, 6, 7, 8, 9]
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q5 — Partition autour d'un pivot</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q5 — Partition&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Coeur du tri rapide : séparer les éléments selon le pivot. Ici, version simple renvoyant deux listes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire &lt;strong&gt;&lt;code&gt;partition(L)&lt;/code&gt;&lt;/strong&gt; qui prend le &lt;strong&gt;premier&lt;/strong&gt; élément comme pivot et renvoie le triplet &lt;code&gt;(petits, pivot, grands)&lt;/code&gt; où &lt;code&gt;petits&lt;/code&gt; contient les éléments &amp;le; pivot (hors le pivot lui-même) et &lt;code&gt;grands&lt;/code&gt; ceux &amp;gt; pivot. Pour L vide, renvoyer &lt;code&gt;([], None, [])&lt;/code&gt;.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;partition([5, 2, 8, 1, 5]) &amp;rarr; ([2, 1, 5], 5, [8])
+partition([3])             &amp;rarr; ([], 3, [])
+partition([])              &amp;rarr; ([], None, [])&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def partition(L):
+    if not L:
+        return ([], None, [])
+    pivot = L[0]
+    # Completer : construire petits (&lt;= pivot) et grands (&gt; pivot)
+    ...
+    return (petits, pivot, grands)
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def partition(L):
+    if not L:
+        return ([], None, [])
+    pivot = L[0]
+    petits = [x for x in L[1:] if x &lt;= pivot]
+    grands = [x for x in L[1:] if x &gt; pivot]
+    return (petits, pivot, grands)
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(partition([5, 2, 8, 1, 5]))
+</text></testcode><stdin><text /></stdin><expected><text>([2, 1, 5], 5, [8])
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(partition([3]))
+</text></testcode><stdin><text /></stdin><expected><text>([], 3, [])
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(partition([]))
+</text></testcode><stdin><text /></stdin><expected><text>([], None, [])
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(partition([4, 1, 9, 4, 7, 2]))
+</text></testcode><stdin><text /></stdin><expected><text>([1, 4, 2], 4, [9, 7])
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q6 — Tri rapide (quicksort)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q6 — Tri rapide&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Diviser pour régner avec un pivot : O(n log n) en moyenne, O(n^2) au pire. En place dans sa version classique, non stable.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire &lt;strong&gt;&lt;code&gt;tri_rapide(L)&lt;/code&gt;&lt;/strong&gt; qui renvoie L triée, en prenant le premier élément comme pivot et en appliquant le procédé récursivement.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;tri_rapide([5, 2, 8, 1, 3]) &amp;rarr; [1, 2, 3, 5, 8]
+tri_rapide([3, 3, 1])       &amp;rarr; [1, 3, 3]
+tri_rapide([])              &amp;rarr; []&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def tri_rapide(L):
+    if len(L) &lt;= 1:
+        return list(L)
+    pivot = L[0]
+    # Completer : petits (&lt;= pivot), grands (&gt; pivot), puis recursion
+    ...
+    return ...
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def tri_rapide(L):
+    if len(L) &lt;= 1:
+        return list(L)
+    pivot = L[0]
+    petits = [x for x in L[1:] if x &lt;= pivot]
+    grands = [x for x in L[1:] if x &gt; pivot]
+    return tri_rapide(petits) + [pivot] + tri_rapide(grands)
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_rapide([5, 2, 8, 1, 3]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2, 3, 5, 8]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_rapide([3, 3, 1]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 3, 3]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_rapide([]))
+</text></testcode><stdin><text /></stdin><expected><text>[]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(tri_rapide([9, 7, 5, 3, 1, 2, 4, 6, 8]))
+</text></testcode><stdin><text /></stdin><expected><text>[1, 2, 3, 4, 5, 6, 7, 8, 9]
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question></quiz>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction à la théorie des jeux — CPGE MP/PSI</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--teal:#026573;--dark:#2c3e50;--bg:#e8edf2;--border:#dce3ea;--hl:#e4f1f2;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 5rem;gap:2rem;}
+.slide{background:#fff;width:100%;max-width:940px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.10);padding:2.2rem 2.8rem 1.8rem;position:relative;}
+.slide-number{position:absolute;bottom:0.7rem;right:1.2rem;font-size:0.72rem;color:#aaa;}
+.slide.title-slide{background:linear-gradient(145deg,#f4f9fc 60%,#d9eef0);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;border-top:6px solid var(--teal);}
+.slide.title-slide h1{font-size:1.9rem;color:var(--dark);margin-bottom:0.4rem;}
+.slide.title-slide .subtitle{font-size:1.15rem;color:#555;}
+h2.frame-title{font-size:1.6rem;color:var(--teal);font-weight:700;margin-bottom:0.7rem;padding-bottom:0.35rem;border-bottom:2px solid #b7dadd;}
+h2.frame-title .tag{font-size:0.7em;font-weight:700;padding:2px 10px;border-radius:12px;color:#fff;vertical-align:middle;margin-left:0.4rem;background:var(--teal);}
+p{line-height:1.7;margin:0.45rem 0;} ul,ol{margin:0.5rem 0 0.5rem 1.4rem;line-height:1.85;}
+ul li::marker,ol li::marker{color:var(--teal);} strong{font-weight:700;} em{font-style:italic;}
+.cols{display:flex;gap:2rem;margin-top:0.8rem;align-items:flex-start;} .col-text{flex:1.1;} .col-side{flex:0.9;}
+.code{background:#0d1117;color:#e6edf3;font-family:'Consolas','Courier New',monospace;font-size:0.85rem;line-height:1.5;padding:0.9rem 1.1rem;border-radius:8px;overflow-x:auto;margin:0.6rem 0;white-space:pre;tab-size:4;}
+.code .kw{color:#ff7b72;} .code .fn{color:#d2a8ff;} .code .nb{color:#79c0ff;} .code .cm{color:#8b949e;}
+.hl-box{background:var(--hl);border-left:4px solid var(--teal);border-radius:0 6px 6px 0;padding:0.7rem 1rem;margin:0.8rem 0;font-size:0.97rem;}
+.hl-box.warn{background:#fef9e7;border-left-color:#f39c12;} .hl-box.bad{background:#fdeef0;border-left-color:#e74c3c;} .hl-box.good{background:#eafaf1;border-left-color:#27ae60;}
+table.ref{border-collapse:collapse;width:100%;margin:0.7rem 0;font-size:0.92rem;}
+table.ref th{background:var(--dark);color:#fff;padding:0.5rem 0.7rem;text-align:left;} table.ref td{border:1px solid var(--border);padding:0.45rem 0.7rem;} table.ref tr:nth-child(even) td{background:#f4f9fc;}
+#nav{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:0.4rem;z-index:100;}
+#nav button{background:var(--teal);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:background .2s;}
+#nav button:hover{background:#014a54;} #nav #btn-scroll{border-radius:20px;width:auto;padding:0 14px;font-size:0.78rem;font-weight:700;}
+body.slideshow .slide{display:none;} body.slideshow .slide.active{display:block;} body.slideshow .slide.active.title-slide{display:flex;}
+svg text{font-family:'Segoe UI',sans-serif;}
+</style>
+</head>
+<body>
+
+<!-- 1 ===== Titre ===== -->
+<section class="slide title-slide" id="s1">
+  <h1>Introduction à la théorie des jeux</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">Jeux d'accessibilité à deux joueurs · Attracteurs · Stratégies · Minimax</p>
+  <p class="subtitle" style="font-size:0.9rem;margin-top:1rem;color:#777;">CPGE MP / PSI — Informatique — 2ᵉ période</p>
+  <span class="slide-number">1 / 12</span>
+</section>
+
+<!-- 2 -->
+<section class="slide" id="s2">
+  <h2 class="frame-title">De quoi parle-t-on ?<span class="tag">INTRO</span></h2>
+  <p>La <strong>théorie des jeux</strong> étudie des décisions en interaction. On se limite ici aux <strong>jeux d'accessibilité à deux joueurs</strong>, fortement liés à la <strong>théorie des graphes</strong>.</p>
+  <ul>
+    <li>Une <strong>position</strong> = un sommet d'un graphe orienté.</li>
+    <li>Un <strong>coup</strong> = se déplacer le long d'un arc.</li>
+    <li>Une <strong>partie</strong> = un chemin dans le graphe.</li>
+  </ul>
+  <div class="hl-box"><strong>Objectif du chapitre.</strong> Modéliser un jeu par un graphe biparti, calculer qui gagne (attracteurs), construire les stratégies, et approcher les jeux trop gros par Minimax.</div>
+  <span class="slide-number">2 / 12</span>
+</section>
+
+<!-- 3 -->
+<section class="slide" id="s3">
+  <h2 class="frame-title">Le jeu d'accessibilité<span class="tag">DÉFINITIONS</span></h2>
+  <p>Deux joueurs : le <strong>Joueur&nbsp;0</strong> veut <em>atteindre</em> une cible $F$ ; le <strong>Joueur&nbsp;1</strong> veut l'<em>éviter</em> pour toujours.</p>
+  <table class="ref">
+    <tr><th>Notion</th><th>Signification</th></tr>
+    <tr><td>État initial $v_0$</td><td>position de départ de la partie</td></tr>
+    <tr><td>États gagnants $F$</td><td>positions cibles à atteindre</td></tr>
+    <tr><td>Partie</td><td>suite $v_0, v_1, v_2,\dots$ reliée par des arcs</td></tr>
+    <tr><td>Stratégie</td><td>règle de choix du coup sur chaque position contrôlée</td></tr>
+  </table>
+  <div class="hl-box good"><strong>Victoire.</strong> Le Joueur 0 gagne si la partie atteint $F$ ; sinon c'est le Joueur 1.</div>
+  <span class="slide-number">3 / 12</span>
+</section>
+
+<!-- 4 -->
+<section class="slide" id="s4">
+  <h2 class="frame-title">L'arène : un graphe biparti<span class="tag">MODÈLE</span></h2>
+  <div class="cols">
+    <div class="col-text">
+      <p>On partitionne les positions selon le joueur qui doit jouer :</p>
+      <p style="text-align:center;">$G=(V_0\cup V_1,\;E)$</p>
+      <ul>
+        <li>$V_0$ : positions du <strong>Joueur 0</strong> (cercles)</li>
+        <li>$V_1$ : positions du <strong>Joueur 1</strong> (carrés)</li>
+      </ul>
+      <p>Les joueurs alternent : chaque arc relie $V_0$ et $V_1$ &rArr; le graphe est <strong>biparti</strong>.</p>
+    </div>
+    <div class="col-side">
+      <svg viewBox="0 0 220 200" width="100%">
+        <line x1="55" y1="45" x2="150" y2="45" stroke="#9bb6c4" stroke-width="2" marker-end="url(#a)"/>
+        <line x1="150" y1="60" x2="55" y2="110" stroke="#9bb6c4" stroke-width="2" marker-end="url(#a)"/>
+        <line x1="55" y1="125" x2="150" y2="150" stroke="#9bb6c4" stroke-width="2" marker-end="url(#a)"/>
+        <defs><marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#9bb6c4"/></marker></defs>
+        <circle cx="45" cy="45" r="20" fill="#e4f1f2" stroke="#026573" stroke-width="2"/><text x="45" y="50" text-anchor="middle" font-size="13">a</text>
+        <rect x="135" y="28" width="36" height="36" rx="4" fill="#fdeef0" stroke="#c0392b" stroke-width="2"/><text x="153" y="51" text-anchor="middle" font-size="13">b</text>
+        <circle cx="45" cy="118" r="20" fill="#e4f1f2" stroke="#026573" stroke-width="2"/><text x="45" y="123" text-anchor="middle" font-size="13">c</text>
+        <rect x="135" y="132" width="36" height="36" rx="4" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/><text x="153" y="155" text-anchor="middle" font-size="13">F</text>
+        <text x="45" y="160" text-anchor="middle" font-size="10" fill="#026573">V₀ (cercles)</text>
+        <text x="153" y="190" text-anchor="middle" font-size="10" fill="#c0392b">V₁ (carrés)</text>
+      </svg>
+    </div>
+  </div>
+  <span class="slide-number">4 / 12</span>
+</section>
+
+<!-- 5 -->
+<section class="slide" id="s5">
+  <h2 class="frame-title">Positions gagnantes : l'attracteur<span class="tag">CŒUR</span></h2>
+  <p>Une position est <strong>gagnante pour le Joueur 0</strong> s'il peut <em>forcer</em> l'arrivée dans $F$ quoi que fasse l'adversaire. Cet ensemble est l'<strong>attracteur</strong> $\mathrm{Attr}_0(F)$.</p>
+  <p>Construction par couches : $\mathrm{Attr}^0=F$, puis on ajoute $u$ si</p>
+  <table class="ref">
+    <tr><th>$u$ contrôlée par</th><th>Condition d'ajout</th></tr>
+    <tr><td>Joueur 0 ($u\in V_0$)</td><td><strong>$\exists$</strong> un successeur déjà gagnant</td></tr>
+    <tr><td>Joueur 1 ($u\in V_1$)</td><td><strong>$\forall$</strong> les successeurs déjà gagnants</td></tr>
+  </table>
+  <div class="hl-box"><strong>Intuition.</strong> Sur $V_0$ il <em>choisit</em> &rArr; une bonne issue suffit. Sur $V_1$ il joue contre nous &rArr; il faut que <em>toutes</em> les issues soient gagnantes.</div>
+  <span class="slide-number">5 / 12</span>
+</section>
+
+<!-- 6 -->
+<section class="slide" id="s6">
+  <h2 class="frame-title">Attracteur : formule de point fixe<span class="tag">FORMULE</span></h2>
+  <p>$$\mathrm{Attr}^{k+1}=\mathrm{Attr}^{k}\;\cup\;\{u\in V_0:\exists\,(u\to v),\,v\in \mathrm{Attr}^{k}\}\;\cup\;\{u\in V_1:\forall\,(u\to v),\,v\in \mathrm{Attr}^{k}\}$$</p>
+  <p>La suite $(\mathrm{Attr}^k)$ est croissante, bornée par $V$ : elle se stabilise.</p>
+  <p style="text-align:center;">$$\mathrm{Attr}_0(F)=\bigcup_{k\ge 0}\mathrm{Attr}^{k}$$</p>
+  <div class="hl-box good"><strong>Détermination.</strong> Les positions hors de $\mathrm{Attr}_0(F)$ sont exactement celles gagnantes pour le Joueur 1.</div>
+  <span class="slide-number">6 / 12</span>
+</section>
+
+<!-- 7 -->
+<section class="slide" id="s7">
+  <h2 class="frame-title">Algorithme (induction arrière)<span class="tag">CODE</span></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">attracteur</span>(V0, V1, succ, pred, F):
+    attr = <span class="nb">set</span>(F)                  <span class="cm"># Attr^0 = F</span>
+    file = <span class="nb">list</span>(F)
+    reste = {u: <span class="nb">len</span>(succ[u]) <span class="kw">for</span> u <span class="kw">in</span> V1}
+    <span class="kw">while</span> file:
+        v = file.pop()             <span class="cm"># v déjà gagnant</span>
+        <span class="kw">for</span> u <span class="kw">in</span> pred[v]:
+            <span class="kw">if</span> u <span class="kw">in</span> attr: <span class="kw">continue</span>
+            <span class="kw">if</span> u <span class="kw">in</span> V0:            <span class="cm"># ∃ : un suffit</span>
+                attr.add(u); file.append(u)
+            <span class="kw">else</span>:                   <span class="cm"># ∀ : décompter</span>
+                reste[u] -= <span class="nb">1</span>
+                <span class="kw">if</span> reste[u] == <span class="nb">0</span>:
+                    attr.add(u); file.append(u)
+    <span class="kw">return</span> attr</div>
+  <div class="hl-box"><strong>Complexité $O(|V|+|E|)$.</strong> Chaque arc est examiné une seule fois.</div>
+  <span class="slide-number">7 / 12</span>
+</section>
+
+<!-- 8 -->
+<section class="slide" id="s8">
+  <h2 class="frame-title">Stratégies gagnantes<span class="tag">STRATÉGIE</span></h2>
+  <p>On note $\mathrm{rang}(u)$ la première couche contenant $u$ (nombre minimal de coups pour forcer $F$).</p>
+  <div class="hl-box good"><strong>Joueur 0</strong> sur $u\in V_0\cap\mathrm{Attr}_0(F)$ : jouer vers un successeur $v$ avec $\mathrm{rang}(v)=\mathrm{rang}(u)-1$. Le rang décroît &rArr; on atteint $F$.</div>
+  <div class="hl-box bad"><strong>Joueur 1</strong> sur $u\in V_1$ hors attracteur : jouer vers un successeur lui aussi hors attracteur (il en existe toujours) &rArr; on n'atteint jamais $F$.</div>
+  <p>Les deux stratégies sont <strong>sans mémoire</strong> : elles ne dépendent que de la position courante.</p>
+  <span class="slide-number">8 / 12</span>
+</section>
+
+<!-- 9 -->
+<section class="slide" id="s9">
+  <h2 class="frame-title">Pourquoi Minimax ?<span class="tag">PASSAGE À L'ÉCHELLE</span></h2>
+  <p>L'attracteur suppose qu'on explore <strong>tout</strong> le graphe. Pour les échecs, les dames, Puissance 4… ce graphe est <strong>gigantesque</strong> : impossible à construire.</p>
+  <div class="hl-box warn"><strong>Idée Minimax.</strong> On explore l'arbre des coups sur une <strong>profondeur limitée</strong> et on évalue les positions atteintes par une <strong>heuristique</strong>.</div>
+  <ul>
+    <li>Joueur <strong>MAX</strong> (nous) : choisit la valeur <strong>maximale</strong>.</li>
+    <li>Joueur <strong>MIN</strong> (adversaire) : choisit la valeur <strong>minimale</strong>.</li>
+  </ul>
+  <span class="slide-number">9 / 12</span>
+</section>
+
+<!-- 10 -->
+<section class="slide" id="s10">
+  <h2 class="frame-title">Minimax : pseudo-code<span class="tag">CODE</span></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">minimax</span>(position, profondeur, joueurMax):
+    <span class="kw">if</span> profondeur == <span class="nb">0</span> <span class="kw">or</span> terminale(position):
+        <span class="kw">return</span> heuristique(position)
+    <span class="kw">if</span> joueurMax:
+        valeur = -infini
+        <span class="kw">for</span> coup <span class="kw">in</span> coups(position):
+            valeur = <span class="nb">max</span>(valeur,
+                minimax(jouer(position, coup), profondeur-<span class="nb">1</span>, <span class="kw">False</span>))
+        <span class="kw">return</span> valeur
+    <span class="kw">else</span>:
+        valeur = +infini
+        <span class="kw">for</span> coup <span class="kw">in</span> coups(position):
+            valeur = <span class="nb">min</span>(valeur,
+                minimax(jouer(position, coup), profondeur-<span class="nb">1</span>, <span class="kw">True</span>))
+        <span class="kw">return</span> valeur</div>
+  <p>MAX joue à la racine le coup réalisant le <strong>max</strong>.</p>
+  <span class="slide-number">10 / 12</span>
+</section>
+
+<!-- 11 -->
+<section class="slide" id="s11">
+  <h2 class="frame-title">L'arbre Minimax<span class="tag">EXEMPLE</span></h2>
+  <div class="cols">
+    <div class="col-text">
+      <p>Les valeurs remontent du bas vers le haut :</p>
+      <ul>
+        <li>feuilles : valeurs de l'<strong>heuristique</strong> ;</li>
+        <li>nœud <strong>MIN</strong> : minimum des enfants ;</li>
+        <li>nœud <strong>MAX</strong> : maximum des enfants.</li>
+      </ul>
+      <div class="hl-box"><strong>Lien attracteur.</strong> Avec profondeur infinie et scores exacts $\pm\infty$, Minimax retrouve « gagnant / perdant » : l'heuristique n'est qu'une approximation.</div>
+    </div>
+    <div class="col-side">
+      <svg viewBox="0 0 240 200" width="100%">
+        <line x1="120" y1="30" x2="60" y2="90" stroke="#9bb6c4" stroke-width="2"/>
+        <line x1="120" y1="30" x2="180" y2="90" stroke="#9bb6c4" stroke-width="2"/>
+        <line x1="60" y1="90" x2="35" y2="155" stroke="#9bb6c4" stroke-width="2"/>
+        <line x1="60" y1="90" x2="85" y2="155" stroke="#9bb6c4" stroke-width="2"/>
+        <line x1="180" y1="90" x2="155" y2="155" stroke="#9bb6c4" stroke-width="2"/>
+        <line x1="180" y1="90" x2="205" y2="155" stroke="#9bb6c4" stroke-width="2"/>
+        <circle cx="120" cy="25" r="17" fill="#026573"/><text x="120" y="30" text-anchor="middle" font-size="13" fill="#fff">3</text>
+        <text x="148" y="22" font-size="10" fill="#026573">MAX</text>
+        <rect x="44" y="74" width="32" height="32" rx="4" fill="#c0392b"/><text x="60" y="95" text-anchor="middle" font-size="13" fill="#fff">3</text>
+        <rect x="164" y="74" width="32" height="32" rx="4" fill="#c0392b"/><text x="180" y="95" text-anchor="middle" font-size="13" fill="#fff">2</text>
+        <text x="200" y="84" font-size="10" fill="#c0392b">MIN</text>
+        <circle cx="35" cy="160" r="15" fill="#e4f1f2" stroke="#026573"/><text x="35" y="165" text-anchor="middle" font-size="12">3</text>
+        <circle cx="85" cy="160" r="15" fill="#e4f1f2" stroke="#026573"/><text x="85" y="165" text-anchor="middle" font-size="12">5</text>
+        <circle cx="155" cy="160" r="15" fill="#e4f1f2" stroke="#026573"/><text x="155" y="165" text-anchor="middle" font-size="12">2</text>
+        <circle cx="205" cy="160" r="15" fill="#e4f1f2" stroke="#026573"/><text x="205" y="165" text-anchor="middle" font-size="12">9</text>
+      </svg>
+    </div>
+  </div>
+  <span class="slide-number">11 / 12</span>
+</section>
+
+<!-- 12 -->
+<section class="slide" id="s12">
+  <h2 class="frame-title">À retenir<span class="tag">BILAN</span></h2>
+  <ul>
+    <li>Jeu d'accessibilité = graphe biparti $G=(V_0\cup V_1,E)$ + cible $F$.</li>
+    <li><strong>Attracteur</strong> $\mathrm{Attr}_0(F)$ : $\exists$ un successeur gagnant sur $V_0$, $\forall$ les successeurs sur $V_1$. Calcul en $O(|V|+|E|)$.</li>
+    <li>Le jeu est <strong>déterminé</strong> : chaque position est gagnante pour exactement un joueur ; stratégies <strong>sans mémoire</strong>.</li>
+    <li><strong>Minimax + heuristique</strong> : pour les graphes trop gros, exploration en profondeur limitée (MAX maximise, MIN minimise).</li>
+  </ul>
+  <div class="hl-box good"><strong>Fil rouge.</strong> Tout le chapitre relie un objet « jeu » à un objet « graphe » — et le résoudre, c'est analyser ce graphe.</div>
+  <span class="slide-number">12 / 12</span>
+</section>
+
+<div id="nav">
+  <button class="ghost" id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button class="ghost" id="btn-next" title="Suivant">&#8594;</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide');
+let current=0,slideshowMode=false;
+function enter(i){slides[current].classList.remove('active');current=(i+slides.length)%slides.length;slides[current].classList.add('active');slides[current].scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('btn-prev').addEventListener('click',()=>{if(slideshowMode)enter(current-1);});
+document.getElementById('btn-next').addEventListener('click',()=>{if(slideshowMode)enter(current+1);});
+document.getElementById('btn-scroll').addEventListener('click',()=>{slideshowMode=!slideshowMode;document.body.classList.toggle('slideshow',slideshowMode);document.getElementById('btn-scroll').textContent=slideshowMode?'Défiler':'Diaporama';if(slideshowMode)slides[current].classList.add('active');else slides.forEach(s=>s.classList.remove('active'));});
+document.addEventListener('keydown',e=>{if((e.key==='ArrowRight'||e.key==='ArrowDown')&&slideshowMode)enter(current+1);if((e.key==='ArrowLeft'||e.key==='ArrowUp')&&slideshowMode)enter(current-1);});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informatique CPGE MP/PSI — Cours, Présentations & Exercices</title>
+<style>
+  :root{
+    --teal:#026573; --teal-d:#013f48; --teal-l:#0a8a9c;
+    --bg:#f4f7f8; --card:#ffffff; --txt:#1f2d31; --muted:#5b6b70;
+    --cours:#026573; --pres:#b8860b; --step:#7a3ea1; --exo:#c0392b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.5}
+  header{background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;padding:48px 24px 40px;text-align:center}
+  header h1{font-size:2rem;font-weight:700;letter-spacing:.5px}
+  header p{margin-top:10px;opacity:.9;font-size:1.05rem}
+  .badge{display:inline-block;margin-top:16px;background:rgba(255,255,255,.15);padding:6px 16px;border-radius:20px;font-size:.85rem}
+  main{max-width:1100px;margin:0 auto;padding:32px 20px 60px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px}
+  .card{background:var(--card);border-radius:14px;box-shadow:0 2px 14px rgba(2,101,115,.08);overflow:hidden;border:1px solid #e3eaec;transition:transform .15s,box-shadow .15s}
+  .card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(2,101,115,.16)}
+  .card-h{background:var(--teal);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:12px}
+  .num{background:#fff;color:var(--teal);font-weight:700;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .card-h h2{font-size:1.05rem;font-weight:600}
+  .links{padding:14px 18px 18px;display:flex;flex-direction:column;gap:9px}
+  .links a{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;text-decoration:none;color:var(--txt);font-size:.92rem;font-weight:500;border:1px solid #e3eaec;background:#fafcfc;transition:background .12s,border-color .12s}
+  .links a:hover{background:#eef6f7;border-color:var(--teal-l)}
+  .links a::before{content:"";width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  a.cours::before{background:var(--cours)} a.pres::before{background:var(--pres)}
+  a.step::before{background:var(--step)} a.exo::before{background:var(--exo)}
+  .tag{margin-left:auto;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  footer{text-align:center;padding:28px;color:var(--muted);font-size:.85rem;border-top:1px solid #e3eaec}
+  .legend{max-width:1100px;margin:0 auto;padding:0 20px 8px;display:flex;flex-wrap:wrap;gap:18px;justify-content:center;font-size:.82rem;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:7px}
+  .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<header>
+  <h1>Informatique &mdash; CPGE MP/PSI</h1>
+<p style="text-align:center;color:#fff;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p>Cours, présentations, visualisations pas à pas et exercices</p>
+  <div class="badge">Programme officiel marocain 2023</div>
+</header>
+
+<div class="legend">
+  <span><i style="background:var(--cours)"></i>Cours</span>
+  <span><i style="background:var(--pres)"></i>Présentation</span>
+  <span><i style="background:var(--step)"></i>Pas à pas</span>
+  <span><i style="background:var(--exo)"></i>Exercices</span>
+</div>
+
+<main>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-h"><div class="num">1</div><h2>Complexité algorithmique</h2></div>
+      <div class="links">
+        <a class="cours" href="01-Complexite-algorithmique/cours-complexite-algorithmique.html">Cours</a>
+        <a class="pres" href="01-Complexite-algorithmique/presentation-complexite-algorithmique.html">Présentation</a>
+        <a class="exo" href="01-Complexite-algorithmique/exercices-complexite.html">Exercices</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="num">2</div><h2>Algorithmes de tri</h2></div>
+      <div class="links">
+        <a class="cours" href="02-Algorithmes-de-tri/codes/cours-algorithmes-de-tri.html">Cours</a>
+        <a class="pres" href="02-Algorithmes-de-tri/codes/presentation-algorithmes-de-tri.html">Présentation</a>
+        <a class="step" href="02-Algorithmes-de-tri/codes/visualisation-tris-pas-a-pas.html">Visualisation pas à pas</a>
+        <a class="step" href="02-Algorithmes-de-tri/analyse/analyse-correction-terminaison-tri.html">Analyse correction / terminaison</a>
+        <a class="exo" href="02-Algorithmes-de-tri/codes/exercices-tri.html">Exercices</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="num">3</div><h2>Arbres binaires</h2></div>
+      <div class="links">
+        <a class="cours" href="03-Arbres-binaires/codes/cours-arbres-binaires.html">Cours</a>
+        <a class="pres" href="03-Arbres-binaires/codes/presentation-arbres-binaires.html">Présentation</a>
+        <a class="step" href="03-Arbres-binaires/codes/visualisation-arbres-binaires.html">Visualisation pas à pas</a>
+        <a class="step" href="03-Arbres-binaires/analyse/analyse-correction-terminaison-arbres-binaires.html">Analyse correction / terminaison</a>
+        <a class="exo" href="03-Arbres-binaires/codes/exercices-arbres-binaires.html">Exercices</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="num">4</div><h2>Algorithmes gloutons</h2></div>
+      <div class="links">
+        <a class="cours" href="04-Algorithmes-gloutons/codes/cours-algorithmes-gloutons.html">Cours</a>
+        <a class="pres" href="04-Algorithmes-gloutons/codes/presentation-algorithmes-gloutons.html">Présentation</a>
+        <a class="step" href="04-Algorithmes-gloutons/codes/visualisation-gloutons-pas-a-pas.html">Visualisation pas à pas</a>
+        <a class="step" href="04-Algorithmes-gloutons/analyse/analyse-correction-terminaison-gloutons.html">Analyse correction / terminaison</a>
+        <a class="exo" href="04-Algorithmes-gloutons/codes/exercices-gloutons.html">Exercices</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="num">5</div><h2>Programmation dynamique</h2></div>
+      <div class="links">
+        <a class="cours" href="05-Programmation-dynamique/codes/cours-programmation-dynamique.html">Cours</a>
+        <a class="pres" href="05-Programmation-dynamique/codes/presentation-programmation-dynamique.html">Présentation</a>
+        <a class="step" href="05-Programmation-dynamique/codes/visualisation-programmation-dynamique.html">Visualisation pas à pas</a>
+        <a class="step" href="05-Programmation-dynamique/analyse/analyse-correction-terminaison-programmation-dynamique.html">Analyse correction / terminaison</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="num">6</div><h2>Métaheuristiques</h2></div>
+      <div class="links">
+        <a class="cours" href="06-Metaheuristiques/cours-metaheuristiques.html">Cours</a>
+        <a class="pres" href="06-Metaheuristiques/presentation-metaheuristiques.html">Présentation</a>
+        <a class="step" href="06-Metaheuristiques/visualisation-metaheuristiques.html">Visualisation pas à pas</a>
+        <a class="exo" href="06-Metaheuristiques/exercices-metaheuristiques.html">Exercices</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="num">7</div><h2>Graphes</h2></div>
+      <div class="links">
+        <a class="cours" href="07-Graphes/cours-graphes.html">Cours</a>
+        <a class="pres" href="07-Graphes/presentation-graphes.html">Présentation</a>
+        <a class="step" href="07-Graphes/visualisation-graphes.html">Visualisation pas à pas</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="num">8</div><h2>Intelligence artificielle</h2></div>
+      <div class="links">
+        <a class="cours" href="08-Intelligence-artificielle/cours-intelligence-artificielle.html">Cours</a>
+        <a class="pres" href="08-Intelligence-artificielle/presentation-intelligence-artificielle.html">Présentation</a>
+        <a class="step" href="08-Intelligence-artificielle/visualisation-intelligence-artificielle.html">Visualisation pas à pas</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="num">9</div><h2>Théorie des jeux</h2></div>
+      <div class="links">
+        <a class="cours" href="09-Theorie-des-jeux/cours-theorie-des-jeux.html">Cours</a>
+        <a class="pres" href="09-Theorie-des-jeux/presentation-theorie-des-jeux.html">Présentation</a>
+        <a class="step" href="09-Theorie-des-jeux/visualisation-theorie-des-jeux.html">Visualisation pas à pas</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-h"><div class="num">10</div><h2>Bases de données relationnelles</h2></div>
+      <div class="links">
+        <a class="cours" href="10-Bases-de-donnees-relationnelles/cours-bases-de-donnees-relationnelles.html">Cours</a>
+        <a class="pres" href="10-Bases-de-donnees-relationnelles/presentation-bases-de-donnees-relationnelles.html">Présentation</a>
+        <a class="step" href="10-Bases-de-donnees-relationnelles/visualisation-bases-de-donnees-relationnelles.html">Visualisation pas à pas</a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  Informatique CPGE MP/PSI &middot; spe.cpgeacademy.org
+</footer>
+</body>
+</html>

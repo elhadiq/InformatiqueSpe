@@ -1,0 +1,305 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<script>
+  MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] }, options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE 2ᵉ année — MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.9em;">La complexité algorithmique</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#e4f1f2;">Estimer les ressources (temps et mémoire) nécessaires à l'exécution d'un algorithme en fonction de la taille de l'entrée, pour évaluer ses performances et anticiper ses limites.</p>
+  </div>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:14px 18px;border-radius:4px;margin-bottom:26px;">
+    <strong style="color:#2c3e50;">🎯 Objectifs du chapitre</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Comprendre la notion de complexité et son intérêt (choisir un algorithme).</li>
+      <li>Définir la taille du problème \(n\).</li>
+      <li>Distinguer complexité temporelle et spatiale ; meilleur et pire des cas.</li>
+      <li>Compter les opérations (méthode incrémenter &amp; compter) et maîtriser le grand \(O\).</li>
+      <li>Calculer la complexité d'un programme itératif et récursif (récurrences, Master théorème).</li>
+    </ul>
+  </div>
+
+  <div style="border:1px solid #ddd;border-radius:8px;padding:14px 18px;margin-bottom:30px;background:#fafbfc;">
+    <strong style="color:#2c3e50;">Sommaire</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>Pourquoi mesurer la complexité ?</li>
+      <li>La taille du problème \(n\)</li>
+      <li>Complexité temporelle et complexité spatiale</li>
+      <li>Les cas d'étude : meilleur et pire des cas</li>
+      <li>Compter les opérations élémentaires</li>
+      <li>La notation asymptotique grand \(O\)</li>
+      <li>Les ordres de grandeur classiques</li>
+      <li>Complexité des programmes itératifs</li>
+      <li>Complexité des programmes récursifs</li>
+      <li>Complexité spatiale</li>
+      <li>Récapitulatif</li>
+    </ol>
+  </div>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. Pourquoi mesurer la complexité ?</h2>
+  <p>Un même problème peut être résolu par plusieurs algorithmes. Tous donnent le bon résultat, mais pas avec la même efficacité. Mesurer le temps d'exécution avec un chronomètre est trompeur : il dépend de la machine, du langage, de la charge du système et des données.</p>
+  <p>La <strong>complexité algorithmique</strong> offre une mesure objective et indépendante de la machine : elle exprime comment évoluent les ressources (temps, mémoire) <strong>lorsque la taille de l'entrée augmente</strong>. On note traditionnellement \(n\) cette taille.</p>
+  <div style="text-align:center;margin:14px 0;">
+    <svg viewBox="0 0 720 200" width="100%" style="max-width:680px" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="arc" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L7,3 L0,6 Z" fill="#026573"/></marker></defs>
+      <rect x="20" y="74" width="150" height="52" rx="10" fill="#026573"/><text x="95" y="105" text-anchor="middle" fill="#fff" font-size="19" font-weight="700">Problème</text>
+      <rect x="290" y="20" width="170" height="48" rx="10" fill="#e4f1f2" stroke="#026573" stroke-width="2"/><text x="375" y="49" text-anchor="middle" fill="#026573" font-size="16" font-weight="700">Algorithme 1</text>
+      <rect x="290" y="132" width="170" height="48" rx="10" fill="#e4f1f2" stroke="#026573" stroke-width="2"/><text x="375" y="161" text-anchor="middle" fill="#026573" font-size="16" font-weight="700">Algorithme 2</text>
+      <rect x="560" y="74" width="140" height="52" rx="10" fill="#27ae60"/><text x="630" y="105" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">Solution</text>
+      <line x1="172" y1="92" x2="288" y2="46" stroke="#026573" stroke-width="2.4" marker-end="url(#arc)"/>
+      <line x1="172" y1="108" x2="288" y2="154" stroke="#026573" stroke-width="2.4" marker-end="url(#arc)"/>
+      <line x1="462" y1="46" x2="600" y2="86" stroke="#026573" stroke-width="2.4" marker-end="url(#arc)"/>
+      <line x1="462" y1="154" x2="600" y2="114" stroke="#026573" stroke-width="2.4" marker-end="url(#arc)"/>
+    </svg>
+  </div>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>💡 Idée clé.</strong> On ne cherche pas le temps exact en secondes, mais la <em>loi de croissance</em> : si je double la taille de l'entrée, le temps est-il doublé, quadruplé, ou presque inchangé ? <strong>Méthode : incrémenter un compteur d'opérations et le compter en fonction de \(n\).</strong>
+  </div>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. La taille du problème \(n\)</h2>
+  <p>La complexité s'exprime toujours en fonction d'un entier \(n\) qui mesure la <strong>taille de l'entrée</strong>. Avant tout calcul, il faut <strong>préciser ce qu'est \(n\)</strong>.</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;"><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Entrée</th><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Taille \(n\)</th></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Une liste / un tableau</td><td style="border:1px solid #ddd;padding:9px;">\(n = \operatorname{len}(\text{liste})\) (nombre d'éléments)</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">Un entier \(N\)</td><td style="border:1px solid #ddd;padding:9px;">\(n = N\), ou \(n = \log_2 N\) (nombre de bits)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Une matrice \(p \times q\)</td><td style="border:1px solid #ddd;padding:9px;">\(n = p\,q\) (nombre de cases)</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">Un graphe</td><td style="border:1px solid #ddd;padding:9px;">\(n\) = nombre de sommets (\(m\) = nombre d'arêtes)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Une chaîne de caractères</td><td style="border:1px solid #ddd;padding:9px;">\(n\) = longueur de la chaîne</td></tr>
+  </table>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>À retenir.</strong> Dans chaque calcul, on précisera explicitement \(n\) (le plus souvent \(n = \operatorname{len}(\text{liste})\)).
+  </div>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Complexité temporelle et complexité spatiale</h2>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#2c3e50;color:#fff;"><th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Type</th><th style="border:1px solid #2c3e50;padding:10px;text-align:left;">Ce qu'elle mesure</th></tr>
+    <tr><td style="border:1px solid #ddd;padding:10px;"><strong>Temporelle</strong></td><td style="border:1px solid #ddd;padding:10px;">Le nombre d'<strong>opérations élémentaires</strong> en fonction de \(n\). Estimation du <em>temps d'exécution</em>.</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:10px;"><strong>Spatiale</strong></td><td style="border:1px solid #ddd;padding:10px;">La <strong>mémoire</strong> supplémentaire utilisée en fonction de \(n\) (variables, tableaux, pile d'appels récursifs).</td></tr>
+  </table>
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ Compromis temps / espace.</strong> Réduire le temps augmente souvent la mémoire utilisée (et inversement). Le bon algorithme dépend de la ressource la plus contrainte.
+  </div>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Les cas d'étude : meilleur et pire des cas</h2>
+  <p>Pour une même taille \(n = \operatorname{len}(\text{liste})\), le nombre d'opérations dépend du contenu. <strong>En classe préparatoire, on étudie seulement le meilleur et le pire des cas.</strong></p>
+  <ul style="padding-left:22px;">
+    <li><strong>Meilleur des cas</strong> : la configuration la plus favorable (nombre minimal d'opérations).</li>
+    <li><strong>Pire des cas</strong> : la configuration la plus défavorable. Il garantit une <em>borne supérieure</em> sur le temps.</li>
+  </ul>
+  <p>Exemple — recherche séquentielle dans une liste de \(n\) éléments :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def recherche(liste, x):
+    for i in range(len(liste)):
+        if liste[i] == x:
+            return i
+    return -1</pre>
+  <ul style="padding-left:22px;">
+    <li><strong>Meilleur cas</strong> : \(x\) en première position → \(O(1)\).</li>
+    <li><strong>Pire cas</strong> : \(x\) absent → \(n\) comparaisons → \(O(n)\).</li>
+  </ul>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">5. Compter les opérations élémentaires</h2>
+  <p>Une <strong>opération élémentaire</strong> (affectation, comparaison, addition, accès à une case) a un coût constant. On compte combien de fois chaque instruction s'exécute, puis on additionne.</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def somme(n):
+    s = 0          # 1 affectation
+    for i in range(1, n+1):   # n itérations
+        s = s + i  # 2 opérations, n fois
+    return s       # 1 opération</pre>
+  <p>Total : \(T(n) = 1 + 2n + 1 = 2n + 2\).</p>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Pourquoi \(O(n)\) ?</strong> Quand \(n\) grandit, le terme dominant est \(2n\) ; la constante (\(+2\)) et le facteur (\(2\)) sont négligeables devant la <em>croissance</em>. On écrit \(T(n) = O(n)\) : croissance <strong>linéaire</strong> (doubler \(n\) double le temps).
+  </div>
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Boucles imbriquées.</strong> Le coût d'une boucle interne se <em>multiplie</em> par les tours de la boucle externe : deux boucles allant jusqu'à \(n\) donnent \(n \times n = n^2\) opérations.
+  </div>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. La notation asymptotique grand \(O\)</h2>
+  <div style="background:#f4ecf7;border-left:4px solid #8e44ad;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Définition.</strong> \(T(n) = O\big(f(n)\big)\) s'il existe une constante \(C \gt 0\) et un rang \(n_0\) tels que : pour tout \(n \ge n_0\), \(T(n) \le C \cdot f(n)\). Autrement dit, \(f(n)\) est une <em>borne supérieure</em> de la croissance de \(T(n)\), à une constante près.
+  </div>
+  <ul style="padding-left:22px;">
+    <li>On ignore les <strong>constantes multiplicatives</strong> : \(5n^2 = O(n^2)\).</li>
+    <li>On ne garde que le <strong>terme dominant</strong> : \(3n^2 + 7n + 4 = O(n^2)\).</li>
+    <li>La base d'un logarithme est sans importance : \(\log_2 n\) et \(\log_{10} n\) sont des \(O(\log n)\).</li>
+  </ul>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">7. Les ordres de grandeur classiques</h2>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;"><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Notation</th><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Nom</th><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Exemple</th></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">\(O(1)\)</td><td style="border:1px solid #ddd;padding:9px;">Constante</td><td style="border:1px solid #ddd;padding:9px;">Accès <code>liste[i]</code></td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">\(O(\log n)\)</td><td style="border:1px solid #ddd;padding:9px;">Logarithmique</td><td style="border:1px solid #ddd;padding:9px;">Recherche dichotomique</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">\(O(n)\)</td><td style="border:1px solid #ddd;padding:9px;">Linéaire</td><td style="border:1px solid #ddd;padding:9px;">Parcours de liste</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">\(O(n \log n)\)</td><td style="border:1px solid #ddd;padding:9px;">Quasi-linéaire</td><td style="border:1px solid #ddd;padding:9px;">Tri fusion, tri rapide</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">\(O(n^2)\)</td><td style="border:1px solid #ddd;padding:9px;">Quadratique</td><td style="border:1px solid #ddd;padding:9px;">Boucles imbriquées</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">\(O(2^n)\)</td><td style="border:1px solid #ddd;padding:9px;">Exponentielle</td><td style="border:1px solid #ddd;padding:9px;">Force brute, parties d'un ensemble</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">\(O(n!)\)</td><td style="border:1px solid #ddd;padding:9px;">Factorielle</td><td style="border:1px solid #ddd;padding:9px;">Permutations</td></tr>
+  </table>
+  <p style="text-align:center;font-size:1.05em;">\(O(1) \lt O(\log n) \lt O(n) \lt O(n \log n) \lt O(n^2) \lt O(2^n) \lt O(n!)\)</p>
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ Ce ne sont que des exemples.</strong> Ce tableau et cette hiérarchie ne constituent <strong>pas une règle générale</strong> : il existe d'autres ordres de complexité (\(O(\sqrt{n})\), \(O(n^3)\), \(O(n^k)\), \(O(n\,2^n)\)…). L'important est de savoir <em>situer</em> une complexité donnée.
+  </div>
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>📈 Concrètement.</strong> Pour \(n = 10^6\) : un \(O(n)\) est instantané, un \(O(n^2)\) effectue \(10^{12}\) opérations (minutes à heures), un \(O(2^n)\) est irréalisable. La complexité détermine la <em>faisabilité</em>.
+  </div>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">8. Complexité des programmes itératifs</h2>
+  <p>On analyse les boucles de l'intérieur vers l'extérieur : instruction simple \(O(1)\) ; boucle de \(n\) tours \(O(n)\) ; deux boucles imbriquées \(O(n^2)\) ; \(k\) boucles imbriquées \(O(n^k)\).</p>
+  <p><strong>Exemple — recherche dichotomique</strong> (liste triée) :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def dichotomie(liste, x):
+    g, d = 0, len(liste) - 1
+    while g &lt;= d:
+        m = (g + d) // 2
+        if liste[m] == x:
+            return m
+        elif liste[m] &lt; x:
+            g = m + 1
+        else:
+            d = m - 1
+    return -1</pre>
+  <p><strong>Calcul formel.</strong> Soit \(t\) le nombre d'éléments de l'intervalle \([g, d]\) ; au départ \(t_0 = n\). Chaque tour divise \(t\) par 2 : \(t_k = \dfrac{n}{2^k}\). La boucle s'arrête quand \(t_k \lt 1\), soit \(\dfrac{n}{2^k} \lt 1\), c'est-à-dire \(k \gt \log_2 n\). Il y a donc au plus \(\lfloor \log_2 n \rfloor + 1\) tours : la complexité est \(O(\log n)\).</p>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">9. Complexité des programmes récursifs</h2>
+  <p>Pour un programme récursif, on exprime la complexité par une <strong>relation de récurrence</strong> : \(T(n)\) s'écrit en fonction du coût des appels plus petits, puis on la <strong>déroule</strong>.</p>
+  <p><strong>Exemple 1 — factorielle.</strong></p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def fact(n):
+    if n &lt;= 1:
+        return 1
+    return n * fact(n - 1)</pre>
+  <p>\(T(n) = T(n-1) + O(1)\). En déroulant : \(T(n) = O(1) + O(1) + \dots\) (\(n\) termes) \(= O(n)\).</p>
+  <p><strong>Exemple 2 — Fibonacci récursif naïf.</strong></p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def fibo(n):
+    if n &lt; 2:
+        return n
+    return fibo(n - 1) + fibo(n - 2)</pre>
+  <p>Chaque appel en engendre deux : \(T(n) = T(n-1) + T(n-2) + O(1)\). Le nombre d'appels croît comme la suite de Fibonacci elle-même, d'où une complexité <strong>exponentielle</strong>.</p>
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Calcul détaillé (nombre d'or).</strong> La partie homogène \(T(n) = T(n-1) + T(n-2)\) a pour <em>équation caractéristique</em> \(r^2 = r + 1\), soit \(r^2 - r - 1 = 0\). Ses racines sont \(r = \dfrac{1 \pm \sqrt5}{2}\) : le <strong>nombre d'or</strong> \(\varphi = \dfrac{1+\sqrt5}{2} \approx 1{,}618\) et \(\psi = \dfrac{1-\sqrt5}{2} \approx -0{,}618\). La solution est \(T(n) = A\,\varphi^{\,n} + B\,\psi^{\,n}\) ; comme \(|\psi| \lt 1\), \(\psi^{\,n} \to 0\). Donc \(T(n) = \Theta(\varphi^{\,n})\) avec \(\varphi \approx 1{,}618\). La borne \(O(2^n)\) est correcte mais <em>lâche</em>, car \(\varphi \lt 2\).
+  </div>
+
+  <div style="background:#f4ecf7;border-left:4px solid #8e44ad;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Méthode générale — résolution par équation caractéristique.</strong> Pour une récurrence <strong>linéaire à coefficients constants</strong> \(T(n) = a_1 T(n-1) + a_2 T(n-2) + \dots + a_k T(n-k)\) :
+    <ol style="margin:8px 0 0 0;">
+      <li>écrire l'<em>équation caractéristique</em> \(r^k = a_1 r^{k-1} + \dots + a_k\) ;</li>
+      <li>trouver ses racines \(r_1, \dots, r_k\) ;</li>
+      <li>solution générale : racines distinctes \(\Rightarrow T(n) = \sum_i C_i\, r_i^{\,n}\) ; une racine \(r\) de multiplicité \(m\) apporte un terme \((C_0 + C_1 n + \dots + C_{m-1} n^{m-1})\, r^{\,n}\) ;</li>
+      <li>les constantes \(C_i\) sont fixées par les conditions initiales.</li>
+    </ol>
+    <strong>Comportement asymptotique :</strong> la racine de plus grand module \(r_{\max}\) domine, donc \(T(n) = \Theta\big(|r_{\max}|^{\,n}\big)\) (à un facteur polynomial près en cas de multiplicité).
+    <br><em>Exemples :</em> Fibonacci \(r^2 = r+1 \Rightarrow \varphi \Rightarrow \Theta(\varphi^{\,n})\) ; \(T(n) = 2T(n-1) \Rightarrow r=2 \Rightarrow \Theta(2^{\,n})\) ; \(T(n) = 2T(n-1) - T(n-2) \Rightarrow (r-1)^2 = 0 \Rightarrow \Theta(n)\).
+  </div>
+
+  <div style="background:#f4ecf7;border-left:4px solid #8e44ad;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Confirmation — algèbre linéaire (Fibonacci).</strong> On pose le vecteur d'état \(\begin{pmatrix}F_{n+1}\\ F_n\end{pmatrix} = A\begin{pmatrix}F_n\\ F_{n-1}\end{pmatrix}\) avec \(A=\begin{pmatrix}1&1\\ 1&0\end{pmatrix}\), d'où \(\begin{pmatrix}F_{n+1}\\ F_n\end{pmatrix} = A^{\,n}\begin{pmatrix}1\\ 0\end{pmatrix}\). Les valeurs propres vérifient \(\det(A-\lambda I)=\lambda^2-\lambda-1=0\), soit \(\lambda = \varphi,\ \psi\). En diagonalisant \(A = P D P^{-1}\) avec \(D=\operatorname{diag}(\varphi,\psi)\), on a \(A^{\,n}=P D^{\,n} P^{-1}\) et l'on obtient la <strong>formule de Binet</strong> : \(F_n = \dfrac{\varphi^{\,n} - \psi^{\,n}}{\sqrt5}\). Comme \(|\psi| \lt 1\), \(F_n \sim \dfrac{\varphi^{\,n}}{\sqrt5}\) : on retrouve \(\Theta(\varphi^{\,n})\).
+  </div>
+
+  <p><strong>Exemples de récurrences classiques :</strong></p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.93em;">
+    <tr style="background:#2c3e50;color:#fff;"><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Récurrence</th><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Exemple</th><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Complexité</th></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">\(T(n) = T(n/2) + O(1)\)</td><td style="border:1px solid #ddd;padding:9px;">dichotomie récursive</td><td style="border:1px solid #ddd;padding:9px;">\(O(\log n)\)</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">\(T(n) = T(n-1) + O(1)\)</td><td style="border:1px solid #ddd;padding:9px;">factorielle</td><td style="border:1px solid #ddd;padding:9px;">\(O(n)\)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">\(T(n) = T(n-1) + O(n)\)</td><td style="border:1px solid #ddd;padding:9px;">somme de paires</td><td style="border:1px solid #ddd;padding:9px;">\(O(n^2)\)</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">\(T(n) = 2T(n/2) + O(n)\)</td><td style="border:1px solid #ddd;padding:9px;">tri fusion</td><td style="border:1px solid #ddd;padding:9px;">\(O(n \log n)\)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">\(T(n) = T(n-1) + T(n-2) + O(1)\)</td><td style="border:1px solid #ddd;padding:9px;">Fibonacci naïf</td><td style="border:1px solid #ddd;padding:9px;">\(O(\varphi^{\,n})\), \(\varphi \approx 1{,}618\)</td></tr>
+  </table>
+
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Diviser pour régner — Master théorème.</strong> Pour \(T(n) = a\,T(n/b) + O(n^d)\), en posant l'exposant critique \(\log_b a\) :
+    <ul style="margin:6px 0 0 0;">
+      <li>si \(d \gt \log_b a\) : \(T(n) = O(n^d)\) ;</li>
+      <li>si \(d = \log_b a\) : \(T(n) = O(n^d \log n)\) ;</li>
+      <li>si \(d \lt \log_b a\) : \(T(n) = O\big(n^{\log_b a}\big)\).</li>
+    </ul>
+    Cas usuel : \(T(n) = 2T(n/2) + O(n)\) (\(a = b = 2\), \(d = 1\)) \(\to O(n \log n)\), comme le tri fusion.
+  </div>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">10. Complexité spatiale</h2>
+  <p>La complexité spatiale mesure la mémoire <strong>supplémentaire</strong> nécessaire, au-delà des données d'entrée (calcul asymptotique, meilleur et pire des cas).</p>
+  <ul style="padding-left:22px;">
+    <li>Quelques variables seulement : \(O(1)\) (espace constant, dit <em>en place</em>).</li>
+    <li>Création d'une nouvelle liste de taille \(n\) : \(O(n)\).</li>
+    <li><strong>Récursivité</strong> : chaque appel non terminé occupe une case de la <em>pile d'appels</em>. Une récursion de profondeur \(n\) a une complexité spatiale \(O(n)\), même sans tableau.</li>
+  </ul>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>À retenir.</strong> Un algorithme rapide n'est pas toujours économe en mémoire : le tri fusion est \(O(n \log n)\) en temps mais nécessite \(O(n)\) d'espace auxiliaire.
+  </div>
+
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">11. Récapitulatif</h2>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;"><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Structure de code</th><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Complexité temporelle</th></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Instruction simple, accès tableau</td><td style="border:1px solid #ddd;padding:9px;">\(O(1)\)</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">Boucle simple sur \(n\)</td><td style="border:1px solid #ddd;padding:9px;">\(O(n)\)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Deux boucles imbriquées sur \(n\)</td><td style="border:1px solid #ddd;padding:9px;">\(O(n^2)\)</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">Division de l'intervalle par 2</td><td style="border:1px solid #ddd;padding:9px;">\(O(\log n)\)</td></tr>
+    <tr><td style="border:1px solid #ddd;padding:9px;">Diviser pour régner (recombinaison linéaire)</td><td style="border:1px solid #ddd;padding:9px;">\(O(n \log n)\)</td></tr>
+    <tr style="background:#f7fbfe;"><td style="border:1px solid #ddd;padding:9px;">Récursion à deux appels (Fibonacci naïf)</td><td style="border:1px solid #ddd;padding:9px;">\(O(\varphi^{\,n})\)</td></tr>
+  </table>
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:12px 16px;border-radius:4px;margin:18px 0;">
+    <strong>✅ Points essentiels.</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Toujours préciser \(n\) (souvent \(n = \operatorname{len}(\text{liste})\)).</li>
+      <li>Compter les opérations, garder le terme dominant → grand \(O\).</li>
+      <li>On étudie le meilleur et le pire des cas ; le pire cas garantit une borne.</li>
+      <li>Itératif : boucle → \(O(n)\), imbriquées → \(O(n^2)\), division par 2 → \(O(\log n)\).</li>
+      <li>Récursif : poser et dérouler la récurrence ; Master théorème pour diviser pour régner.</li>
+      <li>Les ordres classiques sont des exemples, pas une liste exhaustive.</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#7f8c8d;font-size:0.85em;margin-top:30px;border-top:1px solid #ddd;padding-top:14px;">CPGE MP/PSI — Informatique · Chapitre : La complexité algorithmique · Conforme au programme officiel 2023</p>
+
+</div>

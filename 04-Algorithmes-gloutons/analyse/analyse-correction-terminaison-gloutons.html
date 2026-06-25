@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algorithmes gloutons — correction, terminaison, optimalité</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:920px;margin:0 auto;padding:1.2rem;background:#fff;}
+  code{background:#eef1f3;padding:1px 5px;border-radius:3px;font-family:Consolas,Monaco,monospace;}
+  pre code{background:none;padding:0;}
+  h2{font-size:1.55em;}
+  h3{margin-top:1.1em;}
+  .box{border-radius:4px;padding:12px 16px;margin:12px 0;}
+  .spec{background:#eef2f7;border-left:4px solid #34495e;}
+  .corr{background:#f4ecfb;border-left:4px solid #5b21b6;}
+  .term{background:#e7f6ef;border-left:4px solid #047857;}
+  .cplx{background:#e4f1f2;border-left:4px solid #026573;}
+  .warn{background:#fef9e7;border-left:4px solid #f39c12;}
+  .bad{background:#fdeef0;border-left:4px solid #e74c3c;}
+  .good{background:#eafaf1;border-left:4px solid #27ae60;}
+  .lab-c{color:#5b21b6;font-weight:bold;}
+  .lab-t{color:#047857;font-weight:bold;}
+  .lab-x{color:#026573;font-weight:bold;}
+  pre.code{background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;}
+  pre.calc{background:#f7fbfc;border:1px solid #ddd;border-radius:6px;padding:12px 16px;font-family:Consolas,monospace;font-size:0.92em;line-height:1.7;}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.94em;}
+  th{background:#2c3e50;color:#fff;padding:8px;text-align:left;border:1px solid #2c3e50;}
+  td{border:1px solid #ddd;padding:8px;}
+  tr:nth-child(even) td{background:#f7fbfc;}
+</style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.8em;">Algorithmes gloutons — analyse</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6eef0;">Pour le rendu de monnaie, le sac à dos et Huffman : <strong>spécification</strong>, <strong>correction</strong> (invariant), <strong>terminaison</strong> (variant) et surtout la question propre aux gloutons — l'<strong>optimalité</strong>, qui se prouve par <strong>argument d'échange</strong> ou se réfute par un <strong>contre-exemple</strong>.</p>
+  </div>
+
+  <!-- CADRE -->
+  <div class="box corr">
+    <span class="lab-c">📘 Correction, terminaison… et optimalité</span>
+    <p style="margin:6px 0 0 0;">Comme pour tout algorithme :</p>
+    <p style="text-align:center;margin:8px 0;">\[ \text{Correction totale} \;=\; \text{Correction partielle} \;+\; \text{Terminaison} \]</p>
+    <p style="margin:6px 0 0 0;">Mais un glouton résout un <strong>problème d'optimisation</strong> : il ne suffit pas qu'il produise une solution <em>valide</em> (correction), il faut savoir si cette solution est <strong>optimale</strong>. C'est une propriété <strong>supplémentaire</strong> : un glouton peut être parfaitement correct (il termine et renvoie une solution réalisable) tout en n'étant <strong>pas</strong> optimal.</p>
+  </div>
+
+  <table>
+    <tr><th>Question</th><th>Outil</th></tr>
+    <tr><td><strong>Correction</strong> (la sortie est-elle réalisable ?)</td><td>Invariant de boucle : initialisation + conservation + sortie</td></tr>
+    <tr><td><strong>Terminaison</strong> (l'algorithme s'arrête-t-il ?)</td><td>Variant \(V \in \mathbb{N}\) strictement décroissant (Floyd)</td></tr>
+    <tr><td><strong>Optimalité</strong> (la sortie est-elle la meilleure ?)</td><td>Propriété du choix glouton + sous-structure → <strong>preuve par échange</strong> ; sinon <strong>contre-exemple</strong></td></tr>
+  </table>
+
+  <!-- ===================== RENDU DE MONNAIE ===================== -->
+  <h2 style="color:#026573;border-bottom:3px solid #026573;padding-bottom:6px;">A. Le rendu de monnaie</h2>
+  <pre class="code">def rendu_monnaie(systeme, S):   # systeme trie par ordre decroissant
+    rendu = []
+    for piece in systeme:
+        while S &gt;= piece:
+            rendu.append(piece)
+            S = S - piece
+    return rendu</pre>
+
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">Spécification.</span>
+    <p style="margin:6px 0 0 0;"><strong>Précondition :</strong> <code>systeme</code> est une liste d'entiers strictement positifs, triée par ordre décroissant, contenant la pièce \(1\) ; \(S \in \mathbb{N}\). <strong>Postcondition :</strong> <code>rendu</code> est une liste de pièces de <code>systeme</code> dont la somme vaut \(S\).</p>
+  </div>
+
+  <h3 style="color:#5b21b6;">A.1 — Correction</h3>
+  <div class="box corr">
+    <span class="lab-c">Invariant de la boucle interne.</span>
+    <p style="margin:6px 0 0 0;">Notons \(S_0\) la valeur initiale. À tout instant : \( \big(\sum \text{rendu}\big) + S = S_0 \) et \(S \ge 0\).</p>
+    <p style="margin:6px 0 0 0;"><strong>Initialisation :</strong> <code>rendu</code> est vide et \(S = S_0\), l'égalité tient. <strong>Conservation :</strong> chaque tour ajoute une pièce de valeur \(p\) à <code>rendu</code> et retranche \(p\) à \(S\) ; la somme \(\sum\text{rendu} + S\) est inchangée, et la garde \(S \ge p\) assure \(S \ge 0\) après. <strong>Sortie :</strong> à la fin, comme la pièce \(1\) divise tout entier et est présente, \(S\) a pu être ramené à \(0\), donc \(\sum \text{rendu} = S_0\).</p>
+  </div>
+
+  <h3 style="color:#047857;">A.2 — Terminaison</h3>
+  <div class="box term">
+    <span class="lab-t">Variant.</span>
+    <p style="margin:6px 0 0 0;">On prend \(V = S\) (la somme restante). À chaque tour de la boucle <code>while</code>, \(S\) décroît de \(p \ge 1\), donc \(V\) est un entier naturel <strong>strictement décroissant</strong> : la boucle interne s'arrête. La boucle externe parcourt une liste finie. Par le théorème de Floyd (l'ordre \((\mathbb{N},<)\) est bien fondé), l'algorithme termine.</p>
+  </div>
+
+  <h3 style="color:#026573;">A.3 — Optimalité : ça dépend du système !</h3>
+  <div class="box good">
+    <span class="lab-x">✅ Systèmes canoniques.</span>
+    <p style="margin:6px 0 0 0;">Pour le système de l'euro \((1,2,5,10,20,50,\dots)\), on démontre (argument d'échange) que le glouton renvoie le nombre minimal de pièces. Idée : si une solution optimale n'utilisait pas la plus grande pièce \(p \le S\), on pourrait remplacer un sous-ensemble de petites pièces sommant à \(p\) par cette pièce unique, sans augmenter le total — donc il existe une solution optimale qui fait le choix glouton.</p>
+  </div>
+  <div class="box bad">
+    <span style="color:#e74c3c;font-weight:bold;">❌ Contre-exemple (système non canonique).</span>
+    <p style="margin:6px 0 0 0;">Système \((4,3,1)\), \(S = 6\). Le glouton : \(6 \to 4\) (reste \(2\)) \(\to 1 \to 1\), soit \(\{4,1,1\}\), <strong>3 pièces</strong>. L'optimum est \(\{3,3\}\), <strong>2 pièces</strong>. Le choix glouton « prendre \(4\) » détruit l'optimalité : la propriété du choix glouton est <strong>fausse</strong> ici.</p>
+  </div>
+  <div class="box warn">
+    <span style="color:#f39c12;font-weight:bold;">⚠️ À retenir.</span>
+    <p style="margin:6px 0 0 0;">L'algorithme reste <strong>correct</strong> (il rend bien \(S\)) et <strong>termine</strong> dans tous les cas ; seule l'<strong>optimalité</strong> dépend du système. Pour un système quelconque, l'optimum se calcule par <strong>programmation dynamique</strong> : \( \text{opt}(m) = 1 + \min_{p \le m} \text{opt}(m-p) \), avec \(\text{opt}(0)=0\).</p>
+  </div>
+
+  <!-- ===================== SAC A DOS ===================== -->
+  <h2 style="color:#026573;border-bottom:3px solid #026573;padding-bottom:6px;">B. Le sac à dos fractionnaire</h2>
+  <pre class="code">def sac_fractionnaire(objets, C):   # objets : (valeur, poids)
+    objets = sorted(objets, key=lambda o: o[0]/o[1], reverse=True)
+    valeur = 0.0
+    for v, p in objets:
+        if C &gt;= p:
+            valeur += v; C -= p
+        else:
+            valeur += v * (C / p); C = 0; break
+    return valeur</pre>
+
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">Spécification.</span>
+    <p style="margin:6px 0 0 0;"><strong>Pré :</strong> objets de poids \(p_i &gt; 0\) et valeur \(v_i \ge 0\), capacité \(C \ge 0\). <strong>Post :</strong> <code>valeur</code> est la valeur maximale d'un remplissage de poids total \(\le C\), les objets étant <strong>divisibles</strong>.</p>
+  </div>
+
+  <h3 style="color:#047857;">B.1 — Terminaison</h3>
+  <div class="box term">
+    <span class="lab-t">Variant.</span>
+    <p style="margin:6px 0 0 0;">La boucle <code>for</code> parcourt une liste finie d'objets ; le variant est le nombre d'objets non encore examinés, entier décroissant. L'instruction <code>break</code> ne fait qu'arrêter plus tôt. L'algorithme termine.</p>
+  </div>
+
+  <h3 style="color:#026573;">B.2 — Optimalité (preuve par échange)</h3>
+  <div class="box good">
+    <span class="lab-x">✅ Argument d'échange.</span>
+    <p style="margin:6px 0 0 0;">Trions par densité \(d_i = v_i/p_i\) décroissante. Soit une solution optimale \(x\) (proportion de chaque objet). Supposons qu'elle prenne une fraction d'un objet \(j\) <em>moins</em> rentable alors qu'un objet \(i\) plus rentable (\(d_i &gt; d_j\)) n'est pas pris à fond. En transférant un poids \(\varepsilon\) de \(j\) vers \(i\), la valeur varie de \(\varepsilon(d_i - d_j) &gt; 0\) : contradiction avec l'optimalité. Donc une solution optimale remplit d'abord les objets les plus denses — exactement le choix glouton. La <strong>sous-structure optimale</strong> (après avoir pris l'objet le plus dense, on résout le même problème sur la capacité restante) conclut.</p>
+  </div>
+
+  <h3 style="color:#e74c3c;">B.3 — Le sac 0/1 : le même glouton échoue</h3>
+  <div class="box bad">
+    <span style="color:#e74c3c;font-weight:bold;">❌ Contre-exemple (objets indivisibles).</span>
+    <p style="margin:6px 0 0 0;">\(A(60,10)\), \(B(100,20)\), \(C(120,30)\), capacité \(C = 50\). Densités \(6 &gt; 5 &gt; 4\). Le glouton prend \(A\) puis \(B\) : valeur \(160\), il reste \(20 &lt; 30\), \(C\) refusé. Or \(B+C\) (poids \(50\)) vaut \(220 &gt; 160\). L'<strong>indivisibilité</strong> détruit la propriété du choix glouton : prendre le plus dense « gaspille » de la capacité. Le sac 0/1 relève de la <strong>programmation dynamique</strong>.</p>
+  </div>
+
+  <!-- ===================== HUFFMAN ===================== -->
+  <h2 style="color:#026573;border-bottom:3px solid #026573;padding-bottom:6px;">C. Le codage de Huffman</h2>
+  <pre class="code">import heapq
+def huffman(freq):
+    tas = [[f, c, None, None] for c, f in freq.items()]
+    heapq.heapify(tas)
+    while len(tas) &gt; 1:
+        g = heapq.heappop(tas)     # plus petite frequence
+        d = heapq.heappop(tas)     # deuxieme plus petite
+        heapq.heappush(tas, [g[0] + d[0], None, g, d])
+    return tas[0]</pre>
+
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">Spécification.</span>
+    <p style="margin:6px 0 0 0;"><strong>Pré :</strong> \(n \ge 1\) caractères de fréquences \(f_i &gt; 0\). <strong>Post :</strong> un arbre binaire de code <strong>préfixe</strong> minimisant la longueur moyenne \( \sum_i f_i\,\ell_i \), où \(\ell_i\) est la profondeur (longueur du code) du caractère \(i\).</p>
+  </div>
+
+  <h3 style="color:#047857;">C.1 — Terminaison</h3>
+  <div class="box term">
+    <span class="lab-t">Variant.</span>
+    <p style="margin:6px 0 0 0;">Variant \(V = |\text{tas}|\). Chaque tour retire deux arbres et en réinsère un : \(V\) décroît de \(1\) à chaque itération. Partant de \(n\), la boucle s'exécute \(n-1\) fois puis s'arrête (\(V=1\)). Avec un tas binaire, chaque opération coûte \(O(\log n)\), d'où une complexité \(O(n \log n)\).</p>
+  </div>
+
+  <h3 style="color:#026573;">C.2 — Optimalité (lemme d'échange + récurrence)</h3>
+  <div class="box good">
+    <span class="lab-x">✅ Le choix glouton est sûr.</span>
+    <p style="margin:6px 0 0 0;"><strong>Lemme.</strong> Soient \(x, y\) les deux caractères de plus faibles fréquences. Il existe un arbre optimal où \(x\) et \(y\) sont des feuilles <strong>sœurs de profondeur maximale</strong>. <em>Preuve :</em> dans un arbre optimal, échanger un caractère de profondeur maximale avec \(x\) (puis \(y\)) ne peut <strong>pas augmenter</strong> \(\sum f_i \ell_i\), car on déplace les plus petites fréquences vers le bas. On obtient un arbre optimal réalisant le choix glouton.</p>
+    <p style="margin:6px 0 0 0;"><strong>Sous-structure optimale.</strong> Fusionner \(x\) et \(y\) en un méta-caractère de fréquence \(f_x+f_y\) donne un problème à \(n-1\) caractères. Un arbre optimal du problème réduit, où l'on rouvre la feuille fusionnée en \((x,y)\), est optimal pour le problème initial. Par <strong>récurrence</strong> sur \(n\), Huffman est optimal.</p>
+  </div>
+
+  <!-- ===================== SYNTHESE ===================== -->
+  <h2 style="color:#026573;border-bottom:3px solid #026573;padding-bottom:6px;">D. Synthèse</h2>
+  <table>
+    <tr><th>Algorithme</th><th>Termine ?</th><th>Correct ?</th><th>Optimal ?</th><th>Outil de preuve d'optimalité</th></tr>
+    <tr><td>Rendu (système euro)</td><td>Oui</td><td>Oui</td><td style="color:#27ae60;"><strong>Oui</strong></td><td>Argument d'échange</td></tr>
+    <tr><td>Rendu (système 1,3,4)</td><td>Oui</td><td>Oui</td><td style="color:#e74c3c;"><strong>Non</strong></td><td>Contre-exemple \(6=3+3\)</td></tr>
+    <tr><td>Sac fractionnaire</td><td>Oui</td><td>Oui</td><td style="color:#27ae60;"><strong>Oui</strong></td><td>Échange sur les densités</td></tr>
+    <tr><td>Sac à dos 0/1</td><td>Oui</td><td>Oui</td><td style="color:#e74c3c;"><strong>Non</strong></td><td>Contre-exemple \(B+C\)</td></tr>
+    <tr><td>Huffman</td><td>Oui</td><td>Oui</td><td style="color:#27ae60;"><strong>Oui</strong></td><td>Lemme d'échange + récurrence</td></tr>
+  </table>
+
+  <div class="box cplx">
+    <span class="lab-x">🧭 Méthode générale.</span>
+    <p style="margin:6px 0 0 0;">Pour un glouton : (1) prouver <strong>terminaison</strong> (variant) et <strong>correction</strong> (invariant : la solution construite reste réalisable) ; (2) pour l'<strong>optimalité</strong>, démontrer la <strong>propriété du choix glouton</strong> par échange — « il existe une solution optimale contenant le premier choix glouton » — puis conclure par <strong>sous-structure optimale</strong> et récurrence. Si la propriété du choix glouton est fausse, exhiber <strong>un contre-exemple</strong> suffit, et l'on bascule sur la <strong>programmation dynamique</strong>.</p>
+  </div>
+
+  <p style="text-align:center;color:#7f8c8d;font-size:0.85em;margin-top:30px;border-top:1px solid #ddd;padding-top:14px;">CPGE MP/PSI — Informatique · Analyse : algorithmes gloutons · Conforme au programme officiel 2023</p>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analyse des tris efficaces — correction, terminaison, complexité</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:920px;margin:0 auto;padding:1.2rem;background:#fff;}
+  code{background:#eef1f3;padding:1px 5px;border-radius:3px;font-family:Consolas,Monaco,monospace;}
+  pre code{background:none;padding:0;}
+  h2{font-size:1.55em;}
+  h3{margin-top:1.1em;}
+  .box{border-radius:4px;padding:12px 16px;margin:12px 0;}
+  .spec{background:#eef2f7;border-left:4px solid #34495e;}
+  .corr{background:#f4ecfb;border-left:4px solid #5b21b6;}
+  .term{background:#e7f6ef;border-left:4px solid #047857;}
+  .cplx{background:#e4f1f2;border-left:4px solid #026573;}
+  .warn{background:#fef9e7;border-left:4px solid #f39c12;}
+  .bad{background:#fdeef0;border-left:4px solid #e74c3c;}
+  .good{background:#eafaf1;border-left:4px solid #27ae60;}
+  .lab-c{color:#5b21b6;font-weight:bold;}
+  .lab-t{color:#047857;font-weight:bold;}
+  .lab-x{color:#026573;font-weight:bold;}
+  pre.code{background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;}
+  pre.calc{background:#f7fbfc;border:1px solid #ddd;border-radius:6px;padding:12px 16px;font-family:Consolas,monospace;font-size:0.92em;line-height:1.7;}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.94em;}
+  th{background:#2c3e50;color:#fff;padding:8px;text-align:left;border:1px solid #2c3e50;}
+  td{border:1px solid #ddd;padding:8px;}
+  tr:nth-child(even) td{background:#f7fbfc;}
+</style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.8em;">Analyse des tris efficaces</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6eef0;">Pour le tri rapide et le tri par fusion : spécification, <strong>correction</strong> (invariant de boucle et récurrence bien fondée), <strong>terminaison</strong> (variant et fonction de mesure) et <strong>complexité</strong>.</p>
+  </div>
+
+  <!-- CADRE -->
+  <div class="box corr">
+    <span class="lab-c">📘 Cadre : correction totale</span>
+    <p style="margin:6px 0 0 0;">Un algorithme est <strong>correct</strong> (au sens total) s'il vérifie :</p>
+    <p style="text-align:center;margin:8px 0;">\[ \text{Correction totale} \;=\; \text{Correction partielle} \;+\; \text{Terminaison} \]</p>
+    <p style="margin:6px 0 0 0;">La <strong>correction partielle</strong> dit : <em>si</em> l'algorithme termine, la sortie respecte la spécification. La <strong>terminaison</strong> dit : pour toute entrée valide, il s'arrête en temps fini. Outils : <strong>invariant de boucle</strong> (itératif) ou <strong>récurrence bien fondée</strong> (récursif) pour la correction ; <strong>variant</strong> (itératif) ou <strong>fonction de mesure</strong> (récursif) pour la terminaison.</p>
+  </div>
+
+  <table>
+    <tr><th>Objectif</th><th>Boucle (itératif)</th><th>Récursion</th></tr>
+    <tr><td><strong>Correction</strong></td><td>Invariant : initialisation + conservation + sortie</td><td>Récurrence bien fondée sur la mesure : base + hérédité</td></tr>
+    <tr><td><strong>Terminaison</strong></td><td>Variant \(V \in \mathbb{N}\) strictement décroissant (Floyd)</td><td>Mesure \(\mu \in \mathbb{N}\) décroissante à chaque appel</td></tr>
+  </table>
+
+  <!-- ===================== TRI FUSION ===================== -->
+  <h2 style="color:#026573;border-bottom:3px solid #026573;padding-bottom:6px;">A. Le tri par fusion</h2>
+  <p>Le tri par fusion repose sur une fonction récursive <code>tri_fusion</code> et une fonction auxiliaire itérative <code>fusion</code>. On analyse d'abord la fusion (boucle → invariant + variant), puis le tri lui-même (récursion → mesure + récurrence).</p>
+
+  <h3 style="color:#026573;">A.1 — La fonction <code>fusion</code> : spécification</h3>
+  <pre class="code">def fusion(A, B):
+    C = []
+    i, j = 0, 0
+    while i &lt; len(A) and j &lt; len(B):
+        if A[i] &lt;= B[j]:
+            C.append(A[i]); i += 1
+        else:
+            C.append(B[j]); j += 1
+    return C + A[i:] + B[j:]</pre>
+  <div class="box spec">
+    <strong>Spécification.</strong> <em>Précondition</em> : \(A\) et \(B\) sont triées par ordre croissant. <em>Postcondition</em> : <code>fusion(A,B)</code> renvoie une liste triée contenant exactement les éléments de \(A\) et de \(B\) (avec multiplicités).
+  </div>
+
+  <h3 style="color:#5b21b6;">A.2 — Correction de <code>fusion</code> : invariant de boucle</h3>
+  <div class="box corr">
+    <span class="lab-c">♻ Invariant \(I\).</span> Au début de chaque tour de boucle, en notant \(i\) et \(j\) les compteurs :
+    <ul style="margin:6px 0 0 0;">
+      <li>\((I_1)\) \(C\) est triée par ordre croissant ;</li>
+      <li>\((I_2)\) \(C\) contient exactement les éléments de \(A[0{:}i]\) et de \(B[0{:}j]\) ;</li>
+      <li>\((I_3)\) tout élément de \(C\) vérifie \(x \le A[i]\) si \(i &lt; \operatorname{len}(A)\), et \(x \le B[j]\) si \(j &lt; \operatorname{len}(B)\).</li>
+    </ul>
+  </div>
+  <p><strong>Initialisation.</strong> Avant le premier tour, \(C = [\,]\) et \(i = j = 0\). \((I_1)\) et \((I_2)\) sont vraies (\(C\) vide, \(A[0{:}0] = B[0{:}0] = [\,]\)) ; \((I_3)\) est vraie car \(C\) n'a aucun élément. ✓</p>
+  <p><strong>Conservation.</strong> Supposons \(I\) vrai et la condition de boucle vraie (\(i &lt; \operatorname{len}(A)\) et \(j &lt; \operatorname{len}(B)\)). On ajoute \(m = \min(A[i], B[j])\) à \(C\) et on avance le compteur correspondant. Par \((I_3)\), tout élément de \(C\) est \(\le A[i]\) et \(\le B[j]\), donc \(\le m\) : \(C\) reste triée et \(m\) est bien placé en fin \((I_1)\). On a consommé un élément de plus de \(A\) ou de \(B\), donc \((I_2)\) reste vrai. Comme \(A\) et \(B\) sont triées, le nouveau \(A[i]\) (ou \(B[j]\)) est \(\ge m \ge\) tous les éléments de \(C\) : \((I_3)\) est rétabli. ✓</p>
+  <p><strong>Sortie.</strong> À la fin de la boucle, \(i = \operatorname{len}(A)\) <em>ou</em> \(j = \operatorname{len}(B)\) : l'une des deux listes est entièrement consommée. On renvoie <code>C + A[i:] + B[j:]</code>. Par \((I_2)\), \(C\) contient \(A[0{:}i]\) et \(B[0{:}j]\) ; on lui ajoute le reste (\(A[i{:}]\) ou \(B[j{:}]\), l'autre étant vide). Par \((I_3)\) et le tri de \(A, B\), ce reste est trié et tous ses éléments sont \(\ge\) ceux de \(C\). Le résultat est donc trié et contient exactement les éléments de \(A\) et \(B\) : la postcondition est satisfaite. ✓</p>
+
+  <h3 style="color:#047857;">A.3 — Terminaison de <code>fusion</code> : variant de boucle</h3>
+  <div class="box term">
+    <span class="lab-t">⌛ Variant \(V\).</span> On pose \(V = (\operatorname{len}(A) - i) + (\operatorname{len}(B) - j)\), à valeurs dans \(\mathbb{N}\) (ordre usuel, bien fondé).
+  </div>
+  <p>À chaque tour, on incrémente \(i\) ou \(j\) de \(1\) (jamais les deux), donc \(V\) <strong>décroît strictement</strong> de \(1\). De plus, tant que la boucle s'exécute, \(i &lt; \operatorname{len}(A)\) et \(j &lt; \operatorname{len}(B)\), donc \(V \ge 1 &gt; 0\). Par le <strong>théorème de terminaison de Floyd</strong> (une suite d'entiers naturels strictement décroissante est finie, car \((\mathbb{N}, &lt;)\) est bien fondé), la boucle effectue un nombre fini de tours. ✓</p>
+  <p>Le nombre de tours est au plus \(\operatorname{len}(A) + \operatorname{len}(B)\) : la fusion de deux listes de tailles \(m\) et \(p\) est en \(O(m + p)\).</p>
+
+  <h3 style="color:#047857;">A.4 — Terminaison de <code>tri_fusion</code> : fonction de mesure</h3>
+  <pre class="code">def tri_fusion(L):
+    if len(L) &lt;= 1:
+        return L
+    m = len(L) // 2
+    return fusion(tri_fusion(L[:m]), tri_fusion(L[m:]))</pre>
+  <div class="box term">
+    <span class="lab-t">📏 Mesure \(\mu\).</span> On pose \(\mu(L) = \operatorname{len}(L)\), à valeurs dans \(\mathbb{N}\) (bien fondé). Cas de base : \(\operatorname{len}(L) \le 1\).
+  </div>
+  <p>Pour une liste de longueur \(n \ge 2\), avec \(m = \lfloor n/2 \rfloor\), les appels récursifs portent sur \(L[{:}m]\) et \(L[m{:}]\) de longueurs \(\lfloor n/2 \rfloor\) et \(\lceil n/2 \rceil\). Comme \(n \ge 2\), on a \(\lfloor n/2 \rfloor &lt; n\) et \(\lceil n/2 \rceil \le n - 1 &lt; n\) : la mesure <strong>décroît strictement</strong> à chaque appel. Comme \(\mathbb{N}\) est bien fondé, on atteint le cas de base en un nombre fini d'étapes : <code>tri_fusion</code> termine. (La fonction <code>fusion</code> termine d'après A.3.) ✓</p>
+
+  <h3 style="color:#5b21b6;">A.5 — Correction de <code>tri_fusion</code> : récurrence bien fondée</h3>
+  <div class="box corr">
+    <span class="lab-c">Propriété \(P(L)\).</span> <code>tri_fusion(L)</code> renvoie une liste triée contenant exactement les éléments de \(L\) (une permutation triée de \(L\)).
+  </div>
+  <p>On raisonne par récurrence forte sur la mesure \(\mu(L) = \operatorname{len}(L)\) (récurrence bien fondée sur \((\mathbb{N}, &lt;)\)).</p>
+  <p><strong>Cas de base</strong> (\(\operatorname{len}(L) \le 1\)). Une liste vide ou à un élément est déjà triée ; elle est renvoyée telle quelle. \(P(L)\) est vraie. ✓</p>
+  <p><strong>Hérédité.</strong> Soit \(n \ge 2\) ; supposons \(P\) vraie pour toute liste de longueur \(&lt; n\). Pour \(L\) de longueur \(n\) : par hypothèse de récurrence (longueurs \(&lt; n\)), <code>tri_fusion(L[:m])</code> et <code>tri_fusion(L[m:])</code> renvoient des permutations triées de \(L[{:}m]\) et \(L[m{:}]\). Par la <strong>correction de fusion</strong> (A.2), <code>fusion(gauche, droite)</code> renvoie une liste triée contenant exactement les éléments de gauche et droite, c'est-à-dire de \(L[{:}m]\) et \(L[m{:}]\), soit exactement les éléments de \(L\). Donc \(P(L)\) est vraie. ✓</p>
+  <p>Par récurrence bien fondée, \(P(L)\) est vraie pour toute liste \(L\) : <code>tri_fusion</code> est <strong>partiellement correct</strong>. Avec la terminaison (A.4), il est <strong>totalement correct</strong>.</p>
+
+  <h3 style="color:#026573;">A.6 — Complexité de <code>tri_fusion</code> (calcul)</h3>
+  <p><strong>Mise en équation.</strong> La fonction <code>tri_fusion</code> fait deux appels récursifs sur des listes de taille \(n/2\), puis une fusion qui parcourt les \(n\) éléments (coût linéaire, A.3). En notant \(c\) une constante :</p>
+  <div class="box cplx"><p style="margin:0;text-align:center;">\[ T(n) = 2\,T\!\left(\tfrac{n}{2}\right) + c\,n \quad (n \ge 2), \qquad T(1) = O(1) \]</p></div>
+  <p><strong>Résolution par déroulement.</strong> On remplace successivement \(T(n/2)\), \(T(n/4)\), … :</p>
+  <div class="box cplx"><p style="margin:0;text-align:center;">\[ \begin{aligned}
+  T(n) &= 2\,T\!\left(\tfrac{n}{2}\right) + c\,n \\
+       &= 2\Big[2\,T\!\left(\tfrac{n}{4}\right) + c\tfrac{n}{2}\Big] + c\,n = 4\,T\!\left(\tfrac{n}{4}\right) + 2c\,n \\
+       &= 8\,T\!\left(\tfrac{n}{8}\right) + 3c\,n \\
+       &= \;\cdots\; = 2^{k}\,T\!\left(\tfrac{n}{2^{k}}\right) + k\,c\,n
+  \end{aligned} \]</p></div>
+  <p>Le déroulement s'arrête quand la sous-liste a taille \(1\), c'est-à-dire \(\dfrac{n}{2^{k}} = 1\), soit \(k = \log_2 n\). On obtient alors :</p>
+  <div class="box cplx"><p style="margin:0;text-align:center;">\[ T(n) = n\,T(1) + (\log_2 n)\,c\,n = c\,n\log_2 n + O(n) = \boxed{O(n\log n)} \]</p></div>
+  <p>On retrouve ce résultat par le <strong>théorème maître</strong> : pour \(T(n) = a\,T(n/b) + O(n)\) avec \(a = b = 2\), on a \(n^{\log_b a} = n^{1} = n\), cas où la complexité vaut \(O(n\log n)\).</p>
+  <p><strong>Comparaisons et conclusion.</strong> Chaque niveau effectue au plus \(n - 1\) comparaisons et il y a \(\log_2 n\) niveaux : le nombre de comparaisons est de l'ordre de \(n\log_2 n\). Cette complexité ne dépend pas du contenu : \(O(n\log n)\) est le <strong>même au meilleur et au pire des cas</strong>, donc <strong>garanti</strong>. La complexité spatiale est \(O(n)\) (listes auxiliaires) : le tri par fusion n'est pas en place, mais il est stable.</p>
+
+  <!-- ===================== TRI RAPIDE ===================== -->
+  <h2 style="color:#026573;border-bottom:3px solid #026573;padding-bottom:6px;margin-top:34px;">B. Le tri rapide</h2>
+  <pre class="code">def tri_rapide(L):
+    if len(L) &lt;= 1:
+        return L
+    pivot = L[0]
+    petits = [x for x in L[1:] if x &lt;= pivot]
+    grands = [x for x in L[1:] if x &gt; pivot]
+    return tri_rapide(petits) + [pivot] + tri_rapide(grands)</pre>
+  <div class="box spec">
+    <strong>Spécification.</strong> <em>Précondition</em> : \(L\) est une liste d'éléments comparables. <em>Postcondition</em> : <code>tri_rapide(L)</code> renvoie une permutation triée par ordre croissant de \(L\).
+  </div>
+
+  <h3 style="color:#5b21b6;">B.1 — Correction de l'étape de partition</h3>
+  <div class="box corr">
+    <span class="lab-c">Lemme de partition.</span> Par définition des listes en compréhension :
+    <ul style="margin:6px 0 0 0;">
+      <li>\(\text{petits} = \{\, x \in L[1{:}] : x \le \text{pivot} \,\}\) &nbsp;et&nbsp; \(\text{grands} = \{\, x \in L[1{:}] : x &gt; \text{pivot} \,\}\) ;</li>
+      <li>\(\text{petits}\), \([\text{pivot}]\) et \(\text{grands}\) forment une <strong>partition</strong> des éléments de \(L\) ;</li>
+      <li>\(\forall a \in \text{petits},\ a \le \text{pivot}\) &nbsp;et&nbsp; \(\forall b \in \text{grands},\ b &gt; \text{pivot}\).</li>
+    </ul>
+  </div>
+  <p>Ce lemme remplace ici l'invariant de boucle : les deux compréhensions parcourent \(L[1{:}]\) et chaque \(x\) y est rangé selon la comparaison à pivot, de façon exhaustive et exclusive. C'est l'analogue « ensembliste » de l'invariant d'une partition écrite avec une boucle.</p>
+
+  <h3 style="color:#047857;">B.2 — Terminaison de <code>tri_rapide</code> : fonction de mesure</h3>
+  <div class="box term">
+    <span class="lab-t">📏 Mesure \(\mu\).</span> On pose \(\mu(L) = \operatorname{len}(L) \in \mathbb{N}\) (bien fondé). Cas de base : \(\operatorname{len}(L) \le 1\).
+  </div>
+  <p>Le pivot est retiré avant les appels récursifs : \(\operatorname{len}(\text{petits}) + \operatorname{len}(\text{grands}) = \operatorname{len}(L) - 1\). Donc \(\operatorname{len}(\text{petits}) \le n - 1 &lt; n\) et \(\operatorname{len}(\text{grands}) \le n - 1 &lt; n\) : la mesure <strong>décroît strictement</strong> à chaque appel récursif. Comme \(\mathbb{N}\) est bien fondé, le cas de base est atteint en un nombre fini d'étapes : <code>tri_rapide</code> <strong>termine</strong> pour toute entrée. ✓</p>
+
+  <h3 style="color:#5b21b6;">B.3 — Correction de <code>tri_rapide</code> : récurrence bien fondée</h3>
+  <div class="box corr">
+    <span class="lab-c">Propriété \(P(L)\).</span> <code>tri_rapide(L)</code> renvoie une permutation triée par ordre croissant de \(L\).
+  </div>
+  <p>Récurrence forte sur \(\mu(L) = \operatorname{len}(L)\).</p>
+  <p><strong>Cas de base</strong> (\(\operatorname{len}(L) \le 1\)). \(L\) est déjà triée et renvoyée telle quelle : \(P(L)\) vraie. ✓</p>
+  <p><strong>Hérédité.</strong> Soit \(n \ge 2\), \(P\) supposée vraie pour toute liste de longueur \(&lt; n\). Comme \(\operatorname{len}(\text{petits}) &lt; n\) et \(\operatorname{len}(\text{grands}) &lt; n\), l'hypothèse de récurrence donne : <code>tri_rapide(petits)</code> est une permutation triée de petits, et <code>tri_rapide(grands)</code> une permutation triée de grands. La valeur renvoyée <code>tri_rapide(petits) + [pivot] + tri_rapide(grands)</code> :</p>
+  <ul>
+    <li><strong>contient exactement les éléments de \(L\)</strong> : \(\text{petits} \cup \{\text{pivot}\} \cup \text{grands} = L\) (lemme B.1) ;</li>
+    <li><strong>est triée</strong> : tout élément de petits est \(\le \text{pivot}\), tout élément de grands est \(&gt; \text{pivot}\) ; comme chaque bloc est trié et que \(\text{petits} \le \text{pivot} &lt; \text{grands}\), la concaténation est croissante.</li>
+  </ul>
+  <p>Donc \(P(L)\) est vraie. Par récurrence bien fondée, <code>tri_rapide</code> est <strong>partiellement correct</strong> ; avec B.2, il est <strong>totalement correct</strong>. ✓</p>
+
+  <h3 style="color:#026573;">B.4 — Complexité de <code>tri_rapide</code> (calcul)</h3>
+  <p>L'étape de partition parcourt \(L[1{:}]\) (deux compréhensions) : elle coûte \(c\,n\) opérations, soit \(O(n)\). Le coût total dépend de l'<strong>équilibre</strong> des deux sous-listes, donc du pivot.</p>
+
+  <p style="margin-bottom:2px;"><strong>Pire des cas.</strong> Le pivot est toujours le plus petit (ou le plus grand) élément : une sous-liste est vide, l'autre a \(n - 1\) éléments. La récurrence est \(T(n) = T(n - 1) + c\,n\). On la déroule :</p>
+  <div class="box bad"><p style="margin:0;text-align:center;">\[ \begin{aligned}
+  T(n) &= T(n-1) + c\,n = T(n-2) + c(n-1) + c\,n = \cdots \\
+       &= c\,\big(n + (n-1) + \cdots + 2\big) + T(1) \\
+       &= c\left(\frac{n(n+1)}{2} - 1\right) + O(1) = \boxed{O(n^2)}
+  \end{aligned} \]</p></div>
+
+  <p style="margin-bottom:2px;"><strong>Meilleur cas et cas moyen.</strong> La partition équilibre les deux côtés (\(n/2\) chacun) : \(T(n) = 2\,T(n/2) + c\,n\), exactement la récurrence du tri par fusion (A.6), de solution \(O(n\log n)\). En moyenne sur tous les ordres d'entrée, le nombre moyen de comparaisons vaut environ \(2n\ln n \approx 1{,}39\,n\log_2 n\), donc également \(O(n\log n)\).</p>
+
+  <table>
+    <tr><th>Cas</th><th>Récurrence</th><th>Complexité</th></tr>
+    <tr><td><strong>Moyen / meilleur</strong> (partition équilibrée)</td><td>\(T(n) = 2\,T(n/2) + O(n)\)</td><td>\(O(n\log n)\)</td></tr>
+    <tr style="background:#fdeef0;"><td><strong>Pire</strong> (pivot extrémal, liste triée)</td><td>\(T(n) = T(n-1) + O(n)\)</td><td>\(O(n^2)\)</td></tr>
+  </table>
+  <div class="box warn">
+    <strong>Lien avec la terminaison.</strong> La mesure \(\mu = \operatorname{len}(L)\) garantit l'<em>arrêt</em> dans tous les cas, y compris le pire ; mais c'est la <em>répartition</em> produite par la partition qui détermine la <em>vitesse</em> (équilibrée \(\to O(n\log n)\), déséquilibrée \(\to O(n^2)\)). Un pivot aléatoire ou la médiane de trois rend le pire cas très improbable.
+  </div>
+
+  <!-- ===================== SYNTHÈSE ===================== -->
+  <h2 style="color:#026573;border-bottom:3px solid #026573;padding-bottom:6px;margin-top:34px;">C. Synthèse</h2>
+  <table>
+    <tr><th>Tri</th><th>Correction</th><th>Terminaison</th><th>Complexité</th></tr>
+    <tr><td><strong>Tri fusion</strong></td><td>Invariant de <code>fusion</code> + récurrence bien fondée sur \(\operatorname{len}\)</td><td>Variant \((m-i)+(p-j)\) ; mesure \(\mu = \operatorname{len}(L)\)</td><td>\(O(n\log n)\) garanti</td></tr>
+    <tr><td><strong>Tri rapide</strong></td><td>Lemme de partition + récurrence bien fondée sur \(\operatorname{len}\)</td><td>Mesure \(\mu = \operatorname{len}(L)\) (pivot retiré)</td><td>\(O(n\log n)\) moyen, \(O(n^2)\) pire</td></tr>
+  </table>
+  <div class="box good">
+    <strong>✅ Points essentiels.</strong>
+    <ul style="margin:8px 0 0 0;">
+      <li>Correction totale = correction partielle + terminaison, à démontrer séparément.</li>
+      <li>Boucle → invariant (initialisation/conservation/sortie) et variant \(\mathbb{N}\) décroissant (Floyd).</li>
+      <li>Récursion → récurrence bien fondée sur une mesure et mesure décroissante vers le cas de base.</li>
+      <li>La terminaison garantit l'arrêt ; la complexité mesure la vitesse — deux questions distinctes.</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#7f8c8d;font-size:0.85em;margin-top:30px;border-top:1px solid #ddd;padding-top:14px;">CPGE MP/PSI — Informatique · Analyse des tris : correction, terminaison et complexité</p>
+</body>
+</html>

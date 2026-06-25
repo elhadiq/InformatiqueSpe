@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz><question type="coderunner"><name><text>Q1 — Attracteur du Joueur 0</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;&lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q1 — Attracteur du Joueur 0&lt;/p&gt;&lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Un jeu d'accessibilité oppose le Joueur 0 (positions &lt;code&gt;V0&lt;/code&gt;) au Joueur 1 (positions &lt;code&gt;V1&lt;/code&gt;). Le dictionnaire &lt;code&gt;succ&lt;/code&gt; donne, pour chaque position, la liste de ses successeurs. &lt;code&gt;F&lt;/code&gt; est la liste des positions cibles.&lt;/p&gt;&lt;/div&gt;&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;attracteur(V0, V1, succ, F)&lt;/code&gt;&lt;/strong&gt; qui renvoie l'ensemble (&lt;code&gt;set&lt;/code&gt;) des positions gagnantes pour le Joueur 0. Règle&amp;nbsp;: une position de &lt;code&gt;V0&lt;/code&gt; est ajoutée s'il &lt;strong&gt;existe&lt;/strong&gt; un successeur déjà gagnant&amp;nbsp;; une position de &lt;code&gt;V1&lt;/code&gt; est ajoutée si &lt;strong&gt;tous&lt;/strong&gt; ses successeurs sont déjà gagnants.&lt;/p&gt;&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;&lt;pre style="color:#0a3a40;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;V0=['t','a','b','x'] ; V1=['p','q']
+succ={'a':['t'],'b':['t'],'p':['a','b'],'q':['a','x'],'x':['q'],'t':[]}
+F=['t']  -&gt;  {'t','a','b','p'}&lt;/pre&gt;&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def attracteur(V0, V1, succ, F):
+    V0 = set(V0); V1 = set(V1)
+    # 1) construire le dictionnaire des predecesseurs pred[v] = liste des u tels que u-&gt;v
+    # 2) initialiser attr avec F, puis propager a rebours
+    # 3) V0 : un successeur gagnant suffit ; V1 : tous les successeurs gagnants
+    ...
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def attracteur(V0, V1, succ, F):
+    V0 = set(V0); V1 = set(V1)
+    pred = {}
+    for u in succ:
+        for v in succ[u]:
+            pred.setdefault(v, []).append(u)
+    attr = set(F)
+    file = list(F)
+    reste = {u: len(succ.get(u, [])) for u in V1}
+    while file:
+        v = file.pop()
+        for u in pred.get(v, []):
+            if u in attr:
+                continue
+            if u in V0:                 # Joueur 0 : un successeur gagnant suffit
+                attr.add(u); file.append(u)
+            else:                       # Joueur 1 : tous les successeurs gagnants
+                reste[u] -= 1
+                if reste[u] == 0:
+                    attr.add(u); file.append(u)
+    return attr
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>V0=['t','a','b','x']; V1=['p','q']
+succ={'a':['t'],'b':['t'],'p':['a','b'],'q':['a','x'],'x':['q'],'t':[]}
+print(sorted(attracteur(V0,V1,succ,['t'])))
+</text></testcode><stdin><text /></stdin><expected><text>['a', 'b', 'p', 't']
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>V0=['s0','s2']; V1=['s1']
+succ={'s0':['s1'],'s1':['s2','g'],'s2':['g'],'g':[]}
+print(sorted(attracteur(V0,V1,succ,['g'])))
+</text></testcode><stdin><text /></stdin><expected><text>['g', 's0', 's1', 's2']
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>V0=['u']; V1=['w']
+succ={'u':['w'],'w':['u'],'z':[]}
+print(sorted(attracteur(V0,V1,succ,['z'])))
+</text></testcode><stdin><text /></stdin><expected><text>['z']
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>V0=['t','a','b','x']; V1=['p','q']
+succ={'a':['t'],'b':['t'],'p':['a','b'],'q':['a','x'],'x':['q'],'t':[]}
+print(type(attracteur(V0,V1,succ,['t'])).__name__)
+</text></testcode><stdin><text /></stdin><expected><text>set
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q2 — Valeur Minimax</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;&lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q2 — Valeur Minimax d'un arbre de jeu&lt;/p&gt;&lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Un arbre de jeu est represente par des listes imbriquees&amp;nbsp;: un entier est une feuille (valeur de l'heuristique), une liste represente un noeud interne (ses enfants). La racine est un noeud du joueur &lt;strong&gt;MAX&lt;/strong&gt;, et les niveaux alternent MAX / MIN.&lt;/p&gt;&lt;/div&gt;&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;minimax(arbre, est_max)&lt;/code&gt;&lt;/strong&gt; qui renvoie la valeur Minimax. Un noeud MAX prend le &lt;strong&gt;maximum&lt;/strong&gt; des valeurs de ses enfants, un noeud MIN le &lt;strong&gt;minimum&lt;/strong&gt;.&lt;/p&gt;&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;&lt;pre style="color:#0a3a40;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;minimax([[3,5],[2,9]], True)  -&gt;  3
+( = max( min(3,5), min(2,9) ) = max(3,2) = 3 )&lt;/pre&gt;&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>12</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def minimax(arbre, est_max):
+    # cas de base : une feuille (entier) renvoie sa valeur
+    # sinon : evaluer recursivement les enfants en alternant est_max
+    # noeud MAX -&gt; max des enfants ; noeud MIN -&gt; min des enfants
+    ...
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def minimax(arbre, est_max):
+    if isinstance(arbre, int):
+        return arbre
+    valeurs = [minimax(enfant, not est_max) for enfant in arbre]
+    return max(valeurs) if est_max else min(valeurs)
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(minimax([[3,5],[2,9]], True))
+</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(minimax([[[1,4],[7,2]],[[6,3],[5,8]]], True))
+</text></testcode><stdin><text /></stdin><expected><text>6
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(minimax([[3,5],[2,9]], False))
+</text></testcode><stdin><text /></stdin><expected><text>5
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(minimax(7, True))
+</text></testcode><stdin><text /></stdin><expected><text>7
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q3 — Élagage Alpha-Bêta</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;&lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q3 — Élagage Alpha-Bêta&lt;/p&gt;&lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Même représentation de l'arbre qu'à la Q2 (listes imbriquees, racine MAX). L'élagage alpha-bêta renvoie la &lt;strong&gt;même valeur&lt;/strong&gt; que Minimax mais coupe les branches inutiles.&lt;/p&gt;&lt;/div&gt;&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;alphabeta(arbre, est_max, alpha, beta)&lt;/code&gt;&lt;/strong&gt; qui renvoie la valeur de l'arbre. Sur un noeud MAX&amp;nbsp;: mettre à jour &lt;code&gt;alpha&lt;/code&gt; et couper dès que &lt;code&gt;alpha &amp;gt;= beta&lt;/code&gt;. Sur un noeud MIN&amp;nbsp;: mettre à jour &lt;code&gt;beta&lt;/code&gt; et couper dès que &lt;code&gt;beta &amp;lt;= alpha&lt;/code&gt;. Appel initial&amp;nbsp;: &lt;code&gt;alpha=-10**9&lt;/code&gt;, &lt;code&gt;beta=10**9&lt;/code&gt;.&lt;/p&gt;&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;&lt;pre style="color:#0a3a40;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;alphabeta([[3,5],[2,9]], True, -10**9, 10**9)  -&gt;  3&lt;/pre&gt;&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def alphabeta(arbre, est_max, alpha, beta):
+    if isinstance(arbre, int):
+        return arbre
+    if est_max:
+        # parcourir les enfants, maximiser, mettre a jour alpha, couper si alpha &gt;= beta
+        ...
+    else:
+        # parcourir les enfants, minimiser, mettre a jour beta, couper si beta &lt;= alpha
+        ...
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def alphabeta(arbre, est_max, alpha, beta):
+    if isinstance(arbre, int):
+        return arbre
+    if est_max:
+        v = -10**9
+        for enfant in arbre:
+            v = max(v, alphabeta(enfant, False, alpha, beta))
+            alpha = max(alpha, v)
+            if alpha &gt;= beta:
+                break
+        return v
+    else:
+        v = 10**9
+        for enfant in arbre:
+            v = min(v, alphabeta(enfant, True, alpha, beta))
+            beta = min(beta, v)
+            if beta &lt;= alpha:
+                break
+        return v
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(alphabeta([[3,5],[2,9]], True, -10**9, 10**9))
+</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(alphabeta([[[1,4],[7,2]],[[6,3],[5,8]]], True, -10**9, 10**9))
+</text></testcode><stdin><text /></stdin><expected><text>6
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(alphabeta([[5,6,7],[1,2,3],[8,9,4]], True, -10**9, 10**9))
+</text></testcode><stdin><text /></stdin><expected><text>5
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>def mm(t,m):
+ return t if isinstance(t,int) else (max(mm(c,not m) for c in t) if m else min(mm(c,not m) for c in t))
+T=[[[1,4],[7,2]],[[6,3],[5,8]]]
+print(alphabeta(T, True, -10**9, 10**9) == mm(T, True))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q4 — Rang et stratégie gagnante</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;&lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q4 — Rang d'une position gagnante&lt;/p&gt;&lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Le &lt;strong&gt;rang&lt;/strong&gt; d'une position gagnante est le nombre minimal de coups que le Joueur 0 doit forcer pour atteindre &lt;code&gt;F&lt;/code&gt; (les cibles ont un rang 0). Il donne directement la stratégie gagnante&amp;nbsp;: « jouer vers un successeur de rang strictement inférieur ».&lt;/p&gt;&lt;/div&gt;&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;rangs(V0, V1, succ, F)&lt;/code&gt;&lt;/strong&gt; qui renvoie un dictionnaire associant à chaque position gagnante son rang. Utiliser une propagation &lt;strong&gt;par couches&lt;/strong&gt; (file FIFO) depuis &lt;code&gt;F&lt;/code&gt;, avec les mêmes règles d'ajout que l'attracteur.&lt;/p&gt;&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;&lt;pre style="color:#0a3a40;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;succ={'a':['t'],'b':['t'],'p':['a','b'],'q':['a','x'],'x':['q'],'t':[]}
+rangs(['t','a','b','x'],['p','q'],succ,['t'])
+ -&gt; {'t':0,'a':1,'b':1,'p':2}&lt;/pre&gt;&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>from collections import deque
+
+def rangs(V0, V1, succ, F):
+    V0 = set(V0); V1 = set(V1)
+    # construire pred, initialiser rang a 0 sur F, propager en FIFO (couches)
+    # V0 : un successeur gagnant suffit ; V1 : tous les successeurs gagnants
+    ...
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>from collections import deque
+
+def rangs(V0, V1, succ, F):
+    V0 = set(V0); V1 = set(V1)
+    pred = {}
+    for u in succ:
+        for v in succ[u]:
+            pred.setdefault(v, []).append(u)
+    rang = {v: 0 for v in F}
+    file = deque(F)
+    reste = {u: len(succ.get(u, [])) for u in V1}
+    while file:
+        v = file.popleft()
+        for u in pred.get(v, []):
+            if u in rang:
+                continue
+            if u in V0:
+                rang[u] = rang[v] + 1; file.append(u)
+            else:
+                reste[u] -= 1
+                if reste[u] == 0:
+                    rang[u] = rang[v] + 1; file.append(u)
+    return rang
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>succ={'a':['t'],'b':['t'],'p':['a','b'],'q':['a','x'],'x':['q'],'t':[]}
+print(sorted(rangs(['t','a','b','x'],['p','q'],succ,['t']).items()))
+</text></testcode><stdin><text /></stdin><expected><text>[('a', 1), ('b', 1), ('p', 2), ('t', 0)]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>succ={'s0':['s1'],'s1':['s2','g'],'s2':['g'],'g':[]}
+print(sorted(rangs(['s0','s2'],['s1'],succ,['g']).items()))
+</text></testcode><stdin><text /></stdin><expected><text>[('g', 0), ('s0', 3), ('s1', 2), ('s2', 1)]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>succ={'a':['t'],'b':['t'],'p':['a','b'],'q':['a','x'],'x':['q'],'t':[]}
+r=rangs(['t','a','b','x'],['p','q'],succ,['t'])
+print('q' in r, 'x' in r)
+</text></testcode><stdin><text /></stdin><expected><text>False False
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question></quiz>

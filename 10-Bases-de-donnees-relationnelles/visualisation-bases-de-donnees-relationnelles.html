@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exécution d'une requête SQL pas à pas — CPGE MP/PSI</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--teal:#026573;--dark:#26323d;--bg:#eef2f5;--hl:#e4f1f2;--border:#d6dee4;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);
+  display:flex;flex-direction:column;align-items:center;padding:1.6rem 1rem 5rem;line-height:1.6;}
+.wrap{width:100%;max-width:1000px;margin:0 auto;}
+header{background:var(--teal);color:#fff;border-radius:12px;padding:1.3rem 1.6rem;margin-bottom:1.2rem;}
+header h1{font-size:1.4rem;margin-bottom:.25rem;}
+header p{color:#d6eef0;font-size:.95rem;}
+.panel{display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap;}
+.query{background:#0d1117;color:#e6edf3;font-family:'Consolas','Courier New',monospace;font-size:.92rem;
+  padding:1rem 1.1rem;border-radius:10px;flex:1;min-width:300px;white-space:pre;line-height:1.7;overflow-x:auto;}
+.query .ln{display:block;padding:1px 6px;border-radius:4px;transition:background .25s;}
+.query .ln.on{background:#1f6f78;color:#fff;}
+.query .kw{color:#ff7b72;}.query .fn{color:#d2a8ff;}.query .nb{color:#79c0ff;}
+.side{flex:0 0 270px;min-width:240px;}
+.stepbox{background:#fff;border:1px solid var(--border);border-left:5px solid var(--teal);
+  border-radius:10px;padding:.9rem 1.1rem;}
+.stepbox .tag{display:inline-block;background:var(--teal);color:#fff;font-size:.7rem;font-weight:700;
+  letter-spacing:1px;padding:2px 9px;border-radius:11px;text-transform:uppercase;margin-bottom:.5rem;}
+.stepbox h3{font-size:1.05rem;color:var(--teal);margin-bottom:.35rem;}
+.stepbox p{font-size:.92rem;color:#3a4754;}
+#stage{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.3rem;margin-top:1.2rem;
+  min-height:240px;overflow-x:auto;}
+.tablebox{display:inline-block;vertical-align:top;margin:0 1.1rem 1rem 0;}
+.tablebox .cap{font-size:.82rem;font-weight:700;color:var(--teal);margin-bottom:.35rem;letter-spacing:.5px;}
+table.db{border-collapse:collapse;font-size:.88rem;}
+table.db th{background:var(--teal);color:#fff;padding:5px 11px;border:1px solid var(--teal);font-weight:600;}
+table.db td{border:1px solid #cdd7de;padding:5px 11px;text-align:center;background:#fff;}
+table.db tr.dim td{color:#b3bcc4;background:#f6f8f9;text-decoration:line-through;}
+table.db tr.keep td{background:#e4f1f2;}
+table.db tr.gA td{background:#fde7d6;}
+table.db tr.gB td{background:#dcefe1;}
+table.db tr.res td{background:#e4f1f2;font-weight:600;}
+.arrow{font-size:1.6rem;color:var(--teal);vertical-align:middle;margin:0 .3rem;}
+.note{font-size:.85rem;color:#6b7884;margin-top:.4rem;}
+#nav{position:fixed;bottom:1.3rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;
+  background:#fff;border:1px solid var(--border);border-radius:30px;padding:.45rem .6rem;box-shadow:0 4px 16px rgba(0,0,0,.13);z-index:50;}
+#nav button{background:var(--teal);color:#fff;border:none;border-radius:20px;padding:.5rem 1rem;
+  font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;}
+#nav button:hover{background:#014a54;} #nav button:disabled{background:#aebcc4;cursor:default;}
+#nav .count{align-self:center;font-size:.85rem;color:#6b7884;padding:0 .5rem;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Exécution d'une requête SQL, étape par étape</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p>On suit l'ordre réel d'évaluation d'un <code>SELECT</code> : FROM/JOIN → WHERE → GROUP BY → agrégat → HAVING → SELECT → ORDER BY.</p>
+</header>
+
+<div class="panel">
+  <div class="query" id="query">
+<span class="ln" data-c="select"><span class="kw">SELECT</span>   E.nom, <span class="fn">ROUND</span>(<span class="fn">AVG</span>(I.note),1) <span class="kw">AS</span> moyenne</span><span class="ln" data-c="from"><span class="kw">FROM</span>     Etudiant E</span><span class="ln" data-c="join"><span class="kw">JOIN</span>     Inscription I <span class="kw">ON</span> E.id = I.id_etudiant</span><span class="ln" data-c="where"><span class="kw">WHERE</span>    I.note &gt;= 10</span><span class="ln" data-c="group"><span class="kw">GROUP BY</span> E.nom</span><span class="ln" data-c="having"><span class="kw">HAVING</span>   <span class="fn">AVG</span>(I.note) &gt;= 12</span><span class="ln" data-c="order"><span class="kw">ORDER BY</span> moyenne <span class="kw">DESC</span>;</span></div>
+  <div class="side">
+    <div class="stepbox">
+      <span class="tag" id="s-tag">Étape</span>
+      <h3 id="s-title">—</h3>
+      <p id="s-desc">—</p>
+    </div>
+  </div>
+</div>
+
+<div id="stage"></div>
+</div>
+
+<div id="nav">
+  <button id="prev">← Précédent</button>
+  <span class="count" id="count">1 / 8</span>
+  <button id="next">Suivant →</button>
+  <button id="reset" style="background:#6b7884;">Reset</button>
+</div>
+
+<script>
+// ----- Données de départ -----
+const ETU = [[1,"Alami"],[2,"Bennani"],[3,"Chraibi"]];
+const INS = [[1,"INF",15],[1,"MAT",9],[2,"INF",11],[2,"MAT",13],[3,"INF",8],[3,"MAT",7]];
+
+function tbl(cap, head, rows){
+  let h = '<div class="tablebox"><div class="cap">'+cap+'</div><table class="db"><tr>';
+  head.forEach(c=>h+='<th>'+c+'</th>'); h+='</tr>';
+  rows.forEach(r=>{ h+='<tr class="'+(r.cls||'')+'">'; r.v.forEach(c=>h+='<td>'+c+'</td>'); h+='</tr>'; });
+  return h+'</table></div>';
+}
+
+// ----- Lignes jointes (FROM/JOIN) -----
+const JOINED = [
+  {v:["Alami","INF",15]}, {v:["Alami","MAT",9]},
+  {v:["Bennani","INF",11]}, {v:["Bennani","MAT",13]},
+  {v:["Chraibi","INF",8]}, {v:["Chraibi","MAT",7]},
+];
+const keepWhere = r => r.v[2] >= 10;
+
+// ----- Définition des étapes -----
+const steps = [
+  { clause:[], tag:"Départ", title:"Les deux tables",
+    desc:"On part de Etudiant et Inscription. Objectif : la moyenne des « bonnes » notes (≥ 10) par étudiant, pour ceux dont cette moyenne atteint 12.",
+    render:()=> tbl("Etudiant",["id","nom"],ETU.map(r=>({v:r})))
+             + tbl("Inscription",["id_etudiant","code_module","note"],INS.map(r=>({v:r}))) },
+
+  { clause:["from","join"], tag:"FROM · JOIN", title:"1. Jointure des tables",
+    desc:"FROM + JOIN ... ON relient chaque inscription à son étudiant (E.id = I.id_etudiant). On obtient une grande table de travail.",
+    render:()=> tbl("Etudiant ⋈ Inscription",["nom","code_module","note"], JOINED.map(r=>({v:r.v}))) },
+
+  { clause:["where"], tag:"WHERE", title:"2. Filtrer les lignes",
+    desc:"WHERE I.note ≥ 10 garde uniquement les lignes vérifiant la condition ; les autres sont éliminées (barrées).",
+    render:()=> tbl("après WHERE note ≥ 10",["nom","code_module","note"],
+              JOINED.map(r=>({v:r.v, cls: keepWhere(r)?"keep":"dim"}))) },
+
+  { clause:["group"], tag:"GROUP BY", title:"3. Regrouper",
+    desc:"GROUP BY E.nom partitionne les lignes restantes par étudiant. Alami : 1 ligne ; Bennani : 2 lignes. (Chraibi a disparu au WHERE.)",
+    render:()=> tbl("groupe Alami",["nom","note"],[{v:["Alami",15],cls:"gA"}])
+             + tbl("groupe Bennani",["nom","note"],[{v:["Bennani",11],cls:"gB"},{v:["Bennani",13],cls:"gB"}]) },
+
+  { clause:["group","select"], tag:"AVG", title:"4. Appliquer l'agrégat",
+    desc:"On calcule AVG(note) sur chaque groupe : Alami → 15.0 ; Bennani → (11+13)/2 = 12.0.",
+    render:()=> tbl("moyenne par groupe",["nom","AVG(note)"],
+              [{v:["Alami",15.0],cls:"gA"},{v:["Bennani",12.0],cls:"gB"}]) },
+
+  { clause:["having"], tag:"HAVING", title:"5. Filtrer les groupes",
+    desc:"HAVING AVG(note) ≥ 12 garde les groupes dont la moyenne atteint 12. Ici les deux passent (15.0 et 12.0).",
+    render:()=> tbl("après HAVING ≥ 12",["nom","AVG(note)"],
+              [{v:["Alami","15.0 ✓"],cls:"keep"},{v:["Bennani","12.0 ✓"],cls:"keep"}]) },
+
+  { clause:["select"], tag:"SELECT", title:"6. Projection",
+    desc:"SELECT choisit les colonnes du résultat : le nom et la moyenne arrondie (ROUND(...,1)), renommée moyenne via AS.",
+    render:()=> tbl("colonnes sélectionnées",["nom","moyenne"],
+              [{v:["Alami",15.0],cls:"res"},{v:["Bennani",12.0],cls:"res"}]) },
+
+  { clause:["order"], tag:"ORDER BY", title:"7. Trier — résultat final",
+    desc:"ORDER BY moyenne DESC trie par moyenne décroissante. Le résultat de la requête est prêt.",
+    render:()=> tbl("RÉSULTAT",["nom","moyenne"],
+              [{v:["Alami",15.0],cls:"res"},{v:["Bennani",12.0],cls:"res"}]) },
+];
+
+let i = 0;
+const q = document.getElementById('query');
+function show(){
+  steps[i].clause;
+  q.querySelectorAll('.ln').forEach(l=>l.classList.toggle('on', steps[i].clause.includes(l.dataset.c)));
+  document.getElementById('s-tag').textContent = steps[i].tag;
+  document.getElementById('s-title').textContent = steps[i].title;
+  document.getElementById('s-desc').textContent = steps[i].desc;
+  document.getElementById('stage').innerHTML = steps[i].render();
+  document.getElementById('count').textContent = (i+1)+' / '+steps.length;
+  document.getElementById('prev').disabled = (i===0);
+  document.getElementById('next').disabled = (i===steps.length-1);
+}
+document.getElementById('next').onclick=()=>{ if(i<steps.length-1){i++;show();} };
+document.getElementById('prev').onclick=()=>{ if(i>0){i--;show();} };
+document.getElementById('reset').onclick=()=>{ i=0;show(); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'&&i<steps.length-1){i++;show();}
+  if(e.key==='ArrowLeft'&&i>0){i--;show();}
+});
+show();
+</script>
+</body>
+</html>

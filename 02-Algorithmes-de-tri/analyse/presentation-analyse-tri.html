@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analyse des tris — correction, terminaison, complexité</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --orange:    #026573;
+  --darkblue:  #2c3e50;
+  --lightbg:   #f4f9fc;
+  --border:    #dce3ea;
+  --correc:    #5b21b6;
+  --termin:    #047857;
+}
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #e8edf2; color: var(--darkblue);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 2rem 1rem 5rem; gap: 2rem;
+}
+.slide {
+  background: #fff; width: 100%; max-width: 940px;
+  border-radius: 10px; box-shadow: 0 4px 18px rgba(0,0,0,.10);
+  padding: 2.2rem 2.8rem 1.8rem; position: relative;
+}
+.slide-number { position: absolute; bottom: 0.7rem; right: 1.2rem; font-size: 0.72rem; color: #aaa; }
+.slide.title-slide {
+  background: linear-gradient(145deg, #f4f9fc 60%, #d9eef0);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 280px; text-align: center; border-top: 6px solid var(--orange);
+}
+.slide.title-slide h1 { font-size: 1.85rem; color: var(--darkblue); margin-bottom: 0.4rem; }
+.slide.title-slide .subtitle { font-size: 1.1rem; color: #555; }
+h2.frame-title { font-size: 1.55rem; color: var(--orange); font-weight: 700; margin-bottom: 0.7rem; padding-bottom: 0.35rem; border-bottom: 2px solid #b7dadd; }
+h2.frame-title .tag { font-size: 0.7em; font-weight: 700; padding: 2px 10px; border-radius: 12px; color:#fff; vertical-align: middle; margin-left: 0.4rem; }
+.tag-c { background: var(--correc); }
+.tag-t { background: var(--termin); }
+.tag-x { background: var(--orange); }
+p { line-height: 1.65; margin: 0.45rem 0; }
+ul, ol { margin: 0.5rem 0 0.5rem 1.4rem; line-height: 1.8; }
+ul li::marker, ol li::marker { color: var(--orange); }
+strong { font-weight: 700; }
+.code {
+  background: #0d1117; color: #e6edf3;
+  font-family: 'Consolas','Courier New',monospace;
+  font-size: 0.8rem; line-height: 1.5;
+  padding: 0.9rem 1.1rem; border-radius: 8px;
+  overflow-x: auto; margin: 0.6rem 0; white-space: pre; tab-size: 4;
+}
+.code .kw{color:#ff7b72;} .code .fn{color:#d2a8ff;} .code .nb{color:#79c0ff;} .code .cm{color:#8b949e;}
+.box { border-left: 4px solid var(--orange); border-radius: 0 6px 6px 0; padding: 0.7rem 1rem; margin: 0.7rem 0; font-size: 0.96rem; background: var(--lightbg); }
+.box-c { border-left-color: var(--correc); background: #f4ecfb; }
+.box-t { border-left-color: var(--termin); background: #e7f6ef; }
+.box-x { border-left-color: var(--orange); background: #e4f1f2; }
+.box-w { border-left-color: #f39c12; background: #fef9e7; }
+.box b.lab { display:block; margin-bottom: 0.2rem; }
+.box-c b.lab { color: var(--correc); } .box-t b.lab { color: var(--termin); } .box-x b.lab { color: var(--orange); }
+table.ref { border-collapse: collapse; width: 100%; margin: 0.6rem 0; font-size: 0.86rem; }
+table.ref th { background: var(--darkblue); color: #fff; padding: 0.45rem 0.6rem; text-align: left; }
+table.ref td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; }
+table.ref tr:nth-child(even) td { background: var(--lightbg); }
+#nav { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; gap: 0.4rem; z-index: 100; }
+#nav button { background: var(--orange); color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.1rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.25); transition: background .2s; }
+#nav button:hover { background: #014a54; }
+#nav #btn-scroll { border-radius: 20px; width: auto; padding: 0 14px; font-size: 0.78rem; font-weight: 700; }
+body.slideshow .slide { display: none; }
+body.slideshow .slide.active { display: block; }
+body.slideshow .slide.active.title-slide { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide title-slide" id="s1">
+  <h1>Analyse des tris efficaces</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">Correction · Terminaison · Complexité — Tri rapide & Tri par fusion</p>
+  <p class="subtitle" style="margin-top:0.6rem;font-size:0.95rem;">Informatique CPGE — MP / PSI</p>
+  <span class="slide-number">1 / 16</span>
+</section>
+
+<!-- 2 cadre -->
+<section class="slide" id="s2">
+  <h2 class="frame-title">Cadre : correction totale</h2>
+  <p style="text-align:center;font-size:1.15rem;margin:0.8rem 0;">$$\text{Correction totale} = \text{Correction partielle} + \text{Terminaison}$$</p>
+  <table class="ref">
+    <tr><th>Objectif</th><th>Boucle (itératif)</th><th>Récursion</th></tr>
+    <tr><td><strong>Correction</strong></td><td>Invariant : init. + conservation + sortie</td><td>Récurrence bien fondée : base + hérédité</td></tr>
+    <tr><td><strong>Terminaison</strong></td><td>Variant $V \in \mathbb{N}$ décroissant (Floyd)</td><td>Mesure $\mu \in \mathbb{N}$ décroissante</td></tr>
+  </table>
+  <div class="box box-x"><b class="lab">Ensemble bien fondé.</b> $(\mathbb{N}, &lt;)$ : pas de suite infinie strictement décroissante — c'est ce qui garantit l'arrêt.</div>
+  <span class="slide-number">2 / 16</span>
+</section>
+
+<!-- 3 fusion spec -->
+<section class="slide" id="s3">
+  <h2 class="frame-title">Tri fusion — la fonction <code>fusion</code></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">fusion</span>(A, B):
+    C = []
+    i, j = <span class="nb">0</span>, <span class="nb">0</span>
+    <span class="kw">while</span> i &lt; <span class="nb">len</span>(A) <span class="kw">and</span> j &lt; <span class="nb">len</span>(B):
+        <span class="kw">if</span> A[i] &lt;= B[j]:
+            C.append(A[i]); i += <span class="nb">1</span>
+        <span class="kw">else</span>:
+            C.append(B[j]); j += <span class="nb">1</span>
+    <span class="kw">return</span> C + A[i:] + B[j:]</div>
+  <div class="box"><b>Spécification.</b> Précondition : $A$, $B$ triées. Postcondition : liste triée contenant exactement les éléments de $A$ et $B$.</div>
+  <span class="slide-number">3 / 16</span>
+</section>
+
+<!-- 4 fusion invariant -->
+<section class="slide" id="s4">
+  <h2 class="frame-title">Correction de <code>fusion</code><span class="tag tag-c">INVARIANT</span></h2>
+  <div class="box box-c"><b class="lab">♻ Invariant I (début de chaque tour)</b>
+    <ul style="margin:0.2rem 0 0 0;">
+      <li>(I₁) $C$ est triée ;</li>
+      <li>(I₂) $C$ contient exactement $A[0{:}i]$ et $B[0{:}j]$ ;</li>
+      <li>(I₃) tout élément de $C$ est $\leq A[i]$ et $\leq B[j]$ (s'ils existent).</li>
+    </ul>
+  </div>
+  <p><strong>Initialisation.</strong> $C=[\,]$, $i=j=0$ : I₁, I₂, I₃ trivialement vraies.</p>
+  <p><strong>Conservation.</strong> On ajoute $m=\min(A[i],B[j])$ ; par I₃, $C \leq m$ donc $C$ reste triée ; un compteur avance (I₂) ; le tri de $A,B$ rétablit I₃.</p>
+  <span class="slide-number">4 / 16</span>
+</section>
+
+<!-- 5 fusion sortie -->
+<section class="slide" id="s5">
+  <h2 class="frame-title">Correction de <code>fusion</code> — sortie<span class="tag tag-c">INVARIANT</span></h2>
+  <p><strong>Sortie.</strong> La boucle s'arrête quand $i=\text{len}(A)$ ou $j=\text{len}(B)$.</p>
+  <p>On renvoie $C + A[i{:}] + B[j{:}]$. Par I₂, $C$ contient $A[0{:}i]$ et $B[0{:}j]$ ; le reste (une seule liste non vide) est trié et $\geq$ tous les éléments de $C$ (I₃).</p>
+  <div class="box box-c"><b class="lab">Conclusion</b> Le résultat est trié et contient exactement les éléments de $A$ et $B$ : la postcondition est satisfaite. $\blacksquare$</div>
+  <span class="slide-number">5 / 16</span>
+</section>
+
+<!-- 6 fusion variant -->
+<section class="slide" id="s6">
+  <h2 class="frame-title">Terminaison de <code>fusion</code><span class="tag tag-t">VARIANT</span></h2>
+  <div class="box box-t"><b class="lab">⌛ Variant</b> $V = (\text{len}(A)-i) + (\text{len}(B)-j) \in \mathbb{N}$.</div>
+  <p>À chaque tour, $i$ <em>ou</em> $j$ augmente de 1 : $V$ <strong>décroît strictement</strong>. Tant que la boucle tourne, $V \geq 1 &gt; 0$.</p>
+  <div class="box box-t"><b class="lab">Théorème de Floyd</b> Une suite d'entiers naturels strictement décroissante est finie (car $(\mathbb{N},&lt;)$ est bien fondé). Donc la boucle s'arrête. $\blacksquare$</div>
+  <p>Nombre de tours $\leq \text{len}(A)+\text{len}(B)$ : fusion en $O(m+p)$.</p>
+  <span class="slide-number">6 / 16</span>
+</section>
+
+<!-- 7 tri_fusion mesure -->
+<section class="slide" id="s7">
+  <h2 class="frame-title">Terminaison de <code>tri_fusion</code><span class="tag tag-t">MESURE</span></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">tri_fusion</span>(L):
+    <span class="kw">if</span> <span class="nb">len</span>(L) &lt;= <span class="nb">1</span>:
+        <span class="kw">return</span> L
+    m = <span class="nb">len</span>(L) // <span class="nb">2</span>
+    <span class="kw">return</span> fusion(tri_fusion(L[:m]), tri_fusion(L[m:]))</div>
+  <div class="box box-t"><b class="lab">📏 Mesure</b> $\mu(L) = \text{len}(L) \in \mathbb{N}$ ; cas de base $\text{len}(L) \leq 1$.</div>
+  <p>Pour $n \geq 2$ : les appels portent sur des longueurs $\lfloor n/2 \rfloor &lt; n$ et $\lceil n/2 \rceil \leq n-1 &lt; n$. $\mu$ décroît strictement $\Rightarrow$ cas de base atteint en temps fini. $\blacksquare$</p>
+  <span class="slide-number">7 / 16</span>
+</section>
+
+<!-- 8 tri_fusion récurrence -->
+<section class="slide" id="s8">
+  <h2 class="frame-title">Correction de <code>tri_fusion</code><span class="tag tag-c">RÉCURRENCE</span></h2>
+  <div class="box box-c"><b class="lab">P(L)</b> <code>tri_fusion(L)</code> renvoie une permutation triée de $L$. Récurrence forte sur $\mu(L)=\text{len}(L)$.</div>
+  <p><strong>Base</strong> ($\text{len}(L)\leq 1$) : $L$ déjà triée, renvoyée telle quelle. ✓</p>
+  <p><strong>Hérédité.</strong> Pour $n \geq 2$, par hypothèse (longueurs $&lt; n$), gauche et droite sont des permutations triées de $L[:m]$ et $L[m:]$. Par la correction de <code>fusion</code>, le résultat est trié et contient les éléments de $L$. ✓</p>
+  <div class="box box-x">Avec la terminaison : <code>tri_fusion</code> est <strong>totalement correct</strong>.</div>
+  <span class="slide-number">8 / 16</span>
+</section>
+
+<!-- 9 tri_fusion complexité -->
+<section class="slide" id="s9">
+  <h2 class="frame-title">Complexité de <code>tri_fusion</code><span class="tag tag-x">COMPLEXITÉ</span></h2>
+  <p style="text-align:center;font-size:1.1rem;margin:0.9rem 0;">$$T(n) = 2\,T(n/2) + O(n) \;\Longrightarrow\; O(n\log n)$$</p>
+  <div class="box box-x"><b class="lab">Garanti</b> Même complexité au meilleur et au pire cas (la division ne dépend pas du contenu). Espace $O(n)$, stable, non en place.</div>
+  <span class="slide-number">9 / 16</span>
+</section>
+
+<!-- 10 calcul tri_fusion -->
+<section class="slide" id="s9b">
+  <h2 class="frame-title">Calcul — <code>tri_fusion</code><span class="tag tag-x">COMPLEXITÉ</span></h2>
+  <p>On déroule $T(n) = 2\,T(n/2) + c\,n$ :</p>
+  <div class="code">T(n) = 2 T(n/2) + cn
+     = 4 T(n/4) + 2cn
+     = 8 T(n/8) + 3cn
+     = ...
+     = 2^k T(n/2^k) + k·cn</div>
+  <p>Arrêt quand $n/2^k = 1$, soit $k = \log_2 n$ :</p>
+  <p style="text-align:center;font-size:1.05rem;">$$T(n) = n\,T(1) + (\log_2 n)\,cn = O(n\log n)$$</p>
+  <div class="box box-x"><b class="lab">Théorème maître</b> $a=b=2$, $n^{\log_b a}=n$ → cas $O(n\log n)$. Au plus $n\log_2 n$ comparaisons.</div>
+  <span class="slide-number">10 / 16</span>
+</section>
+
+<!-- 11 tri rapide -->
+<section class="slide" id="s10">
+  <h2 class="frame-title">Tri rapide — partition<span class="tag tag-c">LEMME</span></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">tri_rapide</span>(L):
+    <span class="kw">if</span> <span class="nb">len</span>(L) &lt;= <span class="nb">1</span>: <span class="kw">return</span> L
+    pivot = L[<span class="nb">0</span>]
+    petits = [x <span class="kw">for</span> x <span class="kw">in</span> L[<span class="nb">1</span>:] <span class="kw">if</span> x &lt;= pivot]
+    grands = [x <span class="kw">for</span> x <span class="kw">in</span> L[<span class="nb">1</span>:] <span class="kw">if</span> x &gt; pivot]
+    <span class="kw">return</span> tri_rapide(petits) + [pivot] + tri_rapide(grands)</div>
+  <div class="box box-c"><b class="lab">Lemme de partition</b> $petits=\{x \leq pivot\}$, $grands=\{x &gt; pivot\}$ ; $petits$, $[pivot]$, $grands$ partitionnent $L$, avec $petits \leq pivot &lt; grands$.</div>
+  <span class="slide-number">11 / 16</span>
+</section>
+
+<!-- 11 tri rapide mesure -->
+<section class="slide" id="s11">
+  <h2 class="frame-title">Terminaison de <code>tri_rapide</code><span class="tag tag-t">MESURE</span></h2>
+  <div class="box box-t"><b class="lab">📏 Mesure</b> $\mu(L)=\text{len}(L) \in \mathbb{N}$ ; cas de base $\text{len}(L)\leq 1$.</div>
+  <p>Le pivot est retiré : $\text{len}(petits) + \text{len}(grands) = \text{len}(L) - 1$.</p>
+  <p>Donc $\text{len}(petits) \leq n-1 &lt; n$ et $\text{len}(grands) \leq n-1 &lt; n$ : $\mu$ <strong>décroît strictement</strong> à chaque appel $\Rightarrow$ <code>tri_rapide</code> termine pour toute entrée. $\blacksquare$</p>
+  <span class="slide-number">12 / 16</span>
+</section>
+
+<!-- 12 tri rapide récurrence -->
+<section class="slide" id="s12">
+  <h2 class="frame-title">Correction de <code>tri_rapide</code><span class="tag tag-c">RÉCURRENCE</span></h2>
+  <div class="box box-c"><b class="lab">P(L)</b> <code>tri_rapide(L)</code> renvoie une permutation triée de $L$. Récurrence forte sur $\text{len}(L)$.</div>
+  <p><strong>Base</strong> : $\text{len}(L)\leq 1$, déjà triée. ✓</p>
+  <p><strong>Hérédité</strong> : par hypothèse, $tri(petits)$ et $tri(grands)$ triés. La concaténation $tri(petits)+[pivot]+tri(grands)$ :</p>
+  <ul>
+    <li>contient tous les éléments de $L$ (lemme) ;</li>
+    <li>est triée car $petits \leq pivot &lt; grands$ et chaque bloc est trié. ✓</li>
+  </ul>
+  <span class="slide-number">13 / 16</span>
+</section>
+
+<!-- 13 tri rapide complexité -->
+<section class="slide" id="s13">
+  <h2 class="frame-title">Complexité de <code>tri_rapide</code><span class="tag tag-x">COMPLEXITÉ</span></h2>
+  <table class="ref">
+    <tr><th>Cas</th><th>Récurrence</th><th>Résultat</th></tr>
+    <tr><td>Moyen / meilleur (équilibré)</td><td>$T(n)=2T(n/2)+O(n)$</td><td>$O(n\log n)$</td></tr>
+    <tr><td>Pire (pivot extrémal)</td><td>$T(n)=T(n-1)+O(n)$</td><td>$O(n^2)$</td></tr>
+  </table>
+  <div class="box box-w"><b class="lab">Terminaison ≠ vitesse</b> La mesure $\mu$ garantit l'<em>arrêt</em> dans tous les cas ; c'est la <em>répartition</em> de la partition qui fixe la <em>vitesse</em>. Pivot aléatoire / médiane de trois $\Rightarrow$ pire cas improbable.</div>
+  <span class="slide-number">14 / 16</span>
+</section>
+
+<!-- 15 calcul tri rapide -->
+<section class="slide" id="s13b">
+  <h2 class="frame-title">Calcul — <code>tri_rapide</code><span class="tag tag-x">COMPLEXITÉ</span></h2>
+  <p><strong>Pire cas</strong> ($T(n)=T(n-1)+cn$) :</p>
+  <div class="code">T(n) = T(n-1) + cn = T(n-2) + c(n-1) + cn = ...
+     = c·(n + (n-1) + ... + 2) + T(1)
+     = c·( n(n+1)/2 - 1 ) + O(1)  =  O(n²)</div>
+  <p><strong>Meilleur / moyen</strong> ($T(n)=2\,T(n/2)+cn$) : même déroulé que la fusion → $O(n\log n)$.</p>
+  <div class="box box-x"><b class="lab">En moyenne</b> $\approx 2n\ln n \approx 1{,}39\,n\log_2 n$ comparaisons, donc $O(n\log n)$.</div>
+  <span class="slide-number">15 / 16</span>
+</section>
+
+<!-- 16 synthèse -->
+<section class="slide" id="s14">
+  <h2 class="frame-title">Synthèse</h2>
+  <table class="ref">
+    <tr><th>Tri</th><th>Correction</th><th>Terminaison</th><th>Complexité</th></tr>
+    <tr><td><strong>Fusion</strong></td><td>Invariant de <code>fusion</code> + récurrence</td><td>Variant $(m{-}i){+}(p{-}j)$ ; mesure $\text{len}$</td><td>$O(n\log n)$ garanti</td></tr>
+    <tr><td><strong>Rapide</strong></td><td>Lemme partition + récurrence</td><td>Mesure $\text{len}$ (pivot retiré)</td><td>$O(n\log n)$ / $O(n^2)$</td></tr>
+  </table>
+  <ul style="margin-top:0.7rem;">
+    <li>Boucle → <strong>invariant</strong> + <strong>variant</strong> (Floyd).</li>
+    <li>Récursion → <strong>récurrence bien fondée</strong> + <strong>mesure</strong> décroissante.</li>
+    <li>Correction = arrêt + résultat juste ; complexité = vitesse.</li>
+  </ul>
+  <span class="slide-number">16 / 16</span>
+</section>
+
+<div id="nav">
+  <button id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button id="btn-next" title="Suivant">&#8594;</button>
+</div>
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0, slideshowMode = false;
+const btnScroll = document.getElementById('btn-scroll');
+function setShow(on){
+  slideshowMode = on;
+  document.body.classList.toggle('slideshow', on);
+  btnScroll.textContent = on ? 'Défiler' : 'Diaporama';
+  slides.forEach(s => s.classList.remove('active'));
+  if(on){ slides[current].classList.add('active'); slides[current].scrollIntoView({block:'center'}); }
+}
+function enter(i){
+  if(!slideshowMode){ setShow(true); }
+  slides[current].classList.remove('active');
+  current = (i + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  slides[current].scrollIntoView({behavior:'smooth', block:'center'});
+}
+document.getElementById('btn-prev').addEventListener('click', () => enter(current-1));
+document.getElementById('btn-next').addEventListener('click', () => enter(current+1));
+btnScroll.addEventListener('click', () => setShow(!slideshowMode));
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight' || e.key==='ArrowDown'){ e.preventDefault(); enter(current+1); }
+  if(e.key==='ArrowLeft'  || e.key==='ArrowUp'){ e.preventDefault(); enter(current-1); }
+});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

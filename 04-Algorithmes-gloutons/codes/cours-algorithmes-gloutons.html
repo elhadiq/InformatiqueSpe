@@ -1,0 +1,281 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <!-- HERO -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE 2ᵉ année — MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.9em;">Les algorithmes gloutons</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6eef0;">Une stratégie de résolution des problèmes d'optimisation : à chaque étape, faire le choix qui semble le meilleur sur le moment, sans jamais revenir en arrière. Simple et rapide — mais pas toujours optimale.</p>
+  </div>
+
+  <!-- OBJECTIFS -->
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:14px 18px;border-radius:4px;margin-bottom:26px;">
+    <strong style="color:#2c3e50;">🎯 Objectifs du chapitre</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Comprendre ce qu'est un <strong>problème d'optimisation</strong> et la <strong>stratégie gloutonne</strong>.</li>
+      <li>Identifier les deux ingrédients clés : <strong>propriété du choix glouton</strong> et <strong>sous-structure optimale</strong>.</li>
+      <li>Montrer, à l'aide de <strong>contre-exemples</strong>, qu'un glouton ne garantit pas toujours l'optimum.</li>
+      <li>Résoudre des problèmes classiques : <strong>rendu de monnaie</strong>, <strong>sac à dos</strong>, <strong>arbre de Huffman</strong>.</li>
+      <li>Savoir reconnaître quand l'approche gloutonne est correcte… et quand elle échoue.</li>
+    </ul>
+  </div>
+
+  <!-- SOMMAIRE -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:14px 18px;margin-bottom:30px;background:#fafbfc;">
+    <strong style="color:#2c3e50;">Sommaire</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>Problèmes d'optimisation et idée gloutonne</li>
+      <li>Structure d'un algorithme glouton (choix glouton et sous-structure optimale)</li>
+      <li>Le rendu de monnaie</li>
+      <li>Le problème du sac à dos</li>
+      <li>L'arbre de Huffman (codage optimal)</li>
+      <li>Quand le glouton fonctionne-t-il ? — récapitulatif</li>
+    </ol>
+  </div>
+
+  <!-- ===== 1 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. Problèmes d'optimisation et idée gloutonne</h2>
+  <p>Un <strong>problème d'optimisation</strong> consiste à trouver, parmi un ensemble (souvent énorme) de solutions possibles, une solution qui <strong>maximise</strong> ou <strong>minimise</strong> une certaine quantité, appelée <em>fonction objectif</em>. Exemples : rendre une somme avec le <em>moins</em> de pièces possible, remplir un sac pour <em>maximiser</em> la valeur transportée, coder un texte avec le <em>moins</em> de bits possible.</p>
+
+  <p>Explorer <em>toutes</em> les solutions (force brute) est en général trop coûteux : le nombre de combinaisons explose exponentiellement. On cherche donc des méthodes plus malines. L'<strong>approche gloutonne</strong> (en anglais <em>greedy</em>, « gourmande ») est l'une des plus simples :</p>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Principe glouton.</strong> On construit la solution <strong>pas à pas</strong>. À chaque étape, on effectue le choix qui paraît <strong>localement le meilleur</strong> (le plus « gourmand ») selon un critère simple, <strong>sans jamais remettre en cause</strong> les choix déjà faits.
+  </div>
+
+  <p>L'algorithme est donc rapide et facile à écrire. Sa faiblesse est dans le mot « localement » : un enchaînement de choix optimaux <em>sur le moment</em> ne donne pas forcément la <strong>meilleure solution globale</strong>. Tout l'enjeu du chapitre est de distinguer les cas où le glouton est correct de ceux où il échoue.</p>
+
+  <!-- ===== 2 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Structure d'un algorithme glouton</h2>
+  <p>Un algorithme glouton suit toujours le même schéma : tant que la solution n'est pas complète, choisir le « meilleur » candidat restant et l'ajouter s'il est compatible.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#8b949e;"># Schéma général d'un algorithme glouton</span>
+<span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">glouton</span>(candidats):
+    solution = []
+    <span style="color:#ff7b72;">while</span> not complet(solution) <span style="color:#ff7b72;">and</span> candidats:
+        x = meilleur_candidat(candidats)   <span style="color:#8b949e;"># choix glouton</span>
+        candidats.remove(x)
+        <span style="color:#ff7b72;">if</span> compatible(solution, x):
+            solution.append(x)
+    <span style="color:#ff7b72;">return</span> solution</pre>
+
+  <p>Pour qu'un tel algorithme produise une solution <strong>optimale</strong>, le problème doit posséder deux propriétés.</p>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>1. Propriété du choix glouton.</strong> Il existe une solution optimale qui contient le choix localement optimal effectué à la première étape. Autrement dit : faire le choix glouton ne « ferme jamais la porte » à l'optimum.
+  </div>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>2. Sous-structure optimale.</strong> Une solution optimale du problème contient en elle des solutions optimales des <strong>sous-problèmes</strong>. Une fois le premier choix fait, il reste un problème <em>de même nature</em>, plus petit, qu'on résout par le même procédé.
+  </div>
+
+  <p>La sous-structure optimale est aussi le fondement de la <strong>programmation dynamique</strong> (chapitre suivant). La différence : le glouton fait <strong>un seul</strong> choix — celui qui paraît le meilleur — et ne le remet jamais en cause ; la programmation dynamique <strong>examine plusieurs choix</strong> et garde le meilleur. Le glouton est donc plus rapide, mais correct seulement lorsque la propriété du choix glouton est vérifiée.</p>
+
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>⚠️ Point de vigilance.</strong> Démontrer qu'un glouton est <strong>optimal</strong> demande une vraie preuve (souvent par <em>échange</em> : on transforme une solution optimale quelconque en la solution gloutonne sans dégrader l'objectif). À l'inverse, montrer qu'un glouton <strong>n'est pas</strong> optimal est facile : il suffit d'<strong>un seul contre-exemple</strong>.
+  </div>
+
+  <!-- ===== 3 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Le rendu de monnaie</h2>
+  <p><strong>Problème.</strong> On dispose d'un système de pièces (par exemple 1, 2, 5, 10, 20, 50 centimes…) en quantité illimitée. Pour rendre une somme S, on veut utiliser le <strong>nombre minimal</strong> de pièces.</p>
+
+  <p><strong>Stratégie gloutonne.</strong> À chaque étape, prendre la <strong>plus grande pièce</strong> qui ne dépasse pas la somme restante, puis recommencer.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">rendu_monnaie</span>(systeme, S):
+    <span style="color:#8b949e;"># systeme : pièces triées par ordre décroissant</span>
+    rendu = []
+    <span style="color:#ff7b72;">for</span> piece <span style="color:#ff7b72;">in</span> systeme:
+        <span style="color:#ff7b72;">while</span> S &gt;= piece:
+            rendu.append(piece)
+            S = S - piece
+    <span style="color:#ff7b72;">return</span> rendu</pre>
+
+  <p>Pour rendre 68 centimes avec (50, 20, 10, 5, 2, 1) : on prend 50, puis 10, puis 5, puis 2, puis 1, soit <strong>5 pièces</strong> : 50 + 10 + 5 + 2 + 1 = 68. C'est bien optimal.</p>
+
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>✅ Le glouton est optimal… pour les bons systèmes.</strong> Pour le système de pièces de l'euro (et celui de la plupart des monnaies réelles), dit <strong>canonique</strong>, l'algorithme glouton donne toujours le nombre minimal de pièces.
+  </div>
+
+  <div style="background:#fdeef0;border-left:4px solid #e74c3c;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>❌ Contre-exemple (système non canonique).</strong> Avec le système (1, 3, 4) et S = 6 : le glouton prend 4, puis 1, puis 1, soit <strong>3 pièces</strong> (4 + 1 + 1). Or la solution optimale est <strong>2 pièces</strong> : 3 + 3 ! Le choix glouton « prendre 4 d'abord » a fermé la porte à l'optimum. Ce système ne vérifie pas la propriété du choix glouton.
+  </div>
+
+  <p>Conclusion : le rendu de monnaie illustre parfaitement la nuance du chapitre. Le même algorithme glouton est <strong>optimal pour certains systèmes</strong> et <strong>sous-optimal pour d'autres</strong>. Pour un système quelconque, il faut la <strong>programmation dynamique</strong> pour garantir l'optimum.</p>
+
+  <!-- ===== 4 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Le problème du sac à dos</h2>
+  <p><strong>Problème.</strong> On dispose d'objets, chacun ayant un <strong>poids</strong> p<sub>i</sub> et une <strong>valeur</strong> v<sub>i</sub>, et d'un sac de capacité maximale C. On veut emporter un ensemble d'objets de <strong>valeur totale maximale</strong> sans dépasser C.</p>
+
+  <p>Il existe deux versions, et c'est précisément là que se joue la différence.</p>
+
+  <h3 style="color:#026573;">4.1 — Sac à dos fractionnaire</h3>
+  <p>On peut prendre des <strong>fractions</strong> d'objet (par exemple de la poudre d'or, du sable, un liquide). La stratégie gloutonne est : trier les objets par <strong>valeur par unité de poids</strong> (v<sub>i</sub> / p<sub>i</sub>) décroissante, puis remplir le sac en prenant d'abord les objets les plus « rentables », et terminer en prenant une fraction du dernier objet pour combler exactement la capacité.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">sac_fractionnaire</span>(objets, C):
+    <span style="color:#8b949e;"># objets : liste de (valeur, poids)</span>
+    objets = <span style="color:#79c0ff;">sorted</span>(objets, key=<span style="color:#ff7b72;">lambda</span> o: o[<span style="color:#79c0ff;">0</span>] / o[<span style="color:#79c0ff;">1</span>], reverse=<span style="color:#79c0ff;">True</span>)
+    valeur = <span style="color:#79c0ff;">0.0</span>
+    <span style="color:#ff7b72;">for</span> v, p <span style="color:#ff7b72;">in</span> objets:
+        <span style="color:#ff7b72;">if</span> C &gt;= p:                 <span style="color:#8b949e;"># on prend l'objet entier</span>
+            valeur += v; C -= p
+        <span style="color:#ff7b72;">else</span>:                       <span style="color:#8b949e;"># on prend une fraction et on s'arrête</span>
+            valeur += v * (C / p); C = <span style="color:#79c0ff;">0</span>
+            <span style="color:#ff7b72;">break</span>
+    <span style="color:#ff7b72;">return</span> valeur</pre>
+
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>✅ Le glouton est optimal.</strong> Pour le sac fractionnaire, prendre toujours l'objet le plus rentable au kilo est <strong>prouvablement optimal</strong> (preuve par échange). Le problème vérifie la propriété du choix glouton.
+  </div>
+
+  <h3 style="color:#026573;">4.2 — Sac à dos 0/1</h3>
+  <p>Cette fois, chaque objet est <strong>indivisible</strong> : on le prend en entier (1) ou pas du tout (0). Le même glouton « le plus rentable d'abord » <strong>n'est plus optimal</strong>.</p>
+
+  <div style="background:#fdeef0;border-left:4px solid #e74c3c;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>❌ Contre-exemple (sac à dos 0/1).</strong> Capacité C = 10. Trois objets :
+    <table style="border-collapse:collapse;width:100%;margin:10px 0;font-size:0.95em;background:#fff;">
+      <tr style="background:#2c3e50;color:#fff;">
+        <th style="border:1px solid #2c3e50;padding:7px;text-align:left;">Objet</th>
+        <th style="border:1px solid #2c3e50;padding:7px;text-align:left;">Valeur</th>
+        <th style="border:1px solid #2c3e50;padding:7px;text-align:left;">Poids</th>
+        <th style="border:1px solid #2c3e50;padding:7px;text-align:left;">Valeur / poids</th>
+      </tr>
+      <tr><td style="border:1px solid #ddd;padding:7px;">A</td><td style="border:1px solid #ddd;padding:7px;">60</td><td style="border:1px solid #ddd;padding:7px;">10</td><td style="border:1px solid #ddd;padding:7px;">6</td></tr>
+      <tr style="background:#fbf2f3;"><td style="border:1px solid #ddd;padding:7px;">B</td><td style="border:1px solid #ddd;padding:7px;">100</td><td style="border:1px solid #ddd;padding:7px;">20</td><td style="border:1px solid #ddd;padding:7px;">5</td></tr>
+      <tr><td style="border:1px solid #ddd;padding:7px;">C</td><td style="border:1px solid #ddd;padding:7px;">120</td><td style="border:1px solid #ddd;padding:7px;">30</td><td style="border:1px solid #ddd;padding:7px;">4</td></tr>
+    </table>
+    Avec C = 50 : le glouton prend A (rentabilité 6, poids 10), puis B (poids 20, total 30), puis ne peut plus prendre C (il resterait 20 &lt; 30). Valeur = 60 + 100 = <strong>160</strong>. Or prendre <strong>B + C</strong> (poids 20 + 30 = 50) donne une valeur de <strong>220</strong> ! Le glouton, en se jetant sur l'objet le plus rentable, rate la meilleure combinaison.
+  </div>
+
+  <p>Le sac à dos 0/1 ne vérifie <strong>pas</strong> la propriété du choix glouton : il faut la <strong>programmation dynamique</strong> (chapitre suivant) pour le résoudre exactement. C'est l'exemple canonique d'un problème où « gourmand » ne rime pas avec « optimal ».</p>
+
+  <!-- ===== 5 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">5. L'arbre de Huffman (codage optimal)</h2>
+  <p><strong>Problème.</strong> On veut <strong>compresser</strong> un texte. Plutôt que de coder chaque caractère sur le même nombre de bits (codage à longueur fixe), on donne des codes <strong>courts aux caractères fréquents</strong> et des codes longs aux caractères rares. Pour pouvoir décoder sans ambiguïté, aucun code ne doit être le préfixe d'un autre : c'est un <strong>code préfixe</strong>, représenté par un <strong>arbre binaire</strong> dont les feuilles sont les caractères (gauche = 0, droite = 1).</p>
+
+  <p><strong>Algorithme de Huffman (glouton).</strong> On part d'une forêt où chaque caractère est un arbre isolé, pondéré par sa fréquence. Tant qu'il reste plus d'un arbre :</p>
+  <ol style="padding-left:22px;">
+    <li>choisir les <strong>deux arbres de plus petite fréquence</strong> (le choix glouton) ;</li>
+    <li>les fusionner sous une nouvelle racine, de fréquence égale à la <strong>somme</strong> des deux ;</li>
+    <li>replacer ce nouvel arbre dans la forêt.</li>
+  </ol>
+  <p>Le dernier arbre restant est l'arbre de Huffman. On lit le code de chaque caractère en descendant de la racine jusqu'à sa feuille.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">import</span> heapq
+
+<span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">huffman</span>(freq):
+    <span style="color:#8b949e;"># freq : dict {caractère: fréquence}</span>
+    tas = [[f, c, <span style="color:#79c0ff;">None</span>, <span style="color:#79c0ff;">None</span>] <span style="color:#ff7b72;">for</span> c, f <span style="color:#ff7b72;">in</span> freq.items()]
+    heapq.heapify(tas)
+    <span style="color:#ff7b72;">while</span> <span style="color:#79c0ff;">len</span>(tas) &gt; <span style="color:#79c0ff;">1</span>:
+        g = heapq.heappop(tas)          <span style="color:#8b949e;"># plus petite fréquence</span>
+        d = heapq.heappop(tas)          <span style="color:#8b949e;"># deuxième plus petite</span>
+        heapq.heappush(tas, [g[<span style="color:#79c0ff;">0</span>] + d[<span style="color:#79c0ff;">0</span>], <span style="color:#79c0ff;">None</span>, g, d])
+    <span style="color:#ff7b72;">return</span> tas[<span style="color:#79c0ff;">0</span>]          <span style="color:#8b949e;"># racine de l'arbre de Huffman</span></pre>
+
+  <p><strong>Exemple.</strong> Fréquences A:5, B:2, C:1, D:1. On fusionne d'abord C et D (1 + 1 = 2), puis ce nœud avec B (2 + 2 = 4), puis avec A (4 + 5 = 9). On obtient les codes A:0, B:11, C:100, D:101 — les caractères fréquents (A) sont sur 1 bit, les rares (C, D) sur 3 bits.</p>
+
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:10px 16px;border-radius:4px;margin:16px 0;">
+    <strong>✅ Le glouton de Huffman est optimal.</strong> On démontre que fusionner les deux fréquences les plus faibles conduit toujours à un code préfixe de <strong>longueur moyenne minimale</strong> (propriété du choix glouton + sous-structure optimale). C'est l'un des grands succès de l'approche gloutonne, utilisé dans de vrais formats de compression (JPEG, ZIP, MP3…).
+  </div>
+
+  <!-- ===== 6 ===== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. Quand le glouton fonctionne-t-il ? — récapitulatif</h2>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.95em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Problème</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Choix glouton</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Glouton optimal ?</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Rendu de monnaie</strong> (système canonique, ex. euro)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Plus grande pièce ≤ reste</td>
+      <td style="border:1px solid #ddd;padding:9px;color:#27ae60;"><strong>Oui</strong></td>
+    </tr>
+    <tr style="background:#f7fbfc;">
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Rendu de monnaie</strong> (système quelconque, ex. 1,3,4)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Plus grande pièce ≤ reste</td>
+      <td style="border:1px solid #ddd;padding:9px;color:#e74c3c;"><strong>Non</strong> (6 = 3+3)</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Sac à dos fractionnaire</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Meilleure valeur/poids d'abord</td>
+      <td style="border:1px solid #ddd;padding:9px;color:#27ae60;"><strong>Oui</strong></td>
+    </tr>
+    <tr style="background:#f7fbfc;">
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Sac à dos 0/1</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Meilleure valeur/poids d'abord</td>
+      <td style="border:1px solid #ddd;padding:9px;color:#e74c3c;"><strong>Non</strong></td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Codage de Huffman</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Fusionner les 2 plus petites fréquences</td>
+      <td style="border:1px solid #ddd;padding:9px;color:#27ae60;"><strong>Oui</strong></td>
+    </tr>
+  </table>
+
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:12px 16px;border-radius:4px;margin:18px 0;">
+    <strong>✅ Points essentiels.</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li>Un glouton construit la solution pas à pas en faisant à chaque étape le choix <strong>localement optimal</strong>, sans retour en arrière.</li>
+      <li>Il est <strong>optimal</strong> seulement si le problème vérifie la <strong>propriété du choix glouton</strong> et la <strong>sous-structure optimale</strong>.</li>
+      <li>Avantages : <strong>simple</strong> et <strong>rapide</strong> (souvent un tri + un parcours, soit O(n log n)).</li>
+      <li>Un seul <strong>contre-exemple</strong> suffit à prouver qu'un glouton n'est pas optimal (rendu 1,3,4 ; sac à dos 0/1).</li>
+      <li>Quand le glouton échoue, on se tourne vers la <strong>programmation dynamique</strong>.</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#7f8c8d;font-size:0.85em;margin-top:30px;border-top:1px solid #ddd;padding-top:14px;">CPGE MP/PSI — Informatique · Chapitre : Les algorithmes gloutons · Conforme au programme officiel 2023</p>
+
+</div>

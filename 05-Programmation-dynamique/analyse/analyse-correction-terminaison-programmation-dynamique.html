@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analyse des algorithmes de programmation dynamique — correction, terminaison, complexité</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:920px;margin:0 auto;padding:1.2rem;background:#fff;}
+  code{background:#eef1f3;padding:1px 5px;border-radius:3px;font-family:Consolas,Monaco,monospace;}
+  pre code{background:none;padding:0;}
+  h2{font-size:1.55em;color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;margin-top:1.6em;}
+  h3{margin-top:1.1em;color:#026573;}
+  .box{border-radius:4px;padding:12px 16px;margin:12px 0;}
+  .spec{background:#eef2f7;border-left:4px solid #34495e;}
+  .corr{background:#f4ecfb;border-left:4px solid #5b21b6;}
+  .term{background:#e7f6ef;border-left:4px solid #047857;}
+  .cplx{background:#e4f1f2;border-left:4px solid #026573;}
+  .warn{background:#fef9e7;border-left:4px solid #f39c12;}
+  .bad{background:#fdeef0;border-left:4px solid #e74c3c;}
+  .good{background:#eafaf1;border-left:4px solid #27ae60;}
+  .lab-c{color:#5b21b6;font-weight:bold;}
+  .lab-t{color:#047857;font-weight:bold;}
+  .lab-x{color:#026573;font-weight:bold;}
+  pre.code{background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;}
+  pre.calc{background:#f7fbfc;border:1px solid #ddd;border-radius:6px;padding:12px 16px;font-family:Consolas,monospace;font-size:0.92em;line-height:1.7;}
+  table{border-collapse:collapse;width:100%;margin:12px 0;font-size:0.94em;}
+  th{background:#2c3e50;color:#fff;padding:8px;text-align:left;border:1px solid #2c3e50;}
+  td{border:1px solid #ddd;padding:8px;}
+  tr:nth-child(even) td{background:#f7fbfc;}
+</style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.8em;">Analyse des algorithmes de programmation dynamique</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6eef0;">Pour Fibonacci, le sac à dos 0/1, la PLSSC et Levenshtein : <strong>correction</strong> (invariant / récurrence sur les états), <strong>terminaison</strong> (variant, ordre de remplissage) et <strong>complexité</strong> (comptage des sous-problèmes).</p>
+  </div>
+
+  <!-- CADRE -->
+  <div class="box corr">
+    <span class="lab-c">📘 Cadre : correction totale</span>
+    <p style="margin:6px 0 0 0;">Un algorithme est <strong>correct</strong> (au sens total) s'il vérifie :</p>
+    <p style="text-align:center;margin:8px 0;">\[ \text{Correction totale} \;=\; \text{Correction partielle} \;+\; \text{Terminaison} \]</p>
+    <p style="margin:6px 0 0 0;">En programmation dynamique, la correction repose entièrement sur la <strong>relation de récurrence</strong> entre états. On prouve d'abord que cette récurrence est <strong>exacte</strong> (elle calcule bien la quantité voulue), puis que l'implémentation (mémoïsation ou tabulation) la <strong>remplit dans un ordre valide</strong> : chaque case n'est calculée qu'<em>après</em> les cases dont elle dépend.</p>
+  </div>
+
+  <div class="box cplx">
+    <span class="lab-x">🔑 Principe de la complexité.</span>
+    La force de la PD se mesure par un argument simple :
+    \[ \text{coût total} \;=\; (\text{nombre d'états distincts}) \times (\text{coût d'un état}). \]
+    Comme chaque état n'est calculé <strong>qu'une seule fois</strong> (mémorisation), on multiplie le nombre de cases du tableau par le travail fait pour remplir une case. C'est ce qui fait chuter la complexité par rapport à la récursion naïve, qui recalcule un même état un nombre exponentiel de fois.
+  </div>
+
+  <!-- ============ 1. FIBONACCI ============ -->
+  <h2>1. Fibonacci — naïf contre programmation dynamique</h2>
+
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">📋 Spécification.</span>
+    <strong>Entrée :</strong> \(n \in \mathbb{N}\). <strong>Sortie :</strong> \(F_n\), où \(F_0=0,\ F_1=1,\ F_n=F_{n-1}+F_{n-2}\).
+  </div>
+
+  <h3>1.1 — Pourquoi le naïf est exponentiel</h3>
+  <p>Soit \(T(n)\) le nombre d'appels de <code>fib(n)</code> dans la version récursive sans cache. On a \(T(0)=T(1)=1\) et \(T(n)=T(n-1)+T(n-2)+1\). On reconnaît une récurrence « à la Fibonacci » :</p>
+  <pre class="calc">T(n) = T(n-1) + T(n-2) + 1  >  F(n)
+F(n) ~ φ^n / √5   avec   φ = (1+√5)/2 ≈ 1,618
+⇒  T(n) = Θ(φ^n)   (exponentiel)</pre>
+  <div class="box bad">
+    <span style="color:#e74c3c;font-weight:bold;">❌ Le défaut.</span> L'arbre des appels contient un nombre exponentiel de nœuds, alors qu'il n'existe que \(n+1\) valeurs distinctes \(F_0,\dots,F_n\). Le <strong>chevauchement des sous-problèmes</strong> est massivement gaspillé.
+  </div>
+
+  <h3>1.2 — Correction de la version mémoïsée / tabulée</h3>
+  <div class="box corr">
+    <span class="lab-c">🟣 Invariant (tabulation).</span>
+    Dans <code>fib_tab</code>, avant l'itération d'indice \(i\) de la boucle, l'invariant est :
+    \[ I(i):\quad \forall k < i,\ \ f[k] = F_k. \]
+    <p style="margin:8px 0 0 0;"><strong>Initialisation.</strong> Avant \(i=2\), on a posé \(f[0]=0=F_0\) et \(f[1]=1=F_1\) : \(I(2)\) est vrai.</p>
+    <p style="margin:6px 0 0 0;"><strong>Conservation.</strong> Si \(I(i)\) est vrai, alors \(f[i-1]=F_{i-1}\) et \(f[i-2]=F_{i-2}\) sont déjà corrects (car \(i-1<i\) et \(i-2<i\)). L'affectation \(f[i]=f[i-1]+f[i-2]=F_{i-1}+F_{i-2}=F_i\) rend \(I(i+1)\) vrai.</p>
+    <p style="margin:6px 0 0 0;"><strong>Sortie.</strong> À la fin, \(i=n+1\) donc \(I(n+1)\) donne \(f[n]=F_n\). \(\blacksquare\)</p>
+  </div>
+  <div class="box term">
+    <span class="lab-t">🟢 Terminaison.</span> La boucle <code>for i in range(2, n+1)</code> a un nombre d'itérations fixé \(n-1\) ; le variant \(V=(n+1)-i \in \mathbb{N}\) décroît strictement de 1 à chaque tour et l'ensemble \((\mathbb{N},<)\) est bien fondé. Pour la version <strong>mémoïsée</strong>, la mesure \(\mu = n\) décroît strictement à chaque appel récursif (on appelle \(n-1\) et \(n-2\)) et atteint le cas de base \(n<2\).
+  </div>
+  <div class="box cplx">
+    <span class="lab-x">🔵 Complexité.</span> \(n+1\) états, chacun calculé en \(O(1)\) :
+    \[ T(n) = (n+1)\times O(1) = O(n) \quad\text{en temps},\qquad O(n)\ \text{en espace}. \]
+    On passe de \(O(\varphi^n)\) à \(O(n)\) : c'est exactement « réduire la complexité temporelle ».
+  </div>
+
+  <!-- ============ 2. SAC À DOS ============ -->
+  <h2>2. Sac à dos 0/1</h2>
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">📋 Spécification.</span>
+    <strong>Entrée :</strong> poids \((p_i)\), valeurs \((v_i)\) pour \(1\le i\le n\), capacité \(C\). <strong>Sortie :</strong> valeur totale maximale d'un sous-ensemble d'objets de poids total \(\le C\).
+  </div>
+  <p>État : \(M(i,c)\) = valeur maximale en n'utilisant que les \(i\) premiers objets sous capacité \(c\). Récurrence :</p>
+  <p style="text-align:center;">\[ M(i,c)=\begin{cases} 0 & i=0\\[2pt] M(i-1,c) & p_i>c\\[2pt] \max\big(M(i-1,c),\ v_i+M(i-1,c-p_i)\big) & p_i\le c \end{cases} \]</p>
+
+  <div class="box corr">
+    <span class="lab-c">🟣 Correction de la récurrence.</span>
+    On raisonne par <strong>récurrence sur \(i\)</strong> (nombre d'objets considérés).
+    <p style="margin:8px 0 0 0;"><strong>Base \(i=0\) :</strong> sans aucun objet, la seule valeur atteignable est \(0\), donc \(M(0,c)=0\).</p>
+    <p style="margin:6px 0 0 0;"><strong>Hérédité :</strong> supposons \(M(i-1,\cdot)\) correct. Pour le \(i\)-ème objet, une solution optimale soit <strong>ne le contient pas</strong> (valeur \(M(i-1,c)\)), soit <strong>le contient</strong> — possible seulement si \(p_i\le c\) — auquel cas il reste une capacité \(c-p_i\) à remplir <em>optimalement</em> avec les \(i-1\) premiers objets (sous-structure optimale), d'où \(v_i+M(i-1,c-p_i)\). Le maximum des deux cas couvre toutes les solutions : \(M(i,c)\) est optimal. \(\blacksquare\)</p>
+  </div>
+  <div class="box term">
+    <span class="lab-t">🟢 Terminaison.</span> Deux boucles <code>for</code> bornées (\(i\) de \(1\) à \(n\), \(c\) de \(0\) à \(C\)) : variant \(V=(n-i)\,(C+1)+(C-c)\in\mathbb{N}\) strictement décroissant. <strong>Ordre de remplissage valide :</strong> \(M(i,c)\) ne dépend que de la ligne \(i-1\), déjà entièrement calculée — la dépendance va du petit \(i\) vers le grand, donc la tabulation est cohérente.
+  </div>
+  <div class="box cplx">
+    <span class="lab-x">🔵 Complexité.</span> Tableau \((n+1)\times(C+1)\), chaque case en \(O(1)\) :
+    \[ T = O(n\,C),\qquad \text{espace } O(n\,C). \]
+  </div>
+  <div class="box warn">
+    <span style="color:#b9770e;font-weight:bold;">⚠️ Pseudo-polynomial.</span> \(O(nC)\) dépend de la <strong>valeur</strong> \(C\), pas seulement du nombre d'objets \(n\). En codant \(C\) en binaire, sa taille est \(\log_2 C\) bits : la complexité est exponentielle <em>en la taille de l'entrée</em>. C'est pourquoi le sac à dos 0/1 reste un problème \(\mathsf{NP}\text{-difficile}\), même si la PD le résout efficacement pour des \(C\) modérés.
+  </div>
+
+  <!-- ============ 3. PLSSC ============ -->
+  <h2>3. Plus longue sous-séquence commune</h2>
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">📋 Spécification.</span>
+    <strong>Entrée :</strong> deux chaînes \(X\) (longueur \(n\)) et \(Y\) (longueur \(m\)). <strong>Sortie :</strong> longueur de la plus longue sous-séquence commune.
+  </div>
+  <p>État \(L(i,j)\) = longueur de la PLSSC des préfixes \(X_{1..i}\) et \(Y_{1..j}\) :</p>
+  <p style="text-align:center;">\[ L(i,j)=\begin{cases} 0 & i=0 \text{ ou } j=0\\[2pt] L(i-1,j-1)+1 & X_i=Y_j\\[2pt] \max\big(L(i-1,j),\,L(i,j-1)\big) & X_i\neq Y_j \end{cases} \]</p>
+  <div class="box corr">
+    <span class="lab-c">🟣 Correction.</span> Récurrence sur \(i+j\).
+    <p style="margin:8px 0 0 0;"><strong>Cas \(X_i=Y_j\) :</strong> il existe une PLSSC optimale qui apparie ces deux derniers caractères (sinon on pourrait l'allonger), donc \(L(i,j)=L(i-1,j-1)+1\).</p>
+    <p style="margin:6px 0 0 0;"><strong>Cas \(X_i\neq Y_j\) :</strong> les deux derniers caractères ne peuvent pas être appariés ensemble ; une PLSSC optimale ignore soit \(X_i\), soit \(Y_j\). On garde le meilleur des deux : \(\max(L(i-1,j),L(i,j-1))\). \(\blacksquare\)</p>
+  </div>
+  <div class="box term">
+    <span class="lab-t">🟢 Terminaison.</span> Deux boucles bornées (\(n\times m\) itérations). \(L(i,j)\) ne dépend que de cases d'indices \((i',j')\) avec \(i'+j' < i+j\), toutes calculées avant : ordre de remplissage par lignes croissantes valide.
+  </div>
+  <div class="box cplx">
+    <span class="lab-x">🔵 Complexité.</span> \[ T=O(n\,m),\qquad \text{espace } O(n\,m). \] À comparer à l'approche naïve qui testerait les \(2^n\) sous-séquences de \(X\) : \(O(2^n m)\).
+  </div>
+
+  <!-- ============ 4. LEVENSHTEIN ============ -->
+  <h2>4. Distance de Levenshtein</h2>
+  <div class="box spec">
+    <span style="color:#34495e;font-weight:bold;">📋 Spécification.</span>
+    <strong>Entrée :</strong> chaînes \(X\) (\(n\)) et \(Y\) (\(m\)). <strong>Sortie :</strong> nombre minimal d'insertions, suppressions et substitutions transformant \(X\) en \(Y\).
+  </div>
+  <p>État \(D(i,j)\) = distance entre \(X_{1..i}\) et \(Y_{1..j}\) :</p>
+  <p style="text-align:center;">\[ D(i,j)=\begin{cases} i & j=0\\ j & i=0\\ D(i-1,j-1) & X_i=Y_j\\ 1+\min\big(D(i-1,j),\,D(i,j-1),\,D(i-1,j-1)\big) & X_i\neq Y_j \end{cases} \]</p>
+  <div class="box corr">
+    <span class="lab-c">🟣 Correction.</span> Récurrence sur \(i+j\). Les cas de base correspondent à « tout supprimer » (\(j=0\)) ou « tout insérer » (\(i=0\)). Pour le cas général, la dernière opération de la transformation optimale est forcément l'une des trois : <strong>supprimer</strong> \(X_i\) (\(D(i-1,j)+1\)), <strong>insérer</strong> \(Y_j\) (\(D(i,j-1)+1\)), ou <strong>substituer/laisser</strong> (\(D(i-1,j-1)+[X_i\neq Y_j]\)). Le minimum sur ces trois choix donne l'optimum. \(\blacksquare\)
+  </div>
+  <div class="box term">
+    <span class="lab-t">🟢 Terminaison.</span> Boucles bornées \(n\times m\) ; chaque \(D(i,j)\) dépend de cases déjà remplies (indices strictement inférieurs en somme). Aucun risque de boucle infinie.
+  </div>
+  <div class="box cplx">
+    <span class="lab-x">🔵 Complexité.</span> \[ T=O(n\,m),\qquad \text{espace } O(n\,m)\ \text{(réductible à } O(\min(n,m))\text{ en ne gardant que deux lignes).} \]
+  </div>
+
+  <!-- ============ SYNTHÈSE ============ -->
+  <h2>5. Synthèse</h2>
+  <table>
+    <tr><th>Problème</th><th>État</th><th>Nb d'états</th><th>Coût / état</th><th>Complexité</th></tr>
+    <tr><td>Fibonacci</td><td>\(F(n)\)</td><td>\(n+1\)</td><td>\(O(1)\)</td><td>\(O(n)\) vs \(O(\varphi^n)\)</td></tr>
+    <tr><td>Sac à dos 0/1</td><td>\(M(i,c)\)</td><td>\((n{+}1)(C{+}1)\)</td><td>\(O(1)\)</td><td>\(O(nC)\)</td></tr>
+    <tr><td>PLSSC</td><td>\(L(i,j)\)</td><td>\((n{+}1)(m{+}1)\)</td><td>\(O(1)\)</td><td>\(O(nm)\)</td></tr>
+    <tr><td>Levenshtein</td><td>\(D(i,j)\)</td><td>\((n{+}1)(m{+}1)\)</td><td>\(O(1)\)</td><td>\(O(nm)\)</td></tr>
+  </table>
+  <div class="box good">
+    <span style="color:#1e8449;font-weight:bold;">✅ À retenir.</span>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li><strong>Correction</strong> = exactitude de la récurrence (récurrence sur l'état) + ordre de remplissage qui respecte les dépendances.</li>
+      <li><strong>Terminaison</strong> = boucles bornées (tabulation) ou mesure \(\mu\) décroissant vers le cas de base (mémoïsation) ; \((\mathbb{N},<)\) bien fondé.</li>
+      <li><strong>Complexité</strong> = (nombre d'états) × (coût par état), car chaque état est calculé une seule fois.</li>
+      <li>La PD ne réduit la complexité que grâce au <strong>chevauchement</strong> : sans recalculs, pas de gain.</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#7f8c8d;font-size:0.85em;margin-top:30px;border-top:1px solid #ddd;padding-top:14px;">CPGE MP/PSI — Informatique · Analyse : programmation dynamique · Conforme au programme officiel 2023</p>
+</body>
+</html>

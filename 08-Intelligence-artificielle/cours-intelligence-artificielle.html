@@ -1,0 +1,359 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <!-- ===================== HERO ===================== -->
+  <div style="background:#026573;color:#ffffff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE 2ᵉ année — MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.9em;">Introduction à l'intelligence artificielle</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:12px 0 0 0;font-size:1.05em;color:#d6eef0;">Comment une machine peut-elle <strong>apprendre à partir de données</strong> plutôt que d'exécuter une suite d'instructions écrites à la main&nbsp;? Ce chapitre initie à l'apprentissage automatique à travers deux algorithmes simples&nbsp;: <strong>KNN</strong> (classification supervisée) et <strong>K-means</strong> (segmentation non supervisée).</p>
+  </div>
+
+  <!-- ===================== OBJECTIFS ===================== -->
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:14px 18px;border-radius:4px;margin-bottom:26px;">
+    <strong style="color:#026573;">🎯 Objectifs du chapitre</strong>
+    <ul style="margin:8px 0 0 0;padding-left:20px;">
+      <li><strong>Définir</strong> l'intelligence artificielle et expliquer son intérêt.</li>
+      <li><strong>Énumérer</strong> ses sous-domaines et donner des exemples de la vie courante.</li>
+      <li>Distinguer apprentissage <strong>supervisé</strong>, <strong>non supervisé</strong> et par renforcement.</li>
+      <li>Comprendre un problème de <strong>classification</strong> et l'algorithme <strong>KNN</strong> (distance euclidienne).</li>
+      <li>Évaluer un classifieur avec la <strong>matrice de confusion</strong> et choisir le paramètre <strong>k</strong>.</li>
+      <li>Comprendre un problème de <strong>segmentation</strong> et l'algorithme des <strong>k-moyennes</strong>.</li>
+      <li>Constater la convergence de K-means vers un <strong>minimum local</strong>.</li>
+      <li><strong>Implémenter</strong> KNN et K-means en Python.</li>
+    </ul>
+  </div>
+
+  <!-- ===================== SOMMAIRE ===================== -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:14px 18px;margin-bottom:30px;background:#fafbfc;">
+    <strong style="color:#026573;">Sommaire</strong>
+    <ol style="margin:8px 0 0 0;padding-left:22px;">
+      <li>Qu'est-ce que l'intelligence artificielle&nbsp;?</li>
+      <li>Les sous-domaines de l'IA</li>
+      <li>L'apprentissage automatique (Machine Learning)</li>
+      <li>Apprentissage supervisé&nbsp;: classification et régression</li>
+      <li>L'algorithme des k plus proches voisins (KNN)</li>
+      <li>Implémentation de KNN en Python</li>
+      <li>Évaluer un classifieur&nbsp;: la matrice de confusion</li>
+      <li>Bien choisir le paramètre k</li>
+      <li>Apprentissage non supervisé&nbsp;: la segmentation</li>
+      <li>L'algorithme des k-moyennes (K-means)</li>
+      <li>Implémentation de K-means et convergence</li>
+      <li>Récapitulatif</li>
+    </ol>
+  </div>
+
+  <!-- ===================== 1 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. Qu'est-ce que l'intelligence artificielle&nbsp;?</h2>
+  <p>L'<strong>intelligence artificielle (IA)</strong> est la branche de l'informatique qui cherche à doter les machines de capacités habituellement associées à l'intelligence humaine&nbsp;: percevoir, raisonner, décider, apprendre, comprendre le langage. Plutôt que de programmer explicitement la solution d'un problème, on cherche souvent à faire en sorte que la machine <strong>apprenne</strong> à le résoudre à partir d'exemples.</p>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Deux façons de résoudre un problème.</strong> En programmation classique, le développeur écrit les règles&nbsp;: <em>données + programme &rArr; résultat</em>. En apprentissage automatique, on fournit des exemples et on laisse l'ordinateur déduire les règles&nbsp;: <em>données + résultats attendus &rArr; programme (modèle)</em>.
+  </div>
+
+  <p><strong>Pourquoi l'IA&nbsp;?</strong> Certains problèmes sont trop complexes ou trop variables pour être codés à la main&nbsp;: reconnaître un chiffre manuscrit, filtrer un courriel indésirable, recommander un film. Pour ces tâches, il est plus efficace d'apprendre un comportement à partir de grandes quantités de données que d'énumérer toutes les règles.</p>
+
+  <!-- ===================== 2 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Les sous-domaines de l'IA</h2>
+  <p>L'IA est un vaste domaine qui regroupe plusieurs sous-disciplines&nbsp;:</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#026573;color:#fff;">
+      <th style="border:1px solid #026573;padding:9px;text-align:left;">Sous-domaine</th>
+      <th style="border:1px solid #026573;padding:9px;text-align:left;">Objet</th>
+      <th style="border:1px solid #026573;padding:9px;text-align:left;">Exemple de la vie courante</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Apprentissage automatique</strong> (ML)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Apprendre des modèles à partir de données</td>
+      <td style="border:1px solid #ddd;padding:9px;">Recommandations Netflix, filtres anti-spam</td>
+    </tr>
+    <tr style="background:#f5fafb;">
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Vision par ordinateur</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Interpréter des images et vidéos</td>
+      <td style="border:1px solid #ddd;padding:9px;">Reconnaissance faciale, lecture de plaques</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Traitement du langage</strong> (NLP)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Comprendre et générer du texte</td>
+      <td style="border:1px solid #ddd;padding:9px;">Traduction automatique, assistants vocaux</td>
+    </tr>
+    <tr style="background:#f5fafb;">
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Robotique</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Agir dans le monde physique</td>
+      <td style="border:1px solid #ddd;padding:9px;">Robots aspirateurs, véhicules autonomes</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Systèmes experts</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Raisonner à l'aide de règles</td>
+      <td style="border:1px solid #ddd;padding:9px;">Aide au diagnostic médical</td>
+    </tr>
+  </table>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Au programme.</strong> Ce chapitre se concentre sur l'<strong>apprentissage automatique</strong>, et plus précisément sur deux algorithmes simples&nbsp;: <strong>KNN</strong> pour la classification et <strong>K-means</strong> pour la segmentation.
+  </div>
+
+  <!-- ===================== 3 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. L'apprentissage automatique (Machine Learning)</h2>
+  <p>L'<strong>apprentissage automatique</strong> consiste à construire un <strong>modèle</strong> capable de faire des prédictions à partir de <strong>données</strong>. Chaque donnée est généralement décrite par un vecteur de <strong>caractéristiques</strong> (<em>features</em>). On distingue trois grandes familles&nbsp;:</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;">
+    <tr style="background:#026573;color:#fff;">
+      <th style="border:1px solid #026573;padding:9px;text-align:left;">Type d'apprentissage</th>
+      <th style="border:1px solid #026573;padding:9px;text-align:left;">Données</th>
+      <th style="border:1px solid #026573;padding:9px;text-align:left;">But</th>
+      <th style="border:1px solid #026573;padding:9px;text-align:left;">Exemple</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Supervisé</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Étiquetées (entrée + sortie connue)</td>
+      <td style="border:1px solid #ddd;padding:9px;">Prédire l'étiquette de nouvelles données</td>
+      <td style="border:1px solid #ddd;padding:9px;">KNN</td>
+    </tr>
+    <tr style="background:#f5fafb;">
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Non supervisé</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Non étiquetées</td>
+      <td style="border:1px solid #ddd;padding:9px;">Découvrir une structure (groupes)</td>
+      <td style="border:1px solid #ddd;padding:9px;">K-means</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Par renforcement</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">Récompenses / pénalités</td>
+      <td style="border:1px solid #ddd;padding:9px;">Apprendre une stratégie par essais</td>
+      <td style="border:1px solid #ddd;padding:9px;">Jeu, robotique</td>
+    </tr>
+  </table>
+
+  <!-- ===================== 4 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Apprentissage supervisé&nbsp;: classification et régression</h2>
+  <p>En apprentissage <strong>supervisé</strong>, on dispose d'un <strong>jeu de données étiqueté</strong>&nbsp;: chaque exemple est un couple (x, y) où x est le vecteur de caractéristiques et y l'étiquette connue. Le modèle apprend la correspondance x &rarr; y pour ensuite <strong>prédire</strong> l'étiquette de données inédites. Selon la nature de y&nbsp;:</p>
+  <ul style="padding-left:22px;">
+    <li><strong>Classification</strong> &nbsp;: y est une <strong>classe</strong> (valeur discrète). Ex.&nbsp;: courriel «&nbsp;spam&nbsp;» ou «&nbsp;non spam&nbsp;», fleur de type A, B ou C.</li>
+    <li><strong>Régression</strong> &nbsp;: y est une <strong>valeur numérique</strong> continue. Ex.&nbsp;: prédire le prix d'un appartement.</li>
+  </ul>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Idée clé.</strong> Un problème de <strong>classification</strong> prédit la <strong>classe</strong> de nouvelles données en se basant sur un ensemble de données déjà <strong>étiquetées</strong> avec leurs classes.
+  </div>
+
+  <!-- ===================== 5 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">5. L'algorithme des k plus proches voisins (KNN)</h2>
+  <p>Le KNN (<em>k-Nearest Neighbors</em>) est l'un des algorithmes de classification les plus simples. Son principe repose sur une intuition&nbsp;: <strong>un point ressemble à ses voisins</strong>. Pour classer un nouveau point&nbsp;:</p>
+  <ol style="padding-left:22px;">
+    <li>Calculer la <strong>distance</strong> entre ce point et tous les points étiquetés du jeu d'apprentissage.</li>
+    <li>Sélectionner les <strong>k plus proches</strong> voisins.</li>
+    <li>Attribuer au point la classe <strong>majoritaire</strong> parmi ces k voisins (vote).</li>
+  </ol>
+
+  <p>On utilise le plus souvent la <strong>distance euclidienne</strong>. Pour deux points a = (a<sub>1</sub>, …, a<sub>n</sub>) et b = (b<sub>1</sub>, …, b<sub>n</sub>) à n caractéristiques&nbsp;:</p>
+  <div style="text-align:center;font-size:1.1em;margin:14px 0;background:#fafbfc;border:1px solid #ddd;border-radius:6px;padding:12px;">
+    d(a, b) = &radic;<span style="border-top:1px solid #2c3e50;padding:0 4px;">(a<sub>1</sub>&minus;b<sub>1</sub>)<sup>2</sup> + (a<sub>2</sub>&minus;b<sub>2</sub>)<sup>2</sup> + &hellip; + (a<sub>n</sub>&minus;b<sub>n</sub>)<sup>2</sup></span>
+  </div>
+  <div style="background:#fff8e1;border-left:4px solid #f0a500;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Astuce.</strong> Pour comparer des distances entre elles (trouver les plus proches), il est inutile de calculer la racine carrée&nbsp;: comparer les distances <strong>au carré</strong> donne le même classement et évite un calcul coûteux.
+  </div>
+
+  <p><strong>KNN est un apprentissage «&nbsp;paresseux&nbsp;»</strong> (<em>lazy learning</em>)&nbsp;: il n'y a pas de phase d'entraînement, on garde simplement les données et tout le calcul se fait au moment de la prédiction. La complexité d'une prédiction est en O(N&middot;n) pour N points en dimension n, à laquelle s'ajoute le tri ou la sélection des k voisins.</p>
+
+  <!-- ===================== 6 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. Implémentation de KNN en Python</h2>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">from collections import Counter
+
+def distance(a, b):
+    """Distance euclidienne entre deux points (listes de coordonnées)."""
+    s = 0
+    for i in range(len(a)):
+        s += (a[i] - b[i]) ** 2
+    return s ** 0.5
+
+def knn(donnees, etiquettes, x, k):
+    """donnees : liste de points ; etiquettes : classe de chaque point.
+       x : point a classer ; k : nombre de voisins.
+       Renvoie la classe majoritaire parmi les k plus proches voisins."""
+    # 1. distances de x a tous les points etiquetes
+    dists = [(distance(x, donnees[i]), etiquettes[i])
+             for i in range(len(donnees))]
+    # 2. on garde les k plus proches
+    dists.sort(key=lambda couple: couple[0])
+    k_voisins = [classe for (_, classe) in dists[:k]]
+    # 3. vote majoritaire
+    return Counter(k_voisins).most_common(1)[0][0]
+
+# --- exemple ---
+donnees    = [[1, 1], [2, 1], [4, 5], [5, 4]]
+etiquettes = ['A',    'A',    'B',    'B']
+print(knn(donnees, etiquettes, [1, 2], k=3))   # -> 'A'
+print(knn(donnees, etiquettes, [5, 5], k=3))   # -> 'B'</pre>
+
+  <!-- ===================== 7 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">7. Évaluer un classifieur&nbsp;: la matrice de confusion</h2>
+  <p>Pour mesurer la qualité d'un classifieur, on compare ses prédictions aux vraies étiquettes d'un jeu de <strong>test</strong>. La <strong>matrice de confusion</strong> croise classes réelles et classes prédites. Dans le cas à deux classes (positif / négatif)&nbsp;:</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;text-align:center;">
+    <tr style="background:#026573;color:#fff;">
+      <th style="border:1px solid #026573;padding:9px;"></th>
+      <th style="border:1px solid #026573;padding:9px;">Prédit positif</th>
+      <th style="border:1px solid #026573;padding:9px;">Prédit négatif</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;background:#f5fafb;"><strong>Réel positif</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">VP (vrais positifs)</td>
+      <td style="border:1px solid #ddd;padding:9px;">FN (faux négatifs)</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;background:#f5fafb;"><strong>Réel négatif</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;">FP (faux positifs)</td>
+      <td style="border:1px solid #ddd;padding:9px;">VN (vrais négatifs)</td>
+    </tr>
+  </table>
+  <p>On en déduit plusieurs indicateurs&nbsp;:</p>
+  <ul style="padding-left:22px;">
+    <li><strong>Exactitude</strong> (<em>accuracy</em>)&nbsp;: proportion de bonnes prédictions = (VP + VN) / (VP + VN + FP + FN).</li>
+    <li><strong>Précision</strong>&nbsp;: parmi les prédits positifs, combien le sont vraiment = VP / (VP + FP).</li>
+    <li><strong>Rappel</strong> (<em>recall</em>, sensibilité)&nbsp;: parmi les réels positifs, combien sont retrouvés = VP / (VP + FN).</li>
+  </ul>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Pourquoi pas seulement l'exactitude&nbsp;?</strong> Si 95&nbsp;% des courriels sont légitimes, un modèle qui répond toujours «&nbsp;non spam&nbsp;» atteint 95&nbsp;% d'exactitude tout en étant inutile. La précision et le rappel révèlent ce déséquilibre.
+  </div>
+
+  <!-- ===================== 8 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">8. Bien choisir le paramètre k</h2>
+  <p>Le choix de <strong>k</strong> influence fortement le KNN&nbsp;:</p>
+  <ul style="padding-left:22px;">
+    <li><strong>k trop petit</strong> (ex. k = 1)&nbsp;: le modèle est très sensible au bruit et aux points aberrants (<em>surapprentissage</em>).</li>
+    <li><strong>k trop grand</strong>&nbsp;: les frontières entre classes deviennent floues, on prend en compte des voisins lointains (<em>sous-apprentissage</em>).</li>
+  </ul>
+  <p>En pratique, on essaie plusieurs valeurs de k, on construit la matrice de confusion sur un jeu de test pour chacune, et on retient celle qui donne les meilleurs indicateurs. On choisit souvent un k <strong>impair</strong> dans le cas à deux classes pour éviter les égalités au vote.</p>
+
+  <!-- ===================== 9 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">9. Apprentissage non supervisé&nbsp;: la segmentation</h2>
+  <p>En apprentissage <strong>non supervisé</strong>, les données ne sont <strong>pas étiquetées</strong>&nbsp;: on ne connaît pas la classe des points. L'objectif est de <strong>découvrir une structure</strong> cachée. La <strong>segmentation</strong> (ou <em>clustering</em>) consiste à regrouper un ensemble d'éléments hétérogènes en sous-groupes (<strong>clusters</strong>) liés par des caractéristiques communes&nbsp;: les points d'un même groupe se ressemblent, et ceux de groupes différents diffèrent.</p>
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Exemples.</strong> Segmenter une clientèle en profils d'achat, regrouper des articles par thème, compresser une image en réduisant son nombre de couleurs.
+  </div>
+
+  <!-- ===================== 10 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">10. L'algorithme des k-moyennes (K-means)</h2>
+  <p>K-means partitionne les données en <strong>k clusters</strong>. Chaque cluster est représenté par son <strong>centre</strong> (ou <em>centroïde</em>), la moyenne des points qu'il contient. L'algorithme alterne deux étapes jusqu'à stabilisation&nbsp;:</p>
+  <ol style="padding-left:22px;">
+    <li><strong>Initialisation</strong>&nbsp;: choisir k centres (souvent k points tirés au hasard).</li>
+    <li><strong>Affectation</strong>&nbsp;: associer chaque point au centre le plus proche (distance euclidienne).</li>
+    <li><strong>Mise à jour</strong>&nbsp;: recalculer chaque centre comme la moyenne des points qui lui sont affectés.</li>
+    <li><strong>Répéter</strong> les étapes 2 et 3 jusqu'à ce que les centres ne bougent plus (ou plus d'affectation ne change).</li>
+  </ol>
+  <p>L'algorithme cherche à minimiser l'<strong>inertie</strong>, somme des distances au carré de chaque point à son centre&nbsp;:</p>
+  <div style="text-align:center;font-size:1.05em;margin:14px 0;background:#fafbfc;border:1px solid #ddd;border-radius:6px;padding:12px;">
+    I = &sum;<sub>clusters C</sub> &sum;<sub>x &isin; C</sub> d(x, centre<sub>C</sub>)<sup>2</sup>
+  </div>
+  <div style="background:#fff8e1;border-left:4px solid #f0a500;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Convergence vers un minimum local.</strong> Chaque étape fait décroître l'inertie, donc l'algorithme converge&nbsp;; mais le résultat dépend de l'initialisation&nbsp;: K-means converge vers un <strong>minimum local</strong>, pas nécessairement global. On le relance plusieurs fois avec des initialisations différentes et on garde la meilleure (inertie minimale).
+  </div>
+
+  <!-- ===================== 11 ===================== -->
+  <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">11. Implémentation de K-means et convergence</h2>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">def distance(a, b):
+    return sum((a[i] - b[i]) ** 2 for i in range(len(a))) ** 0.5
+
+def plus_proche(x, centres):
+    """Indice du centre le plus proche de x."""
+    best, dmin = 0, distance(x, centres[0])
+    for j in range(1, len(centres)):
+        d = distance(x, centres[j])
+        if d < dmin:
+            best, dmin = j, d
+    return best
+
+def moyenne(points):
+    """Centre (moyenne) d'une liste de points de meme dimension."""
+    n = len(points)
+    dim = len(points[0])
+    return [sum(p[i] for p in points) / n for i in range(dim)]
+
+def kmeans(donnees, centres, iter_max=100):
+    """centres : k centres initiaux. Renvoie (centres, affectation)."""
+    for _ in range(iter_max):
+        # 1. affectation
+        groupes = [[] for _ in centres]
+        affectation = []
+        for x in donnees:
+            j = plus_proche(x, centres)
+            groupes[j].append(x)
+            affectation.append(j)
+        # 2. mise a jour des centres
+        nouveaux = [moyenne(g) if g else centres[j]
+                    for j, g in enumerate(groupes)]
+        if nouveaux == centres:        # stabilisation
+            break
+        centres = nouveaux
+    return centres, affectation
+
+# --- exemple ---
+donnees = [[1, 1], [1, 2], [2, 1], [8, 8], [9, 8], [8, 9]]
+centres0 = [[1, 1], [8, 8]]
+centres, aff = kmeans(donnees, centres0)
+print(centres)   # -> deux centres bien separes
+print(aff)       # -> [0, 0, 0, 1, 1, 1]</pre>
+
+  <!-- ===================== RÉCAP ===================== -->
+  <h2 style="color:#027a3d;border-bottom:2px solid #27ae60;padding-bottom:6px;">12. Récapitulatif</h2>
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:14px 18px;border-radius:4px;margin:14px 0;">
+    <ul style="margin:0;padding-left:20px;">
+      <li>L'<strong>IA</strong> fait apprendre les machines à partir de données&nbsp;; le <strong>Machine Learning</strong> en est le sous-domaine central.</li>
+      <li><strong>Supervisé</strong> = données étiquetées (KNN)&nbsp;; <strong>non supervisé</strong> = données sans étiquette (K-means).</li>
+      <li><strong>KNN</strong>&nbsp;: classer par vote majoritaire des <strong>k plus proches voisins</strong> (distance euclidienne).</li>
+      <li>La <strong>matrice de confusion</strong> (VP, FP, FN, VN) fournit exactitude, précision, rappel et guide le choix de <strong>k</strong>.</li>
+      <li><strong>K-means</strong>&nbsp;: alterner <strong>affectation</strong> au centre le plus proche et <strong>recalcul des centres</strong>&nbsp;; converge vers un <strong>minimum local</strong>.</li>
+    </ul>
+  </div>
+
+  <p style="text-align:center;color:#9aa7b0;font-size:0.85em;margin-top:30px;">CPGE MP / PSI — Informatique · Chapitre 2-2 · Introduction à l'intelligence artificielle</p>
+
+</div>

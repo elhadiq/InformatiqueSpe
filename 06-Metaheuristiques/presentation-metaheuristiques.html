@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les métaheuristiques — le recuit simulé</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--teal:#026573;--dark:#2c3e50;--bg:#e8edf2;--border:#dce3ea;--hl:#e4f1f2;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 5rem;gap:2rem;}
+.slide{background:#fff;width:100%;max-width:940px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.10);padding:2.2rem 2.8rem 1.8rem;position:relative;}
+.slide-number{position:absolute;bottom:0.7rem;right:1.2rem;font-size:0.72rem;color:#aaa;}
+.slide.title-slide{background:linear-gradient(145deg,#f4f9fc 60%,#d9eef0);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;border-top:6px solid var(--teal);}
+.slide.title-slide h1{font-size:1.9rem;color:var(--dark);margin-bottom:0.4rem;}
+.slide.title-slide .subtitle{font-size:1.15rem;color:#555;}
+h2.frame-title{font-size:1.6rem;color:var(--teal);font-weight:700;margin-bottom:0.7rem;padding-bottom:0.35rem;border-bottom:2px solid #b7dadd;}
+h2.frame-title .tag{font-size:0.7em;font-weight:700;padding:2px 10px;border-radius:12px;color:#fff;vertical-align:middle;margin-left:0.4rem;background:var(--teal);}
+p{line-height:1.7;margin:0.45rem 0;} ul,ol{margin:0.5rem 0 0.5rem 1.4rem;line-height:1.85;}
+ul li::marker,ol li::marker{color:var(--teal);} strong{font-weight:700;} em{font-style:italic;}
+.cols{display:flex;gap:2rem;margin-top:0.8rem;align-items:flex-start;} .col-text{flex:1.1;} .col-side{flex:0.9;}
+.code{background:#0d1117;color:#e6edf3;font-family:'Consolas','Courier New',monospace;font-size:0.85rem;line-height:1.5;padding:0.9rem 1.1rem;border-radius:8px;overflow-x:auto;margin:0.6rem 0;white-space:pre;tab-size:4;}
+.code .kw{color:#ff7b72;} .code .fn{color:#d2a8ff;} .code .nb{color:#79c0ff;} .code .cm{color:#8b949e;}
+.hl-box{background:var(--hl);border-left:4px solid var(--teal);border-radius:0 6px 6px 0;padding:0.7rem 1rem;margin:0.8rem 0;font-size:0.97rem;}
+.hl-box.warn{background:#fef9e7;border-left-color:#f39c12;} .hl-box.bad{background:#fdeef0;border-left-color:#e74c3c;} .hl-box.good{background:#eafaf1;border-left-color:#27ae60;}
+table.ref{border-collapse:collapse;width:100%;margin:0.7rem 0;font-size:0.92rem;}
+table.ref th{background:var(--dark);color:#fff;padding:0.5rem 0.7rem;text-align:left;} table.ref td{border:1px solid var(--border);padding:0.45rem 0.7rem;} table.ref tr:nth-child(even) td{background:#f4f9fc;}
+#nav{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:0.4rem;z-index:100;}
+#nav button{background:var(--teal);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:background .2s;}
+#nav button:hover{background:#014a54;} #nav #btn-scroll{border-radius:20px;width:auto;padding:0 14px;font-size:0.78rem;font-weight:700;}
+body.slideshow .slide{display:none;} body.slideshow .slide.active{display:block;} body.slideshow .slide.active.title-slide{display:flex;}
+</style>
+</head>
+<body>
+
+<section class="slide title-slide" id="s1">
+  <h1>Les métaheuristiques — le recuit simulé</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">CPGE MP / PSI · Informatique · Chapitre 1‑6</p>
+  <span class="slide-number">1 / 12</span>
+</section>
+
+<section class="slide" id="s2">
+  <h2 class="frame-title">Problème d'optimisation<span class="tag">DÉFINITION</span></h2>
+  <p>Chercher, parmi un grand nombre de solutions, celle qui <strong>minimise</strong> un coût.</p>
+  <ul>
+    <li><strong>Espace des solutions</strong> $S$ : toutes les configurations admissibles.</li>
+    <li><strong>Fonction de coût</strong> $f : S \to \mathbb{R}$ (aussi appelée énergie).</li>
+    <li>Objectif : trouver $s^\star$ tel que $f(s^\star) \le f(s)$ pour tout $s \in S$.</li>
+  </ul>
+  <div class="hl-box"><strong>Maximiser = minimiser.</strong> Maximiser $g$ revient à minimiser $f = -g$.</div>
+  <span class="slide-number">2 / 12</span>
+</section>
+
+<section class="slide" id="s3">
+  <h2 class="frame-title">Pourquoi des métaheuristiques ?<span class="tag">MOTIVATION</span></h2>
+  <p>L'espace des solutions est souvent <strong>gigantesque</strong>. Voyageur de commerce à $n$ villes : $\dfrac{(n-1)!}{2}$ circuits, soit $> 6\times 10^{13}$ pour $n=20$.</p>
+  <table class="ref">
+    <tr><th>Méthode</th><th>Optimum&nbsp;?</th><th>Coût</th></tr>
+    <tr><td>Exhaustive</td><td>Oui</td><td>Explose (factoriel)</td></tr>
+    <tr><td>Glouton</td><td>Non garanti</td><td>Rapide</td></tr>
+    <tr><td>Prog. dynamique</td><td>Oui</td><td>Limité en taille</td></tr>
+  </table>
+  <div class="hl-box warn"><strong>Compromis.</strong> On échange la garantie d'optimalité contre la rapidité.</div>
+  <span class="slide-number">3 / 12</span>
+</section>
+
+<section class="slide" id="s4">
+  <h2 class="frame-title">Heuristique vs métaheuristique<span class="tag">VOCABULAIRE</span></h2>
+  <ul>
+    <li><strong>Heuristique</strong> : méthode approchée <em>sur mesure</em> pour un problème (« aller vers la ville la plus proche »).</li>
+    <li><strong>Métaheuristique</strong> : stratégie <strong>générale</strong>, indépendante du problème, qui pilote la recherche.</li>
+  </ul>
+  <table class="ref">
+    <tr><th>Solution unique</th><th>Population</th></tr>
+    <tr><td>Recuit simulé, recherche tabou</td><td>Algos génétiques, fourmis</td></tr>
+  </table>
+  <div class="hl-box good"><strong>Au programme :</strong> le <strong>recuit simulé</strong> (<em>simulated annealing</em>), à savoir implémenter.</div>
+  <span class="slide-number">4 / 12</span>
+</section>
+
+<section class="slide" id="s5">
+  <h2 class="frame-title">Recherche locale et voisinage<span class="tag">PRINCIPE</span></h2>
+  <p>Partir d'une solution et l'<strong>améliorer par petites modifications</strong>. Le <strong>voisinage</strong> $V(s)$ = solutions obtenues par une transformation élémentaire.</p>
+  <ul>
+    <li>Voyageur : <strong>échanger deux villes</strong>.</li>
+    <li>Sac à dos : <strong>ajouter / retirer un objet</strong>.</li>
+    <li>Fonction : <strong>déplacer</strong> $x$ de $\pm\varepsilon$.</li>
+  </ul>
+  <div class="hl-box"><strong>Variation de coût :</strong> $\Delta E = f(s') - f(s)$. &nbsp; $\Delta E < 0$ : voisin meilleur.</div>
+  <span class="slide-number">5 / 12</span>
+</section>
+
+<section class="slide" id="s6">
+  <h2 class="frame-title">La descente et son piège<span class="tag">LIMITE</span></h2>
+  <div class="cols">
+    <div class="col-text">
+      <p>La <strong>descente</strong> (<em>hill climbing</em>) n'accepte qu'un voisin <strong>strictement meilleur</strong>.</p>
+      <div class="code"><span class="kw">while</span> <span class="nb">True</span>:
+    m = <span class="nb">min</span>(voisins(s), key=cout)
+    <span class="kw">if</span> cout(m) &lt; cout(s):
+        s = m
+    <span class="kw">else</span>:
+        <span class="kw">return</span> s  <span class="cm"># bloqué</span></div>
+    </div>
+    <div class="col-side">
+      <div class="hl-box bad"><strong>🏔️ Optimum local.</strong> La bille qui ne fait que descendre se fige au fond de la <em>première</em> vallée, pas forcément la plus profonde.</div>
+    </div>
+  </div>
+  <span class="slide-number">6 / 12</span>
+</section>
+
+<section class="slide" id="s7">
+  <h2 class="frame-title">Principe du recuit simulé<span class="tag">ANALOGIE</span></h2>
+  <p>Inspiré du <strong>recuit</strong> en métallurgie : chauffer puis <strong>refroidir lentement</strong> pour atteindre une structure d'<strong>énergie minimale</strong>.</p>
+  <table class="ref">
+    <tr><th>Physique</th><th>Optimisation</th></tr>
+    <tr><td>État / énergie</td><td>Solution $s$ / coût $f(s)$</td></tr>
+    <tr><td>Température $T$</td><td>Paramètre de contrôle $T$</td></tr>
+    <tr><td>Refroidissement lent</td><td>Décroissance de $T$</td></tr>
+  </table>
+  <div class="hl-box"><strong>Idée clé.</strong> Autoriser <em>parfois</em> des mouvements qui dégradent le coût pour s'échapper des optima locaux.</div>
+  <span class="slide-number">7 / 12</span>
+</section>
+
+<section class="slide" id="s8">
+  <h2 class="frame-title">Critère de Metropolis<span class="tag">CŒUR</span></h2>
+  <p>On tire un voisin $s'$ et $\Delta E = f(s') - f(s)$ :</p>
+  <ul>
+    <li>Si $\Delta E \le 0$ : on accepte <strong>toujours</strong>.</li>
+    <li>Si $\Delta E > 0$ : on accepte avec $P = e^{-\Delta E / T}$.</li>
+  </ul>
+  <table class="ref">
+    <tr><th>$\Delta E$</th><th>$T=100$</th><th>$T=1$</th></tr>
+    <tr><td>$1$</td><td>$P\approx 0{,}99$</td><td>$P\approx 0{,}37$</td></tr>
+    <tr><td>$10$</td><td>$P\approx 0{,}90$</td><td>$P\approx 4{,}5\cdot10^{-5}$</td></tr>
+  </table>
+  <div class="hl-box"><strong>En pratique :</strong> tirer $u \in [0,1[$ et accepter si $u < P$.</div>
+  <span class="slide-number">8 / 12</span>
+</section>
+
+<section class="slide" id="s9">
+  <h2 class="frame-title">L'algorithme<span class="tag">CODE</span></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">recuit_simule</span>(s0, cout, voisin, T0, alpha, n_iter):
+    s = s0; c = cout(s)
+    meilleur, c_best = s, c
+    T = T0
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="nb">range</span>(n_iter):
+        s2 = voisin(s); c2 = cout(s2)
+        dE = c2 - c
+        <span class="kw">if</span> dE &lt;= <span class="nb">0</span> <span class="kw">or</span> random.random() &lt; math.exp(-dE / T):
+            s, c = s2, c2
+            <span class="kw">if</span> c &lt; c_best: meilleur, c_best = s, c
+        T = alpha * T  <span class="cm"># refroidissement</span>
+    <span class="kw">return</span> meilleur, c_best</div>
+  <div class="hl-box"><strong>Garder « meilleur » à part :</strong> la solution courante peut se dégrader.</div>
+  <span class="slide-number">9 / 12</span>
+</section>
+
+<section class="slide" id="s10">
+  <h2 class="frame-title">Schéma de refroidissement<span class="tag">RÉGLAGE</span></h2>
+  <p>Décroissance <strong>géométrique</strong> : $T_{k+1} = \alpha \cdot T_k$, avec $0 < \alpha < 1$ (souvent $0{,}90$–$0{,}99$).</p>
+  <ul>
+    <li>$T_0$ grand : la plupart des mouvements acceptés au départ (<strong>exploration</strong>).</li>
+    <li>$\alpha \to 1$ : refroidissement lent, meilleure qualité.</li>
+    <li>$T \to 0$ : se comporte comme une descente (<strong>exploitation</strong>).</li>
+  </ul>
+  <div class="hl-box warn"><strong>Trop rapide</strong> (trempe) $\Rightarrow$ on fige les défauts et on reste coincé.</div>
+  <span class="slide-number">10 / 12</span>
+</section>
+
+<section class="slide" id="s11">
+  <h2 class="frame-title">Exemple : voyageur de commerce<span class="tag">APPLICATION</span></h2>
+  <p>Solution = permutation des villes ; coût = longueur du circuit fermé ; voisin = échange de deux villes.</p>
+  <div class="code"><span class="kw">def</span> <span class="fn">voisin</span>(tour):
+    t = tour[:]
+    i, j = random.sample(<span class="nb">range</span>(<span class="nb">len</span>(t)), <span class="nb">2</span>)
+    t[i], t[j] = t[j], t[i]
+    <span class="kw">return</span> t
+
+<span class="kw">def</span> <span class="fn">longueur</span>(tour, villes):
+    n = <span class="nb">len</span>(tour)
+    <span class="kw">return</span> <span class="nb">sum</span>(dist(villes[tour[i]], villes[tour[(i+<span class="nb">1</span>)%n]])
+               <span class="kw">for</span> i <span class="kw">in</span> <span class="nb">range</span>(n))</div>
+  <div class="hl-box good">Quelques $10^4$ itérations $\Rightarrow$ circuit très proche de l'optimal.</div>
+  <span class="slide-number">11 / 12</span>
+</section>
+
+<section class="slide" id="s12">
+  <h2 class="frame-title">À retenir<span class="tag">BILAN</span></h2>
+  <ul>
+    <li>Métaheuristique = <strong>bonne solution approchée</strong>, sans garantie d'optimalité.</li>
+    <li>Recherche locale + voisinage ; la descente reste piégée dans les <strong>optima locaux</strong>.</li>
+    <li>Recuit simulé : accepter parfois une dégradation avec $P = e^{-\Delta E/T}$.</li>
+    <li>Température $T \leftarrow \alpha T$ : exploration $\to$ exploitation.</li>
+    <li>Mémoriser la <strong>meilleure</strong> solution rencontrée.</li>
+  </ul>
+  <div class="hl-box good"><strong>Atouts :</strong> simple, général, sort des optima locaux. &nbsp; <strong>Limites :</strong> aléatoire, sensible aux réglages.</div>
+  <span class="slide-number">12 / 12</span>
+</section>
+
+<div id="nav">
+  <button class="ghost" id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button class="ghost" id="btn-next" title="Suivant">&#8594;</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide');
+let current=0,slideshowMode=false;
+function enter(i){slides[current].classList.remove('active');current=(i+slides.length)%slides.length;slides[current].classList.add('active');slides[current].scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('btn-prev').addEventListener('click',()=>{if(slideshowMode)enter(current-1);});
+document.getElementById('btn-next').addEventListener('click',()=>{if(slideshowMode)enter(current+1);});
+document.getElementById('btn-scroll').addEventListener('click',()=>{slideshowMode=!slideshowMode;document.body.classList.toggle('slideshow',slideshowMode);document.getElementById('btn-scroll').textContent=slideshowMode?'Défiler':'Diaporama';if(slideshowMode)slides[current].classList.add('active');else slides.forEach(s=>s.classList.remove('active'));});
+document.addEventListener('keydown',e=>{if((e.key==='ArrowRight'||e.key==='ArrowDown')&&slideshowMode)enter(current+1);if((e.key==='ArrowLeft'||e.key==='ArrowUp')&&slideshowMode)enter(current-1);});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

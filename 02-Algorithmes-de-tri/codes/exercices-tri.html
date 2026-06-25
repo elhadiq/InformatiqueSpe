@@ -1,0 +1,119 @@
+<div style="font-family:Arial,Helvetica,sans-serif;color:#2c3e50;line-height:1.65;max-width:900px;margin:0 auto;">
+
+  <div style="background:#026573;color:#ffffff;padding:26px;border-radius:10px;margin-bottom:24px;">
+    <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;margin-bottom:6px;">CPGE MP / PSI · Informatique</div>
+    <h1 style="margin:0;font-size:1.7em;">Exercices — Les algorithmes de tri</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+    <p style="margin:10px 0 0 0;color:#d6eef0;">6 exercices Python progressifs : du tri par sélection au tri rapide et au tri par fusion. Solution modèle et complexité données pour chacun.</p>
+  </div>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:12px 16px;border-radius:4px;margin-bottom:26px;">
+    <strong>Conseil.</strong> Cherchez la solution seul(e) avant de comparer. Pour chaque algorithme, identifiez sa complexité, s'il est en place et s'il est stable.
+  </div>
+
+  <!-- EX1 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 1 — Vérifier qu'une liste est triée</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">est_trie(L)</code> qui renvoie <code>True</code> si L est triée par ordre croissant, <code>False</code> sinon.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">est_trie([1, 2, 2, 5]) → True
+est_trie([3, 1, 2])    → False
+est_trie([])           → True</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def est_trie(L):
+    for i in range(len(L) - 1):
+        if L[i] &gt; L[i + 1]:
+            return False
+    return True</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> un seul parcours → <strong>O(n)</strong>.</p>
+  </div>
+
+  <!-- EX2 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 2 — Tri par sélection (rappel)</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">tri_selection(L)</code> qui renvoie une liste triée, sans <code>sorted</code> ni <code>.sort()</code>.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">tri_selection([5, 2, 8, 1]) → [1, 2, 5, 8]
+tri_selection([3, 3, 1])    → [1, 3, 3]</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def tri_selection(L):
+    L = list(L)
+    n = len(L)
+    for i in range(n):
+        imin = i
+        for j in range(i + 1, n):
+            if L[j] &lt; L[imin]:
+                imin = j
+        L[i], L[imin] = L[imin], L[i]
+    return L</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> deux boucles imbriquées → <strong>O(n²)</strong>. En place, non stable.</p>
+  </div>
+
+  <!-- EX3 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 3 — Fusion de deux listes triées</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">fusion(A, B)</code> qui fusionne deux listes <strong>déjà triées</strong> en une liste triée.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">fusion([1, 3, 5], [2, 4]) → [1, 2, 3, 4, 5]
+fusion([], [1, 2])        → [1, 2]</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def fusion(A, B):
+    C = []
+    i, j = 0, 0
+    while i &lt; len(A) and j &lt; len(B):
+        if A[i] &lt;= B[j]:
+            C.append(A[i]); i += 1
+        else:
+            C.append(B[j]); j += 1
+    return C + A[i:] + B[j:]</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> un parcours des deux listes → <strong>O(m+p)</strong>.</p>
+  </div>
+
+  <!-- EX4 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 4 — Tri par fusion</strong></div>
+    <p>En réutilisant <code>fusion</code>, écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">tri_fusion(L)</code> qui renvoie L triée.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">tri_fusion([5, 2, 8, 1, 3]) → [1, 2, 3, 5, 8]</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def tri_fusion(L):
+    if len(L) &lt;= 1:
+        return list(L)
+    m = len(L) // 2
+    return fusion(tri_fusion(L[:m]), tri_fusion(L[m:]))</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> T(n) = 2 T(n/2) + O(n) → <strong>O(n log n) garanti</strong>. Stable, mais O(n) d'espace.</p>
+  </div>
+
+  <!-- EX5 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 5 — Partition autour d'un pivot</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">partition(L)</code> : pivot = premier élément, renvoie <code>(petits, pivot, grands)</code> avec petits &le; pivot et grands &gt; pivot. Pour L vide : <code>([], None, [])</code>.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">partition([5, 2, 8, 1, 5]) → ([2, 1, 5], 5, [8])
+partition([3])             → ([], 3, [])</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def partition(L):
+    if not L:
+        return ([], None, [])
+    pivot = L[0]
+    petits = [x for x in L[1:] if x &lt;= pivot]
+    grands = [x for x in L[1:] if x &gt; pivot]
+    return (petits, pivot, grands)</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> un parcours → <strong>O(n)</strong>. C'est l'étape clé du tri rapide.</p>
+  </div>
+
+  <!-- EX6 -->
+  <div style="border:1px solid #ddd;border-radius:8px;padding:18px 20px;margin-bottom:22px;">
+    <div style="background:#2c3e50;color:#fff;padding:8px 14px;border-radius:6px;margin-bottom:12px;"><strong>Exercice 6 — Tri rapide (quicksort)</strong></div>
+    <p>Écrire <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">tri_rapide(L)</code> avec le premier élément comme pivot, par récursion.</p>
+    <pre style="background:#e4f1f2;border-left:4px solid #026573;padding:8px 14px;border-radius:4px;font-family:Consolas,monospace;margin:10px 0;">tri_rapide([5, 2, 8, 1, 3]) → [1, 2, 3, 5, 8]
+tri_rapide([3, 3, 1])       → [1, 3, 3]</pre>
+    <p style="margin-bottom:4px;"><strong>Solution :</strong></p>
+    <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:14px;border-radius:8px;overflow-x:auto;font-size:0.9em;">def tri_rapide(L):
+    if len(L) &lt;= 1:
+        return list(L)
+    pivot = L[0]
+    petits = [x for x in L[1:] if x &lt;= pivot]
+    grands = [x for x in L[1:] if x &gt; pivot]
+    return tri_rapide(petits) + [pivot] + tri_rapide(grands)</pre>
+    <p style="background:#eafaf1;border-left:4px solid #27ae60;padding:8px 14px;border-radius:4px;margin:8px 0 0 0;"><strong>Complexité :</strong> <strong>O(n log n) en moyenne</strong>, O(n²) au pire (pivot mal choisi). En place (version classique), non stable.</p>
+  </div>
+
+  <p style="text-align:center;color:#7f8c8d;font-size:0.85em;margin-top:24px;border-top:1px solid #ddd;padding-top:14px;">CPGE MP/PSI — Informatique · Exercices : Les algorithmes de tri</p>
+
+</div>

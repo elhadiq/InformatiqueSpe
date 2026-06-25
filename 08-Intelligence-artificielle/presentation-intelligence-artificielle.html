@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction à l'intelligence artificielle</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--teal:#026573;--dark:#2c3e50;--bg:#e8edf2;--border:#dce3ea;--hl:#e4f1f2;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 5rem;gap:2rem;}
+.slide{background:#fff;width:100%;max-width:940px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.10);padding:2.2rem 2.8rem 1.8rem;position:relative;}
+.slide-number{position:absolute;bottom:0.7rem;right:1.2rem;font-size:0.72rem;color:#aaa;}
+.slide.title-slide{background:linear-gradient(145deg,#f4f9fc 60%,#d9eef0);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;border-top:6px solid var(--teal);}
+.slide.title-slide h1{font-size:1.9rem;color:var(--dark);margin-bottom:0.4rem;}
+.slide.title-slide .subtitle{font-size:1.15rem;color:#555;}
+h2.frame-title{font-size:1.6rem;color:var(--teal);font-weight:700;margin-bottom:0.7rem;padding-bottom:0.35rem;border-bottom:2px solid #b7dadd;}
+h2.frame-title .tag{font-size:0.7em;font-weight:700;padding:2px 10px;border-radius:12px;color:#fff;vertical-align:middle;margin-left:0.4rem;background:var(--teal);}
+p{line-height:1.7;margin:0.45rem 0;} ul,ol{margin:0.5rem 0 0.5rem 1.4rem;line-height:1.85;}
+ul li::marker,ol li::marker{color:var(--teal);} strong{font-weight:700;} em{font-style:italic;}
+.cols{display:flex;gap:2rem;margin-top:0.8rem;align-items:flex-start;} .col-text{flex:1.1;} .col-side{flex:0.9;}
+.code{background:#0d1117;color:#e6edf3;font-family:'Consolas','Courier New',monospace;font-size:0.85rem;line-height:1.5;padding:0.9rem 1.1rem;border-radius:8px;overflow-x:auto;margin:0.6rem 0;white-space:pre;tab-size:4;}
+.code .kw{color:#ff7b72;} .code .fn{color:#d2a8ff;} .code .nb{color:#79c0ff;} .code .cm{color:#8b949e;}
+.hl-box{background:var(--hl);border-left:4px solid var(--teal);border-radius:0 6px 6px 0;padding:0.7rem 1rem;margin:0.8rem 0;font-size:0.97rem;}
+.hl-box.warn{background:#fef9e7;border-left-color:#f39c12;} .hl-box.bad{background:#fdeef0;border-left-color:#e74c3c;} .hl-box.good{background:#eafaf1;border-left-color:#27ae60;}
+table.ref{border-collapse:collapse;width:100%;margin:0.7rem 0;font-size:0.92rem;}
+table.ref th{background:var(--dark);color:#fff;padding:0.5rem 0.7rem;text-align:left;} table.ref td{border:1px solid var(--border);padding:0.45rem 0.7rem;} table.ref tr:nth-child(even) td{background:#f4f9fc;}
+#nav{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:0.4rem;z-index:100;}
+#nav button{background:var(--teal);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:background .2s;}
+#nav button:hover{background:#014a54;} #nav #btn-scroll{border-radius:20px;width:auto;padding:0 14px;font-size:0.78rem;font-weight:700;}
+body.slideshow .slide{display:none;} body.slideshow .slide.active{display:block;} body.slideshow .slide.active.title-slide{display:flex;}
+</style>
+</head>
+<body>
+
+<!-- ===== Slide de titre ===== -->
+<section class="slide title-slide" id="s1">
+  <h1>Introduction à l'intelligence artificielle</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">Apprentissage automatique : KNN &amp; K-means — CPGE MP / PSI</p>
+  <span class="slide-number">1 / 13</span>
+</section>
+
+<section class="slide" id="s2">
+  <h2 class="frame-title">Qu'est-ce que l'IA ?<span class="tag">DÉFINITION</span></h2>
+  <p>Branche de l'informatique visant à doter les machines de capacités d'intelligence : percevoir, raisonner, décider, <strong>apprendre</strong>.</p>
+  <table class="ref">
+    <tr><th>Programmation classique</th><th>Apprentissage automatique</th></tr>
+    <tr><td>données + <strong>programme</strong> ⇒ résultat</td><td>données + résultats ⇒ <strong>modèle</strong></td></tr>
+  </table>
+  <div class="hl-box"><strong>Intérêt.</strong> Pour les tâches trop complexes à coder à la main (reconnaître un chiffre, filtrer un spam), on <em>apprend</em> les règles à partir des données.</div>
+  <span class="slide-number">2 / 13</span>
+</section>
+
+<section class="slide" id="s3">
+  <h2 class="frame-title">Les sous-domaines de l'IA<span class="tag">PANORAMA</span></h2>
+  <table class="ref">
+    <tr><th>Sous-domaine</th><th>Exemple courant</th></tr>
+    <tr><td>Apprentissage automatique (ML)</td><td>Recommandations, anti-spam</td></tr>
+    <tr><td>Vision par ordinateur</td><td>Reconnaissance faciale</td></tr>
+    <tr><td>Traitement du langage (NLP)</td><td>Traduction, assistants vocaux</td></tr>
+    <tr><td>Robotique</td><td>Véhicules autonomes</td></tr>
+    <tr><td>Systèmes experts</td><td>Aide au diagnostic médical</td></tr>
+  </table>
+  <div class="hl-box"><strong>Au programme.</strong> Le ML, avec <strong>KNN</strong> (classification) et <strong>K-means</strong> (segmentation).</div>
+  <span class="slide-number">3 / 13</span>
+</section>
+
+<section class="slide" id="s4">
+  <h2 class="frame-title">Les trois familles d'apprentissage<span class="tag">ML</span></h2>
+  <table class="ref">
+    <tr><th>Type</th><th>Données</th><th>But</th></tr>
+    <tr><td><strong>Supervisé</strong></td><td>étiquetées</td><td>prédire l'étiquette (KNN)</td></tr>
+    <tr><td><strong>Non supervisé</strong></td><td>non étiquetées</td><td>découvrir des groupes (K-means)</td></tr>
+    <tr><td>Par renforcement</td><td>récompenses</td><td>apprendre une stratégie</td></tr>
+  </table>
+  <p>Chaque donnée est un vecteur de <strong>caractéristiques</strong> (<em>features</em>).</p>
+  <span class="slide-number">4 / 13</span>
+</section>
+
+<section class="slide" id="s5">
+  <h2 class="frame-title">Classification supervisée<span class="tag">SUPERVISÉ</span></h2>
+  <p>Jeu de données <strong>étiqueté</strong> : couples $(x, y)$, $x$ = caractéristiques, $y$ = classe connue. On apprend $x \to y$ pour prédire de nouvelles données.</p>
+  <ul>
+    <li><strong>Classification</strong> : $y$ discrète (spam / non spam).</li>
+    <li><strong>Régression</strong> : $y$ continue (prix d'un bien).</li>
+  </ul>
+  <div class="hl-box"><strong>Idée clé.</strong> Prédire la classe de nouvelles données à partir d'exemples déjà étiquetés.</div>
+  <span class="slide-number">5 / 13</span>
+</section>
+
+<section class="slide" id="s6">
+  <h2 class="frame-title">L'algorithme KNN<span class="tag">k-NN</span></h2>
+  <p>Un point ressemble à ses voisins. Pour classer un point $x$ :</p>
+  <ol>
+    <li>Calculer la distance de $x$ à tous les points étiquetés.</li>
+    <li>Garder les $k$ plus proches.</li>
+    <li>Voter : classe <strong>majoritaire</strong> parmi eux.</li>
+  </ol>
+  <p>Distance euclidienne : $d(a,b)=\sqrt{\sum_{i=1}^{n}(a_i-b_i)^2}$</p>
+  <div class="hl-box warn"><strong>Astuce.</strong> Pour comparer des distances, inutile de prendre la racine : comparer les distances au carré.</div>
+  <span class="slide-number">6 / 13</span>
+</section>
+
+<section class="slide" id="s7">
+  <h2 class="frame-title">KNN en Python<span class="tag">CODE</span></h2>
+  <div class="code"><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">distance</span>(a, b):
+    <span class="kw">return</span> <span class="nb">sum</span>((a[i]-b[i])**<span class="nb">2</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="nb">range</span>(<span class="nb">len</span>(a)))**<span class="nb">0.5</span>
+
+<span class="kw">def</span> <span class="fn">knn</span>(donnees, etiq, x, k):
+    d = [(distance(x, donnees[i]), etiq[i]) <span class="kw">for</span> i <span class="kw">in</span> <span class="nb">range</span>(<span class="nb">len</span>(donnees))]
+    d.sort(key=<span class="kw">lambda</span> c: c[<span class="nb">0</span>])
+    voisins = [c <span class="kw">for</span> (_, c) <span class="kw">in</span> d[:k]]
+    <span class="kw">return</span> Counter(voisins).most_common(<span class="nb">1</span>)[<span class="nb">0</span>][<span class="nb">0</span>]</div>
+  <p><span style="color:#8b949e;">KNN = apprentissage « paresseux » : aucun entraînement, tout se calcule à la prédiction.</span></p>
+  <span class="slide-number">7 / 13</span>
+</section>
+
+<section class="slide" id="s8">
+  <h2 class="frame-title">La matrice de confusion<span class="tag">ÉVALUATION</span></h2>
+  <table class="ref">
+    <tr><th></th><th>Prédit +</th><th>Prédit −</th></tr>
+    <tr><td><strong>Réel +</strong></td><td>VP</td><td>FN</td></tr>
+    <tr><td><strong>Réel −</strong></td><td>FP</td><td>VN</td></tr>
+  </table>
+  <ul>
+    <li>Exactitude $= \dfrac{VP+VN}{VP+VN+FP+FN}$</li>
+    <li>Précision $= \dfrac{VP}{VP+FP}$ &nbsp;·&nbsp; Rappel $= \dfrac{VP}{VP+FN}$</li>
+  </ul>
+  <div class="hl-box bad"><strong>Piège.</strong> 95 % de mails légitimes ⇒ « toujours non-spam » = 95 % d'exactitude, mais inutile. D'où précision &amp; rappel.</div>
+  <span class="slide-number">8 / 13</span>
+</section>
+
+<section class="slide" id="s9">
+  <h2 class="frame-title">Bien choisir k<span class="tag">RÉGLAGE</span></h2>
+  <ul>
+    <li><strong>k trop petit</strong> (k=1) : sensible au bruit ⇒ <em>surapprentissage</em>.</li>
+    <li><strong>k trop grand</strong> : frontières floues ⇒ <em>sous-apprentissage</em>.</li>
+  </ul>
+  <p>On teste plusieurs $k$, on compare les matrices de confusion, on garde le meilleur. $k$ <strong>impair</strong> à 2 classes pour éviter les égalités.</p>
+  <span class="slide-number">9 / 13</span>
+</section>
+
+<section class="slide" id="s10">
+  <h2 class="frame-title">Segmentation non supervisée<span class="tag">CLUSTERING</span></h2>
+  <p>Données <strong>non étiquetées</strong> : on cherche une structure cachée. La <strong>segmentation</strong> regroupe les éléments en <strong>clusters</strong> homogènes.</p>
+  <div class="hl-box"><strong>Exemples.</strong> Profils de clientèle, regroupement d'articles, réduction du nombre de couleurs d'une image.</div>
+  <span class="slide-number">10 / 13</span>
+</section>
+
+<section class="slide" id="s11">
+  <h2 class="frame-title">L'algorithme K-means<span class="tag">k-moyennes</span></h2>
+  <p>Partitionner en $k$ clusters, chacun représenté par son <strong>centre</strong> (centroïde).</p>
+  <ol>
+    <li><strong>Initialiser</strong> $k$ centres.</li>
+    <li><strong>Affecter</strong> chaque point au centre le plus proche.</li>
+    <li><strong>Recalculer</strong> chaque centre = moyenne de ses points.</li>
+    <li><strong>Répéter</strong> jusqu'à stabilisation.</li>
+  </ol>
+  <p>Minimise l'inertie : $I=\sum_{C}\sum_{x\in C} d(x,\,\mu_C)^2$</p>
+  <span class="slide-number">11 / 13</span>
+</section>
+
+<section class="slide" id="s12">
+  <h2 class="frame-title">K-means : convergence<span class="tag">CODE</span></h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">kmeans</span>(donnees, centres, iter_max=<span class="nb">100</span>):
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="nb">range</span>(iter_max):
+        groupes = [[] <span class="kw">for</span> _ <span class="kw">in</span> centres]
+        <span class="kw">for</span> x <span class="kw">in</span> donnees:
+            j = plus_proche(x, centres)
+            groupes[j].append(x)
+        nouveaux = [moyenne(g) <span class="kw">if</span> g <span class="kw">else</span> centres[j]
+                    <span class="kw">for</span> j, g <span class="kw">in</span> <span class="nb">enumerate</span>(groupes)]
+        <span class="kw">if</span> nouveaux == centres: <span class="kw">break</span>
+        centres = nouveaux
+    <span class="kw">return</span> centres</div>
+  <div class="hl-box warn"><strong>Minimum local.</strong> L'inertie décroît à chaque étape ⇒ convergence, mais le résultat dépend de l'initialisation. On relance plusieurs fois.</div>
+  <span class="slide-number">12 / 13</span>
+</section>
+
+<section class="slide" id="s13">
+  <h2 class="frame-title">Récapitulatif<span class="tag">BILAN</span></h2>
+  <div class="hl-box good">
+  <ul style="margin:0;">
+    <li><strong>Supervisé</strong> = étiqueté (KNN) · <strong>non supervisé</strong> = sans étiquette (K-means).</li>
+    <li><strong>KNN</strong> : vote des $k$ plus proches voisins, distance euclidienne.</li>
+    <li><strong>Matrice de confusion</strong> ⇒ exactitude, précision, rappel ; guide le choix de $k$.</li>
+    <li><strong>K-means</strong> : affectation ↔ recalcul des centres ; converge vers un minimum local.</li>
+  </ul>
+  </div>
+  <span class="slide-number">13 / 13</span>
+</section>
+
+<div id="nav">
+  <button class="ghost" id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button class="ghost" id="btn-next" title="Suivant">&#8594;</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide');
+let current=0,slideshowMode=false;
+function enter(i){slides[current].classList.remove('active');current=(i+slides.length)%slides.length;slides[current].classList.add('active');slides[current].scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('btn-prev').addEventListener('click',()=>{if(slideshowMode)enter(current-1);});
+document.getElementById('btn-next').addEventListener('click',()=>{if(slideshowMode)enter(current+1);});
+document.getElementById('btn-scroll').addEventListener('click',()=>{slideshowMode=!slideshowMode;document.body.classList.toggle('slideshow',slideshowMode);document.getElementById('btn-scroll').textContent=slideshowMode?'Défiler':'Diaporama';if(slideshowMode)slides[current].classList.add('active');else slides.forEach(s=>s.classList.remove('active'));});
+document.addEventListener('keydown',e=>{if((e.key==='ArrowRight'||e.key==='ArrowDown')&&slideshowMode)enter(current+1);if((e.key==='ArrowLeft'||e.key==='ArrowUp')&&slideshowMode)enter(current-1);});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

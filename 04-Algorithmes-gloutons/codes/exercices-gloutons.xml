@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz><question type="coderunner"><name><text>Q1 — Rendu de monnaie (glouton)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q1 — Rendu de monnaie&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Stratégie gloutonne : à chaque étape, prendre la plus grande pièce qui ne dépasse pas la somme restante.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire une fonction &lt;strong&gt;&lt;code&gt;rendu_monnaie(systeme, S)&lt;/code&gt;&lt;/strong&gt; où &lt;code&gt;systeme&lt;/code&gt; est la liste des valeurs de pièces &lt;strong&gt;triées par ordre décroissant&lt;/strong&gt;. La fonction renvoie la liste des pièces rendues (avec répétitions) pour la somme &lt;code&gt;S&lt;/code&gt;.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;rendu_monnaie([50, 20, 10, 5, 2, 1], 68) &amp;rarr; [50, 10, 5, 2, 1]
+rendu_monnaie([50, 20, 10, 5, 2, 1], 0)  &amp;rarr; []
+rendu_monnaie([2, 1], 5)                 &amp;rarr; [2, 2, 1]&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def rendu_monnaie(systeme, S):
+    rendu = []
+    for piece in systeme:
+        while S &gt;= piece:
+            # Completer : ajouter la piece et diminuer S
+            ...
+    return rendu
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def rendu_monnaie(systeme, S):
+    rendu = []
+    for piece in systeme:
+        while S &gt;= piece:
+            rendu.append(piece)
+            S = S - piece
+    return rendu
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(rendu_monnaie([50, 20, 10, 5, 2, 1], 68))
+</text></testcode><stdin><text /></stdin><expected><text>[50, 10, 5, 2, 1]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(rendu_monnaie([50, 20, 10, 5, 2, 1], 0))
+</text></testcode><stdin><text /></stdin><expected><text>[]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(rendu_monnaie([2, 1], 5))
+</text></testcode><stdin><text /></stdin><expected><text>[2, 2, 1]
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(rendu_monnaie([100, 25, 10, 5, 1], 137))
+</text></testcode><stdin><text /></stdin><expected><text>[100, 25, 10, 1, 1]
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q2 — Nombre de pièces rendues</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q2 — Compter les pièces&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Souvent on ne veut que le nombre de pièces, pas la liste.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire &lt;strong&gt;&lt;code&gt;nb_pieces(systeme, S)&lt;/code&gt;&lt;/strong&gt; qui renvoie le &lt;strong&gt;nombre&lt;/strong&gt; de pièces rendues par la stratégie gloutonne (&lt;code&gt;systeme&lt;/code&gt; trié par ordre décroissant).&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;nb_pieces([50, 20, 10, 5, 2, 1], 68) &amp;rarr; 5
+nb_pieces([1], 7)                    &amp;rarr; 7
+nb_pieces([10, 5, 1], 0)             &amp;rarr; 0&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def nb_pieces(systeme, S):
+    n = 0
+    for piece in systeme:
+        # Completer : ajouter le nombre de fois ou piece tient dans S
+        ...
+    return n
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def nb_pieces(systeme, S):
+    n = 0
+    for piece in systeme:
+        n = n + S // piece
+        S = S % piece
+    return n
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(nb_pieces([50, 20, 10, 5, 2, 1], 68))
+</text></testcode><stdin><text /></stdin><expected><text>5
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(nb_pieces([1], 7))
+</text></testcode><stdin><text /></stdin><expected><text>7
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(nb_pieces([10, 5, 1], 0))
+</text></testcode><stdin><text /></stdin><expected><text>0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(nb_pieces([200, 100, 50, 20, 10, 5, 2, 1], 287))
+</text></testcode><stdin><text /></stdin><expected><text>6
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q3 — Le glouton est-il optimal ? (contre-exemple)</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q3 — Glouton vs optimal&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;On dispose d'une fonction optimale (par programmation dynamique) donnant le nombre minimal de pièces. On veut détecter les sommes où le glouton se trompe.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;On donne &lt;code&gt;opt(systeme, S)&lt;/code&gt; qui renvoie le nombre minimal de pièces (déjà écrite, voir préchargement). Écrire &lt;strong&gt;&lt;code&gt;glouton_est_optimal(systeme, S)&lt;/code&gt;&lt;/strong&gt; qui renvoie &lt;code&gt;True&lt;/code&gt; si le nombre de pièces du glouton (via &lt;code&gt;nb_pieces&lt;/code&gt;) égale l'optimum, &lt;code&gt;False&lt;/code&gt; sinon. Le système est trié par ordre décroissant.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;glouton_est_optimal([4, 3, 1], 6) &amp;rarr; False   # glouton 4+1+1=3, optimal 3+3=2
+glouton_est_optimal([5, 2, 1], 6) &amp;rarr; True
+glouton_est_optimal([4, 3, 1], 7) &amp;rarr; True    # 4+3&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>20</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def nb_pieces(systeme, S):
+    n = 0
+    for piece in systeme:
+        n = n + S // piece
+        S = S % piece
+    return n
+
+def opt(systeme, S):
+    INF = float('inf')
+    dp = [0] + [INF] * S
+    for m in range(1, S + 1):
+        for p in systeme:
+            if p &lt;= m and dp[m - p] + 1 &lt; dp[m]:
+                dp[m] = dp[m - p] + 1
+    return dp[S]
+
+def glouton_est_optimal(systeme, S):
+    # Completer : comparer le glouton et l'optimum
+    ...
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def nb_pieces(systeme, S):
+    n = 0
+    for piece in systeme:
+        n = n + S // piece
+        S = S % piece
+    return n
+
+def opt(systeme, S):
+    INF = float('inf')
+    dp = [0] + [INF] * S
+    for m in range(1, S + 1):
+        for p in systeme:
+            if p &lt;= m and dp[m - p] + 1 &lt; dp[m]:
+                dp[m] = dp[m - p] + 1
+    return dp[S]
+
+def glouton_est_optimal(systeme, S):
+    return nb_pieces(systeme, S) == opt(systeme, S)
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(glouton_est_optimal([4, 3, 1], 6))
+</text></testcode><stdin><text /></stdin><expected><text>False
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(glouton_est_optimal([5, 2, 1], 6))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(glouton_est_optimal([4, 3, 1], 7))
+</text></testcode><stdin><text /></stdin><expected><text>True
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(glouton_est_optimal([25, 10, 1], 30))
+</text></testcode><stdin><text /></stdin><expected><text>False
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q4 — Sac à dos fractionnaire</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q4 — Sac fractionnaire&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Objets divisibles : on peut prendre une fraction du dernier objet. Glouton : meilleur rapport valeur/poids d'abord.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire &lt;strong&gt;&lt;code&gt;sac_fractionnaire(objets, C)&lt;/code&gt;&lt;/strong&gt; où &lt;code&gt;objets&lt;/code&gt; est une liste de couples &lt;code&gt;(valeur, poids)&lt;/code&gt; et &lt;code&gt;C&lt;/code&gt; la capacité. La fonction renvoie la &lt;strong&gt;valeur maximale&lt;/strong&gt; (un flottant) transportable. Arrondir le résultat avec &lt;code&gt;round(..., 2)&lt;/code&gt;.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;sac_fractionnaire([(60,10),(100,20),(120,30)], 50) &amp;rarr; 240.0
+sac_fractionnaire([(60,10),(100,20),(120,30)], 25) &amp;rarr; 135.0
+sac_fractionnaire([(10,5)], 0)                      &amp;rarr; 0.0&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>20</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def sac_fractionnaire(objets, C):
+    objets = sorted(objets, key=lambda o: o[0] / o[1], reverse=True)
+    valeur = 0.0
+    for v, p in objets:
+        if C &gt;= p:
+            # Completer : prendre l'objet entier
+            ...
+        else:
+            # Completer : prendre une fraction puis s'arreter
+            ...
+    return round(valeur, 2)
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def sac_fractionnaire(objets, C):
+    objets = sorted(objets, key=lambda o: o[0] / o[1], reverse=True)
+    valeur = 0.0
+    for v, p in objets:
+        if C &gt;= p:
+            valeur += v
+            C -= p
+        else:
+            valeur += v * (C / p)
+            C = 0
+            break
+    return round(valeur, 2)
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(sac_fractionnaire([(60,10),(100,20),(120,30)], 50))
+</text></testcode><stdin><text /></stdin><expected><text>240.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(sac_fractionnaire([(60,10),(100,20),(120,30)], 25))
+</text></testcode><stdin><text /></stdin><expected><text>135.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(sac_fractionnaire([(10,5)], 0))
+</text></testcode><stdin><text /></stdin><expected><text>0.0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(sac_fractionnaire([(30,5),(20,10),(40,8)], 12))
+</text></testcode><stdin><text /></stdin><expected><text>65.0
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q5 — Sélection d'activités</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q5 — Choix d'activités&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;Problème classique : choisir le plus grand nombre d'activités compatibles (qui ne se chevauchent pas). Glouton optimal : trier par heure de fin croissante, puis prendre chaque activité qui commence après la fin de la précédente choisie.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire &lt;strong&gt;&lt;code&gt;selection_activites(activites)&lt;/code&gt;&lt;/strong&gt; où &lt;code&gt;activites&lt;/code&gt; est une liste de couples &lt;code&gt;(debut, fin)&lt;/code&gt;. La fonction renvoie le &lt;strong&gt;nombre maximal&lt;/strong&gt; d'activités compatibles. Deux activités sont compatibles si l'une commence à un instant &amp;ge; la fin de l'autre.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;selection_activites([(1,3),(2,5),(4,7),(1,8),(5,9),(8,10)]) &amp;rarr; 3
+selection_activites([(0,1)])                                &amp;rarr; 1
+selection_activites([])                                     &amp;rarr; 0&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>18</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>def selection_activites(activites):
+    activites = sorted(activites, key=lambda a: a[1])  # par heure de fin
+    fin = float('-inf')
+    n = 0
+    for debut, f in activites:
+        # Completer : choisir l'activite si elle est compatible
+        ...
+    return n
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>def selection_activites(activites):
+    activites = sorted(activites, key=lambda a: a[1])
+    fin = float('-inf')
+    n = 0
+    for debut, f in activites:
+        if debut &gt;= fin:
+            n += 1
+            fin = f
+    return n
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(selection_activites([(1,3),(2,5),(4,7),(1,8),(5,9),(8,10)]))
+</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(selection_activites([(0,1)]))
+</text></testcode><stdin><text /></stdin><expected><text>1
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(selection_activites([]))
+</text></testcode><stdin><text /></stdin><expected><text>0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(selection_activites([(1,2),(2,3),(3,4),(1,4)]))
+</text></testcode><stdin><text /></stdin><expected><text>3
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question><question type="coderunner"><name><text>Q6 — Coût d'un codage de Huffman</text></name><questiontext format="html"><text>&lt;div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:5px solid #026573;border-radius:8px;padding:20px 24px;margin-bottom:18px;"&gt;
+  &lt;p style="color:#026573;font-family:Georgia,serif;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;margin:0 0 10px 0;"&gt;Q6 — Coût de Huffman&lt;/p&gt;
+  &lt;p style="color:#1e293b;font-family:Georgia,serif;font-size:15px;line-height:1.8;margin:0;"&gt;L'algorithme de Huffman fusionne répétitivement les deux plus petites fréquences. Le coût total du codage est la somme de toutes les fusions effectuées (chaque fusion ajoute la somme des deux fréquences fusionnées).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p style="font-family:Georgia,serif;font-size:15px;color:#1e293b;line-height:1.8;"&gt;Écrire &lt;strong&gt;&lt;code&gt;cout_huffman(freqs)&lt;/code&gt;&lt;/strong&gt; où &lt;code&gt;freqs&lt;/code&gt; est la liste des fréquences des caractères. La fonction renvoie le coût total (nombre de bits du texte codé). Utiliser le module &lt;code&gt;heapq&lt;/code&gt;. Si la liste a 0 ou 1 élément, le coût est 0.&lt;/p&gt;
+&lt;div style="background:#e4f1f2;border:1px solid #b7dadd;border-left:5px solid #026573;border-radius:8px;padding:14px 20px;margin:14px 0;"&gt;
+  &lt;pre style="color:#024;font-family:'Courier New',monospace;font-size:14px;margin:0;background:none;border:none;"&gt;cout_huffman([5, 2, 1, 1])    &amp;rarr; 15
+cout_huffman([1, 1, 1, 1])    &amp;rarr; 8
+cout_huffman([10])            &amp;rarr; 0&lt;/pre&gt;
+&lt;/div&gt;</text></questiontext><generalfeedback format="html"><text /></generalfeedback><defaultgrade>2.0000000</defaultgrade><penalty>0.0000000</penalty><hidden>0</hidden><idnumber /><coderunnertype>python3</coderunnertype><prototypetype>0</prototypetype><allornothing>0</allornothing><penaltyregime>0</penaltyregime><precheck>0</precheck><hidecheck>0</hidecheck><showsource>0</showsource><answerboxlines>20</answerboxlines><answerboxcolumns>100</answerboxcolumns><answerpreload>import heapq
+
+def cout_huffman(freqs):
+    if len(freqs) &lt;= 1:
+        return 0
+    tas = list(freqs)
+    heapq.heapify(tas)
+    cout = 0
+    while len(tas) &gt; 1:
+        a = heapq.heappop(tas)
+        b = heapq.heappop(tas)
+        # Completer : ajouter a+b au cout et reinjecter la fusion
+        ...
+    return cout
+</answerpreload><globalextra /><useace /><resultcolumns /><template /><iscombinatortemplate /><allowmultiplestdins /><answer>import heapq
+
+def cout_huffman(freqs):
+    if len(freqs) &lt;= 1:
+        return 0
+    tas = list(freqs)
+    heapq.heapify(tas)
+    cout = 0
+    while len(tas) &gt; 1:
+        a = heapq.heappop(tas)
+        b = heapq.heappop(tas)
+        cout += a + b
+        heapq.heappush(tas, a + b)
+    return cout
+</answer><validateonsave>1</validateonsave><testsplitterre /><language /><acelang /><sandbox /><grader /><cputimelimitsecs /><memlimitmb /><sandboxparams /><templateparams /><hoisttemplateparams>1</hoisttemplateparams><extractcodefromjson>1</extractcodefromjson><templateparamslang>None</templateparamslang><templateparamsevalpertry>0</templateparamsevalpertry><templateparamsevald>{}</templateparamsevald><twigall>0</twigall><uiplugin /><uiparameters /><attachments>0</attachments><attachmentsrequired>0</attachmentsrequired><maxfilesize>10240</maxfilesize><filenamesregex /><filenamesexplain /><displayfeedback>1</displayfeedback><giveupallowed>0</giveupallowed><prototypeextra /><testcases><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(cout_huffman([5, 2, 1, 1]))
+</text></testcode><stdin><text /></stdin><expected><text>15
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="1" hiderestiffail="0" mark="1.0000000"><testcode><text>print(cout_huffman([1, 1, 1, 1]))
+</text></testcode><stdin><text /></stdin><expected><text>8
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(cout_huffman([10]))
+</text></testcode><stdin><text /></stdin><expected><text>0
+</text></expected><extra><text /></extra><display><text>SHOW</text></display></testcase><testcase testtype="0" useasexample="0" hiderestiffail="0" mark="1.0000000"><testcode><text>print(cout_huffman([45, 13, 12, 16, 9, 5]))
+</text></testcode><stdin><text /></stdin><expected><text>224
+</text></expected><extra><text /></extra><display><text>HIDE</text></display></testcase></testcases></question></quiz>

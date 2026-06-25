@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les algorithmes de tri — CPGE MP/PSI</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --orange:    #026573;
+  --darkblue:  #2c3e50;
+  --lightbg:   #f4f9fc;
+  --border:    #dce3ea;
+  --highlight: #e4f1f2;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #e8edf2;
+  color: var(--darkblue);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem 5rem;
+  gap: 2rem;
+}
+
+.slide {
+  background: #fff;
+  width: 100%;
+  max-width: 940px;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.10);
+  padding: 2.2rem 2.8rem 1.8rem;
+  position: relative;
+}
+
+.slide-number {
+  position: absolute;
+  bottom: 0.7rem;
+  right: 1.2rem;
+  font-size: 0.72rem;
+  color: #aaa;
+}
+
+.slide.title-slide {
+  background: linear-gradient(145deg, #f4f9fc 60%, #d9eef0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  text-align: center;
+  border-top: 6px solid var(--orange);
+}
+.slide.title-slide h1    { font-size: 1.9rem; color: var(--darkblue); margin-bottom: 0.4rem; }
+.slide.title-slide .subtitle { font-size: 1.15rem; color: #555; }
+
+h2.frame-title {
+  font-size: 1.65rem;
+  color: var(--orange);
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid #b7dadd;
+}
+
+p { line-height: 1.7; margin: 0.45rem 0; }
+ul { margin: 0.5rem 0 0.5rem 1.4rem; line-height: 1.85; }
+ul li::marker { color: var(--orange); }
+ol { margin: 0.5rem 0 0.5rem 1.4rem; line-height: 1.85; }
+ol li::marker { color: var(--orange); font-weight: 600; }
+strong { font-weight: 700; }
+em { font-style: italic; }
+
+.cols { display: flex; gap: 2rem; margin-top: 0.8rem; align-items: flex-start; }
+.col-text { flex: 1.1; }
+.col-side { flex: 0.9; }
+
+.code {
+  background: #0d1117; color: #e6edf3;
+  font-family: 'Consolas','Courier New',monospace;
+  font-size: 0.82rem; line-height: 1.5;
+  padding: 0.9rem 1.1rem; border-radius: 8px;
+  overflow-x: auto; margin: 0.6rem 0;
+  white-space: pre; tab-size: 4;
+}
+.code .kw  { color: #ff7b72; }
+.code .fn  { color: #d2a8ff; }
+.code .nb  { color: #79c0ff; }
+.code .cm  { color: #8b949e; }
+
+.hl-box {
+  background: var(--highlight);
+  border-left: 4px solid var(--orange);
+  border-radius: 0 6px 6px 0;
+  padding: 0.7rem 1rem; margin: 0.8rem 0;
+  font-size: 0.97rem;
+}
+.warn { background:#fef9e7; border-left-color:#f39c12; }
+.bad  { background:#fdeef0; border-left-color:#e74c3c; }
+.good { background:#eafaf1; border-left-color:#27ae60; }
+
+table.ref { border-collapse: collapse; width: 100%; margin: 0.7rem 0; font-size: 0.9rem; }
+table.ref th { background: var(--darkblue); color: #fff; padding: 0.5rem 0.7rem; text-align: left; }
+table.ref td { border: 1px solid var(--border); padding: 0.45rem 0.7rem; }
+table.ref tr:nth-child(even) td { background: var(--lightbg); }
+
+.cards { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
+.card {
+  flex: 1; min-width: 130px; text-align: center;
+  background: var(--lightbg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.75rem 0.5rem; font-size: 0.85rem;
+}
+.card strong { display: block; color: var(--orange); margin-bottom: 0.25rem; font-size: 1.0rem; }
+
+#nav { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; gap: 0.4rem; z-index: 100; }
+#nav button {
+  background: var(--orange); color: #fff; border: none;
+  border-radius: 50%; width: 40px; height: 40px;
+  font-size: 1.1rem; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25); transition: background .2s;
+}
+#nav button:hover { background: #014a54; }
+#nav #btn-scroll { border-radius: 20px; width: auto; padding: 0 14px; font-size: 0.78rem; font-weight: 700; }
+
+body.slideshow .slide        { display: none; }
+body.slideshow .slide.active { display: block; }
+body.slideshow .slide.active.title-slide { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- 1 Title -->
+<section class="slide title-slide" id="s1">
+  <h1>Les algorithmes<br>de tri</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">Informatique CPGE — MP / PSI · Première période</p>
+  <span class="slide-number">1 / 15</span>
+</section>
+
+<!-- 2 Objectifs -->
+<section class="slide" id="s2">
+  <h2 class="frame-title">Objectifs du chapitre</h2>
+  <ul>
+    <li>Rappeler les tris simples de 1ʳᵉ année et leur complexité $O(n^2)$.</li>
+    <li>Comprendre les notions de tri <strong>en place</strong> et de <strong>stabilité</strong>.</li>
+    <li>Définir et implémenter le <strong>tri rapide</strong> ; discuter le choix du pivot.</li>
+    <li>Définir et implémenter le <strong>tri par fusion</strong>.</li>
+    <li>Comparer les complexités des méthodes.</li>
+  </ul>
+  <span class="slide-number">2 / 15</span>
+</section>
+
+<!-- 3 Rappel -->
+<section class="slide" id="s3">
+  <h2 class="frame-title">Rappel : les tris simples</h2>
+  <table class="ref">
+    <tr><th>Tri</th><th>Principe</th><th>Pire cas</th></tr>
+    <tr><td><strong>Sélection</strong></td><td>Placer le minimum en tête, recommencer.</td><td>$O(n^2)$</td></tr>
+    <tr><td><strong>Insertion</strong></td><td>Insérer chaque élément dans la partie triée.</td><td>$O(n^2)$</td></tr>
+    <tr><td><strong>À bulles</strong></td><td>Échanger les voisins mal ordonnés.</td><td>$O(n^2)$</td></tr>
+  </table>
+  <p>Le tri par sélection effectue $(n-1)+(n-2)+\dots+1 = \dfrac{n(n-1)}{2}$ comparaisons.</p>
+  <div class="hl-box">Objectif : passer de $O(n^2)$ à $O(n\log n)$.</div>
+  <span class="slide-number">3 / 15</span>
+</section>
+
+<!-- 4 En place -->
+<section class="slide" id="s4">
+  <h2 class="frame-title">Propriété 1 : tri en place</h2>
+  <p>Un tri est <strong>en place</strong> s'il n'utilise qu'une mémoire supplémentaire <strong>constante</strong> $O(1)$, en réorganisant les éléments à l'intérieur du tableau d'origine.</p>
+  <div class="hl-box">Pas de copie de taille $n$ : on permute les cases sur place.</div>
+  <p>Exemples : tri par sélection, tri par insertion, tri rapide (version classique) sont en place. Le tri par fusion ne l'est pas.</p>
+  <span class="slide-number">4 / 15</span>
+</section>
+
+<!-- 5 Stabilité -->
+<section class="slide" id="s5">
+  <h2 class="frame-title">Propriété 2 : stabilité</h2>
+  <p>Un tri est <strong>stable</strong> s'il conserve l'ordre relatif initial des éléments de <strong>clé égale</strong>.</p>
+  <div class="hl-box">Utile pour trier selon plusieurs critères successifs : trier par âge une liste déjà triée par prénom garde l'ordre alphabétique à âge égal.</div>
+  <p>Insertion et fusion sont stables ; sélection et tri rapide ne le sont pas.</p>
+  <span class="slide-number">5 / 15</span>
+</section>
+
+<!-- 6 Tri rapide principe -->
+<section class="slide" id="s6">
+  <h2 class="frame-title">Tri rapide — principe</h2>
+  <p><strong>Diviser pour régner</strong> avec un <strong>pivot</strong> :</p>
+  <ol>
+    <li>Choisir un pivot dans la liste.</li>
+    <li><strong>Partition</strong> : placer les éléments $\leq$ pivot à gauche, les $&gt;$ pivot à droite. Le pivot est à sa place définitive.</li>
+    <li>Trier récursivement la sous-liste gauche et la droite.</li>
+  </ol>
+  <span class="slide-number">6 / 15</span>
+</section>
+
+<!-- 7 Tri rapide code -->
+<section class="slide" id="s7">
+  <h2 class="frame-title">Tri rapide — implémentation</h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">tri_rapide</span>(L):
+    <span class="kw">if</span> <span class="nb">len</span>(L) &lt;= <span class="nb">1</span>:
+        <span class="kw">return</span> L
+    pivot = L[<span class="nb">0</span>]
+    petits = [x <span class="kw">for</span> x <span class="kw">in</span> L[<span class="nb">1</span>:] <span class="kw">if</span> x &lt;= pivot]
+    grands = [x <span class="kw">for</span> x <span class="kw">in</span> L[<span class="nb">1</span>:] <span class="kw">if</span> x &gt; pivot]
+    <span class="kw">return</span> tri_rapide(petits) + [pivot] + tri_rapide(grands)</div>
+  <span class="slide-number">7 / 15</span>
+</section>
+
+<!-- 8 Tri rapide complexité -->
+<section class="slide" id="s8">
+  <h2 class="frame-title">Tri rapide — complexité</h2>
+  <p><strong>En moyenne</strong>, la partition équilibre les deux côtés :</p>
+  <p style="text-align:center;">$$T(n) = 2\,T(n/2) + O(n) \;\Longrightarrow\; O(n\log n)$$</p>
+  <div class="hl-box bad"><strong>Pire des cas</strong> (pivot toujours extrémal, ex. liste déjà triée) : $T(n)=T(n-1)+O(n) \Rightarrow O(n^2)$.</div>
+  <span class="slide-number">8 / 15</span>
+</section>
+
+<!-- 9 Choix du pivot -->
+<section class="slide" id="s9">
+  <h2 class="frame-title">Tri rapide — choix du pivot</h2>
+  <div class="hl-box warn">Prendre toujours le premier élément rend le pire cas $O(n^2)$ fréquent (listes déjà triées).</div>
+  <p>Pour rendre le pire cas improbable :</p>
+  <ul>
+    <li>pivot <strong>aléatoire</strong> ;</li>
+    <li><strong>médiane de trois</strong> (premier, milieu, dernier).</li>
+  </ul>
+  <p>Le tri rapide classique est <strong>en place</strong> mais <strong>non stable</strong>.</p>
+  <span class="slide-number">9 / 15</span>
+</section>
+
+<!-- 10 Tri fusion principe -->
+<section class="slide" id="s10">
+  <h2 class="frame-title">Tri par fusion — principe</h2>
+  <p><strong>Diviser pour régner</strong> sans pivot :</p>
+  <ol>
+    <li>Couper la liste en deux moitiés.</li>
+    <li>Trier récursivement chaque moitié.</li>
+    <li><strong>Fusionner</strong> les deux moitiés triées en une seule liste triée.</li>
+  </ol>
+  <span class="slide-number">10 / 15</span>
+</section>
+
+<!-- 11 Fusion code -->
+<section class="slide" id="s11">
+  <h2 class="frame-title">L'étape de fusion</h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">fusion</span>(A, B):
+    C = []
+    i, j = <span class="nb">0</span>, <span class="nb">0</span>
+    <span class="kw">while</span> i &lt; <span class="nb">len</span>(A) <span class="kw">and</span> j &lt; <span class="nb">len</span>(B):
+        <span class="kw">if</span> A[i] &lt;= B[j]:
+            C.append(A[i]); i += <span class="nb">1</span>
+        <span class="kw">else</span>:
+            C.append(B[j]); j += <span class="nb">1</span>
+    <span class="kw">return</span> C + A[i:] + B[j:]</div>
+  <p>Fusion de deux listes de tailles $m$ et $p$ en $O(m+p)$.</p>
+  <span class="slide-number">11 / 15</span>
+</section>
+
+<!-- 12 Tri fusion code -->
+<section class="slide" id="s12">
+  <h2 class="frame-title">Tri par fusion — implémentation</h2>
+  <div class="code"><span class="kw">def</span> <span class="fn">tri_fusion</span>(L):
+    <span class="kw">if</span> <span class="nb">len</span>(L) &lt;= <span class="nb">1</span>:
+        <span class="kw">return</span> L
+    m = <span class="nb">len</span>(L) // <span class="nb">2</span>
+    gauche = tri_fusion(L[:m])
+    droite = tri_fusion(L[m:])
+    <span class="kw">return</span> fusion(gauche, droite)</div>
+  <div class="hl-box good">$T(n) = 2\,T(n/2) + O(n) \Rightarrow O(n\log n)$ <strong>garanti</strong>, même au pire cas.</div>
+  <span class="slide-number">12 / 15</span>
+</section>
+
+<!-- 13 Fusion propriétés -->
+<section class="slide" id="s13">
+  <h2 class="frame-title">Tri par fusion — propriétés</h2>
+  <ul>
+    <li><strong>Complexité $O(n\log n)$ garantie</strong> (meilleur, moyen et pire cas).</li>
+    <li><strong>Stable</strong> (avec $\leq$ dans la fusion).</li>
+    <li><strong>Non en place</strong> : nécessite $O(n)$ de mémoire supplémentaire.</li>
+  </ul>
+  <div class="hl-box">Compromis : le tri fusion garantit $O(n\log n)$ et la stabilité, au prix de la mémoire ; le tri rapide est en place mais risque $O(n^2)$.</div>
+  <span class="slide-number">13 / 15</span>
+</section>
+
+<!-- 14 Comparaison -->
+<section class="slide" id="s14">
+  <h2 class="frame-title">Comparaison des tris</h2>
+  <table class="ref">
+    <tr><th>Tri</th><th>Moyenne</th><th>Pire</th><th>En place</th><th>Stable</th></tr>
+    <tr><td>Sélection</td><td>$O(n^2)$</td><td>$O(n^2)$</td><td>Oui</td><td>Non</td></tr>
+    <tr><td>Insertion</td><td>$O(n^2)$</td><td>$O(n^2)$</td><td>Oui</td><td>Oui</td></tr>
+    <tr><td><strong>Rapide</strong></td><td>$O(n\log n)$</td><td>$O(n^2)$</td><td>Oui</td><td>Non</td></tr>
+    <tr><td><strong>Fusion</strong></td><td>$O(n\log n)$</td><td>$O(n\log n)$</td><td>Non</td><td>Oui</td></tr>
+  </table>
+  <span class="slide-number">14 / 15</span>
+</section>
+
+<!-- 15 Récap -->
+<section class="slide" id="s15">
+  <h2 class="frame-title">Récapitulatif</h2>
+  <div class="cards">
+    <div class="card"><strong>Tri rapide</strong>$O(n\log n)$ moyen, en place, non stable</div>
+    <div class="card"><strong>Tri fusion</strong>$O(n\log n)$ garanti, stable, $O(n)$ espace</div>
+    <div class="card"><strong>Pivot</strong>choix crucial (aléatoire / médiane)</div>
+  </div>
+  <ul style="margin-top:1rem;">
+    <li>Tris simples $O(n^2)$ ; rapide et fusion atteignent $O(n\log n)$.</li>
+    <li>Les deux reposent sur « diviser pour régner ».</li>
+    <li>Retenir le couple (en place ? / stable ?) de chaque tri.</li>
+  </ul>
+  <span class="slide-number">15 / 15</span>
+</section>
+
+<div id="nav">
+  <button id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button id="btn-next" title="Suivant">&#8594;</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0, slideshowMode = false;
+const btnScroll = document.getElementById('btn-scroll');
+function setShow(on){
+  slideshowMode = on;
+  document.body.classList.toggle('slideshow', on);
+  btnScroll.textContent = on ? 'Défiler' : 'Diaporama';
+  slides.forEach(s => s.classList.remove('active'));
+  if(on){ slides[current].classList.add('active'); slides[current].scrollIntoView({block:'center'}); }
+}
+function enter(i){
+  if(!slideshowMode){ setShow(true); }
+  slides[current].classList.remove('active');
+  current = (i + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  slides[current].scrollIntoView({behavior:'smooth', block:'center'});
+}
+document.getElementById('btn-prev').addEventListener('click', () => enter(current-1));
+document.getElementById('btn-next').addEventListener('click', () => enter(current+1));
+btnScroll.addEventListener('click', () => setShow(!slideshowMode));
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight' || e.key==='ArrowDown'){ e.preventDefault(); enter(current+1); }
+  if(e.key==='ArrowLeft'  || e.key==='ArrowUp'){ e.preventDefault(); enter(current-1); }
+});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

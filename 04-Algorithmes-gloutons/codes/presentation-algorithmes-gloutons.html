@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les algorithmes gloutons</title>
+<!-- Remplacer : Les algorithmes gloutons, __SUBTITLE__, __SLIDES__ (sections .slide), __N__ (nb total de slides). -->
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--teal:#026573;--dark:#2c3e50;--bg:#e8edf2;--border:#dce3ea;--hl:#e4f1f2;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--dark);display:flex;flex-direction:column;align-items:center;padding:2rem 1rem 5rem;gap:2rem;}
+.slide{background:#fff;width:100%;max-width:940px;border-radius:10px;box-shadow:0 4px 18px rgba(0,0,0,.10);padding:2.2rem 2.8rem 1.8rem;position:relative;}
+.slide-number{position:absolute;bottom:0.7rem;right:1.2rem;font-size:0.72rem;color:#aaa;}
+.slide.title-slide{background:linear-gradient(145deg,#f4f9fc 60%,#d9eef0);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:280px;text-align:center;border-top:6px solid var(--teal);}
+.slide.title-slide h1{font-size:1.9rem;color:var(--dark);margin-bottom:0.4rem;}
+.slide.title-slide .subtitle{font-size:1.15rem;color:#555;}
+h2.frame-title{font-size:1.6rem;color:var(--teal);font-weight:700;margin-bottom:0.7rem;padding-bottom:0.35rem;border-bottom:2px solid #b7dadd;}
+h2.frame-title .tag{font-size:0.7em;font-weight:700;padding:2px 10px;border-radius:12px;color:#fff;vertical-align:middle;margin-left:0.4rem;background:var(--teal);}
+p{line-height:1.7;margin:0.45rem 0;} ul,ol{margin:0.5rem 0 0.5rem 1.4rem;line-height:1.85;}
+ul li::marker,ol li::marker{color:var(--teal);} strong{font-weight:700;} em{font-style:italic;}
+.cols{display:flex;gap:2rem;margin-top:0.8rem;align-items:flex-start;} .col-text{flex:1.1;} .col-side{flex:0.9;}
+.code{background:#0d1117;color:#e6edf3;font-family:'Consolas','Courier New',monospace;font-size:0.85rem;line-height:1.5;padding:0.9rem 1.1rem;border-radius:8px;overflow-x:auto;margin:0.6rem 0;white-space:pre;tab-size:4;}
+.code .kw{color:#ff7b72;} .code .fn{color:#d2a8ff;} .code .nb{color:#79c0ff;} .code .cm{color:#8b949e;}
+.hl-box{background:var(--hl);border-left:4px solid var(--teal);border-radius:0 6px 6px 0;padding:0.7rem 1rem;margin:0.8rem 0;font-size:0.97rem;}
+.hl-box.warn{background:#fef9e7;border-left-color:#f39c12;} .hl-box.bad{background:#fdeef0;border-left-color:#e74c3c;} .hl-box.good{background:#eafaf1;border-left-color:#27ae60;}
+table.ref{border-collapse:collapse;width:100%;margin:0.7rem 0;font-size:0.92rem;}
+table.ref th{background:var(--dark);color:#fff;padding:0.5rem 0.7rem;text-align:left;} table.ref td{border:1px solid var(--border);padding:0.45rem 0.7rem;} table.ref tr:nth-child(even) td{background:#f4f9fc;}
+#nav{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;gap:0.4rem;z-index:100;}
+#nav button{background:var(--teal);color:#fff;border:none;border-radius:50%;width:40px;height:40px;font-size:1.1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:background .2s;}
+#nav button:hover{background:#014a54;} #nav #btn-scroll{border-radius:20px;width:auto;padding:0 14px;font-size:0.78rem;font-weight:700;}
+body.slideshow .slide{display:none;} body.slideshow .slide.active{display:block;} body.slideshow .slide.active.title-slide{display:flex;}
+</style>
+</head>
+<body>
+
+<section class="slide title-slide" id="s1">
+  <h1>Les algorithmes gloutons</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p class="subtitle">Résoudre des problèmes d'optimisation, un choix local à la fois — CPGE MP/PSI</p>
+  <span class="slide-number">1 / 13</span>
+</section>
+
+<section class="slide" id="s2">
+  <h2 class="frame-title">Problèmes d'optimisation<span class="tag">Intro</span></h2>
+  <p>Trouver, parmi un très grand nombre de solutions, celle qui <strong>minimise</strong> ou <strong>maximise</strong> une fonction objectif.</p>
+  <ul>
+    <li>Rendu de monnaie &rarr; le <em>moins</em> de pièces.</li>
+    <li>Sac à dos &rarr; la <em>plus grande</em> valeur transportée.</li>
+    <li>Compression &rarr; le <em>moins</em> de bits.</li>
+  </ul>
+  <div class="hl-box bad"><strong>Force brute :</strong> explorer toutes les combinaisons coûte un temps <strong>exponentiel</strong> — irréaliste.</div>
+  <span class="slide-number">2 / 13</span>
+</section>
+
+<section class="slide" id="s3">
+  <h2 class="frame-title">L'idée gloutonne<span class="tag">Principe</span></h2>
+  <p>Construire la solution <strong>pas à pas</strong>. À chaque étape, faire le choix <strong>localement optimal</strong> (le plus « gourmand »), <strong>sans jamais revenir en arrière</strong>.</p>
+  <div class="code"><span class="kw">def</span> <span class="fn">glouton</span>(candidats):
+    solution = []
+    <span class="kw">while</span> not complet(solution) <span class="kw">and</span> candidats:
+        x = meilleur_candidat(candidats)   <span class="cm"># choix glouton</span>
+        candidats.remove(x)
+        <span class="kw">if</span> compatible(solution, x):
+            solution.append(x)
+    <span class="kw">return</span> solution</div>
+  <div class="hl-box warn">Rapide et simple — mais « localement » ne veut pas dire « globalement » optimal.</div>
+  <span class="slide-number">3 / 13</span>
+</section>
+
+<section class="slide" id="s4">
+  <h2 class="frame-title">Les deux ingrédients<span class="tag">Théorie</span></h2>
+  <div class="hl-box"><strong>1. Propriété du choix glouton.</strong> Il existe une solution optimale contenant le choix localement optimal de la première étape : ce choix ne ferme jamais la porte à l'optimum.</div>
+  <div class="hl-box"><strong>2. Sous-structure optimale.</strong> Une solution optimale contient des solutions optimales des sous-problèmes : après un choix, il reste un problème de même nature, plus petit.</div>
+  <p>Si l'une manque &rarr; le glouton peut échouer.</p>
+  <span class="slide-number">4 / 13</span>
+</section>
+
+<section class="slide" id="s5">
+  <h2 class="frame-title">Glouton vs programmation dynamique<span class="tag">Comparaison</span></h2>
+  <table class="ref">
+    <tr><th>Glouton</th><th>Programmation dynamique</th></tr>
+    <tr><td><strong>Un seul</strong> choix par étape</td><td><strong>Plusieurs</strong> choix examinés</td></tr>
+    <tr><td>Jamais de retour en arrière</td><td>Combine les sous-problèmes</td></tr>
+    <tr><td>Très rapide</td><td>Plus coûteuse</td></tr>
+    <tr><td>Correct <em>si</em> choix glouton vérifié</td><td>Toujours optimale</td></tr>
+  </table>
+  <span class="slide-number">5 / 13</span>
+</section>
+
+<section class="slide" id="s6">
+  <h2 class="frame-title">Rendu de monnaie<span class="tag">Exemple 1</span></h2>
+  <p>Rendre une somme $S$ avec le <strong>moins de pièces</strong>. Glouton : prendre la <strong>plus grande pièce</strong> $\le$ reste.</p>
+  <div class="code"><span class="kw">def</span> <span class="fn">rendu_monnaie</span>(systeme, S):
+    rendu = []
+    <span class="kw">for</span> piece <span class="kw">in</span> systeme:        <span class="cm"># décroissant</span>
+        <span class="kw">while</span> S &gt;= piece:
+            rendu.append(piece)
+            S = S - piece
+    <span class="kw">return</span> rendu</div>
+  <div class="hl-box good">68 = 50 + 10 + 5 + 2 + 1 &rarr; 5 pièces (optimal).</div>
+  <span class="slide-number">6 / 13</span>
+</section>
+
+<section class="slide" id="s7">
+  <h2 class="frame-title">Rendu : ça dépend du système !<span class="tag">Contre-exemple</span></h2>
+  <div class="hl-box good"><strong>Système euro (canonique).</strong> Le glouton donne toujours le nombre minimal de pièces.</div>
+  <div class="hl-box bad"><strong>Système (1, 3, 4), rendre 6 :</strong><br>
+  Glouton &rarr; 4 + 1 + 1 = <strong>3 pièces</strong>.<br>
+  Optimal &rarr; 3 + 3 = <strong>2 pièces</strong> !</div>
+  <p>Prendre 4 d'abord a fermé la porte à l'optimum : ce système ne vérifie pas la propriété du choix glouton.</p>
+  <span class="slide-number">7 / 13</span>
+</section>
+
+<section class="slide" id="s8">
+  <h2 class="frame-title">Sac à dos fractionnaire<span class="tag">Exemple 2</span></h2>
+  <p>Objets divisibles. Glouton : trier par <strong>valeur/poids</strong> $v_i/p_i$ décroissant, remplir, finir par une fraction.</p>
+  <div class="code"><span class="kw">def</span> <span class="fn">sac_fractionnaire</span>(objets, C):
+    objets = <span class="nb">sorted</span>(objets, key=<span class="kw">lambda</span> o: o[<span class="nb">0</span>]/o[<span class="nb">1</span>], reverse=<span class="nb">True</span>)
+    valeur = <span class="nb">0.0</span>
+    <span class="kw">for</span> v, p <span class="kw">in</span> objets:
+        <span class="kw">if</span> C &gt;= p:
+            valeur += v; C -= p
+        <span class="kw">else</span>:
+            valeur += v * (C / p); <span class="kw">break</span>
+    <span class="kw">return</span> valeur</div>
+  <div class="hl-box good">✅ Optimal (preuve par échange).</div>
+  <span class="slide-number">8 / 13</span>
+</section>
+
+<section class="slide" id="s9">
+  <h2 class="frame-title">Sac à dos 0/1<span class="tag">Contre-exemple</span></h2>
+  <p>Objets indivisibles (0 ou 1). Le même glouton <strong>échoue</strong>. Capacité $C = 50$ :</p>
+  <table class="ref">
+    <tr><th>Objet</th><th>Valeur</th><th>Poids</th><th>v/p</th></tr>
+    <tr><td>A</td><td>60</td><td>10</td><td>6</td></tr>
+    <tr><td>B</td><td>100</td><td>20</td><td>5</td></tr>
+    <tr><td>C</td><td>120</td><td>30</td><td>4</td></tr>
+  </table>
+  <div class="hl-box bad">Glouton (A puis B) &rarr; <strong>160</strong>. &nbsp; Optimal (B + C) &rarr; <strong>220</strong> !</div>
+  <p>Il faut la <strong>programmation dynamique</strong>.</p>
+  <span class="slide-number">9 / 13</span>
+</section>
+
+<section class="slide" id="s10">
+  <h2 class="frame-title">Codage de Huffman<span class="tag">Exemple 3</span></h2>
+  <p>Compresser : codes <strong>courts</strong> pour caractères <strong>fréquents</strong>. Code <strong>préfixe</strong> = arbre binaire (gauche 0, droite 1).</p>
+  <p><strong>Glouton.</strong> Tant qu'il reste &gt; 1 arbre : fusionner les <strong>deux plus petites fréquences</strong> sous une racine de poids = leur somme.</p>
+  <div class="hl-box">Forêt initiale : un arbre par caractère, pondéré par sa fréquence.</div>
+  <span class="slide-number">10 / 13</span>
+</section>
+
+<section class="slide" id="s11">
+  <h2 class="frame-title">Huffman : implémentation<span class="tag">Code</span></h2>
+  <div class="code"><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">huffman</span>(freq):
+    tas = [[f, c, <span class="nb">None</span>, <span class="nb">None</span>] <span class="kw">for</span> c, f <span class="kw">in</span> freq.items()]
+    heapq.heapify(tas)
+    <span class="kw">while</span> <span class="nb">len</span>(tas) &gt; <span class="nb">1</span>:
+        g = heapq.heappop(tas)   <span class="cm"># 2 plus petites</span>
+        d = heapq.heappop(tas)
+        heapq.heappush(tas, [g[<span class="nb">0</span>]+d[<span class="nb">0</span>], <span class="nb">None</span>, g, d])
+    <span class="kw">return</span> tas[<span class="nb">0</span>]</div>
+  <div class="hl-box good">A:5,B:2,C:1,D:1 &rarr; A:0, B:11, C:100, D:101. ✅ Longueur moyenne minimale.</div>
+  <span class="slide-number">11 / 13</span>
+</section>
+
+<section class="slide" id="s12">
+  <h2 class="frame-title">Quand le glouton est-il optimal ?<span class="tag">Bilan</span></h2>
+  <table class="ref">
+    <tr><th>Problème</th><th>Optimal ?</th></tr>
+    <tr><td>Rendu monnaie (euro)</td><td>✅ Oui</td></tr>
+    <tr><td>Rendu monnaie (1,3,4)</td><td>❌ Non</td></tr>
+    <tr><td>Sac à dos fractionnaire</td><td>✅ Oui</td></tr>
+    <tr><td>Sac à dos 0/1</td><td>❌ Non</td></tr>
+    <tr><td>Codage de Huffman</td><td>✅ Oui</td></tr>
+  </table>
+  <span class="slide-number">12 / 13</span>
+</section>
+
+<section class="slide" id="s13">
+  <h2 class="frame-title">À retenir<span class="tag">Synthèse</span></h2>
+  <ul>
+    <li>Glouton = choix <strong>localement optimal</strong>, jamais de retour en arrière.</li>
+    <li>Optimal seulement avec <strong>choix glouton</strong> + <strong>sous-structure optimale</strong>.</li>
+    <li>Atouts : simple, rapide (souvent un tri, $O(n\log n)$).</li>
+    <li>Un seul <strong>contre-exemple</strong> suffit à le réfuter.</li>
+    <li>S'il échoue &rarr; <strong>programmation dynamique</strong>.</li>
+  </ul>
+  <span class="slide-number">13 / 13</span>
+</section>
+
+<div id="nav">
+  <button class="ghost" id="btn-prev" title="Précédent">&#8592;</button>
+  <button id="btn-scroll" title="Mode diaporama">Diaporama</button>
+  <button class="ghost" id="btn-next" title="Suivant">&#8594;</button>
+</div>
+<script>
+const slides=document.querySelectorAll('.slide');
+let current=0,slideshowMode=false;
+function enter(i){slides[current].classList.remove('active');current=(i+slides.length)%slides.length;slides[current].classList.add('active');slides[current].scrollIntoView({behavior:'smooth',block:'center'});}
+document.getElementById('btn-prev').addEventListener('click',()=>{if(slideshowMode)enter(current-1);});
+document.getElementById('btn-next').addEventListener('click',()=>{if(slideshowMode)enter(current+1);});
+document.getElementById('btn-scroll').addEventListener('click',()=>{slideshowMode=!slideshowMode;document.body.classList.toggle('slideshow',slideshowMode);document.getElementById('btn-scroll').textContent=slideshowMode?'Défiler':'Diaporama';if(slideshowMode)slides[current].classList.add('active');else slides.forEach(s=>s.classList.remove('active'));});
+document.addEventListener('keydown',e=>{if((e.key==='ArrowRight'||e.key==='ArrowDown')&&slideshowMode)enter(current+1);if((e.key==='ArrowLeft'||e.key==='ArrowUp')&&slideshowMode)enter(current-1);});
+</script>
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  html.cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed;}
+  html.cm-darkmode img,html.cm-darkmode svg,html.cm-darkmode video,html.cm-darkmode iframe,html.cm-darkmode #cm-theme-btn{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:'Segoe UI',Arial,Helvetica,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  function init(){
+    var btn=document.getElementById('cm-theme-btn'); if(!btn) return;
+    var H=document.documentElement;
+    function apply(d){
+      if(d){H.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';}
+      else{H.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';}
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+</body>
+</html>

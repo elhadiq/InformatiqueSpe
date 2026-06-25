@@ -1,0 +1,487 @@
+<!-- ===== Bouton mode sombre / clair (auto-contenu) — ne pas dupliquer ===== -->
+<style id="cm-theme-style">
+  .cm-darkmode{filter:invert(1) hue-rotate(180deg);background:#ededed !important;border-radius:12px;padding:4px 2px;}
+  .cm-darkmode img,.cm-darkmode svg,.cm-darkmode video,.cm-darkmode iframe{filter:invert(1) hue-rotate(180deg);}
+  #cm-theme-btn{position:fixed;top:14px;right:14px;z-index:99999;display:inline-flex;align-items:center;gap:7px;
+    font-family:Arial,Helvetica,sans-serif;font-size:0.9em;font-weight:600;cursor:pointer;
+    background:#026573;color:#ffffff;border:none;border-radius:22px;padding:8px 15px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.28);transition:background .2s,transform .1s;}
+  #cm-theme-btn:hover{background:#02525d;}
+  #cm-theme-btn:active{transform:scale(0.96);}
+</style>
+<button id="cm-theme-btn" type="button" aria-label="Basculer mode sombre / clair">
+  <span id="cm-theme-ico">🌙</span><span id="cm-theme-lbl">Mode sombre</span>
+</button>
+<script>
+(function(){
+  var BG='#121212';
+  function init(){
+    var btn=document.getElementById('cm-theme-btn');
+    if(!btn) return;
+    var R=null, els=document.querySelectorAll('div[style*="margin:0 auto"]');
+    for(var i=0;i<els.length;i++){ if(els[i]!==btn){ R=els[i]; break; } }
+    if(!R) R=document.body;
+    var prevH='', prevB='', saved=false;
+    function apply(d){
+      if(d){
+        if(!saved){prevH=document.documentElement.style.background;prevB=document.body.style.background;saved=true;}
+        document.documentElement.style.background=BG;
+        document.body.style.background=BG;
+        R.classList.add('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='☀️';
+        document.getElementById('cm-theme-lbl').textContent='Mode clair';
+      }else{
+        document.documentElement.style.background=prevH;
+        document.body.style.background=prevB;
+        R.classList.remove('cm-darkmode');
+        document.getElementById('cm-theme-ico').textContent='🌙';
+        document.getElementById('cm-theme-lbl').textContent='Mode sombre';
+      }
+    }
+    var dark=false; try{dark=localStorage.getItem('cmTheme')==='dark';}catch(e){}
+    apply(dark);
+    btn.addEventListener('click',function(){
+      dark=!dark; apply(dark);
+      try{localStorage.setItem('cmTheme',dark?'dark':'light');}catch(e){}
+    });
+  }
+  if(document.readyState!=='loading') init();
+  else document.addEventListener('DOMContentLoaded',init);
+})();
+</script>
+<!-- ===== fin bouton mode sombre / clair ===== -->
+
+<div style="font-family:'Segoe UI',system-ui,Arial,sans-serif;max-width:920px;margin:0 auto;color:#1f2d3d;line-height:1.65;">
+
+<!-- Hero -->
+<div style="background:#026573;color:#fff;padding:28px 26px;border-radius:10px;margin-bottom:26px;">
+  <div style="font-size:0.85em;letter-spacing:2px;color:#bfe3e7;text-transform:uppercase;">CPGE MP / PSI · Informatique · 2ᵉ période</div>
+  <h1 style="margin:6px 0 0 0;font-size:1.9em;">Les bases de données relationnelles</h1>
+<p style="text-align:center;color:#026573;font-weight:600;font-size:0.95em;margin:6px 0 14px;">Pr. EL Hadiq Zouhair</p>
+  <p style="margin:12px 0 0 0;color:#d6eef0;">Modèle relationnel, modèle entité-association, clés primaires et étrangères, et manipulation des données avec le langage SQL sous SQLite.</p>
+</div>
+
+<!-- Objectifs -->
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:14px 18px;border-radius:4px;margin:18px 0;">
+  <strong style="color:#026573;">Objectifs du chapitre.</strong> À la fin de cette partie, vous saurez&nbsp;:
+  <ul style="margin:8px 0 0 0;padding-left:22px;">
+    <li>employer le <strong>vocabulaire</strong> des bases relationnelles (table, attribut, enregistrement, domaine, schéma)&nbsp;;</li>
+    <li>concevoir un <strong>modèle entité-association</strong> et le traduire en tables&nbsp;;</li>
+    <li>distinguer <strong>clé primaire</strong> et <strong>clé étrangère</strong> et comprendre leur rôle&nbsp;;</li>
+    <li>écrire des requêtes SQL d'<strong>insertion, mise à jour et suppression</strong> (INSERT, UPDATE, DELETE)&nbsp;;</li>
+    <li>interroger une base avec <strong>SELECT</strong> (projection, sélection, jointures, agrégats, tri, sous-requêtes).</li>
+  </ul>
+</div>
+
+<!-- Sommaire -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">Sommaire</h2>
+<ol style="line-height:1.9;">
+  <li>Vocabulaire des bases de données relationnelles</li>
+  <li>Le modèle entité-association</li>
+  <li>Clés primaires et clés étrangères</li>
+  <li>Du modèle E/A au modèle relationnel</li>
+  <li>SQL&nbsp;: manipulation des données (INSERT, UPDATE, DELETE)</li>
+  <li>Interroger une base&nbsp;: SELECT, projection et sélection</li>
+  <li>Opérateurs ensemblistes et produit cartésien</li>
+  <li>Les jointures internes</li>
+  <li>Renommage avec AS</li>
+  <li>Fonctions d'agrégation et GROUP BY</li>
+  <li>Filtrer les agrégats avec HAVING</li>
+  <li>Tri et limitation&nbsp;: ORDER BY, LIMIT, OFFSET</li>
+  <li>Requêtes imbriquées (sous-requêtes)</li>
+  <li>Récapitulatif</li>
+</ol>
+
+<!-- La base exemple -->
+<div style="background:#fff;border:1px solid #b7dadd;border-radius:8px;padding:16px 18px;margin:22px 0;">
+  <strong style="color:#026573;">La base fil rouge de ce cours.</strong>
+  <p style="margin:8px 0;">Tous les exemples utilisent une petite base d'une université, composée de quatre tables&nbsp;:</p>
+  <ul style="margin:6px 0 0 0;padding-left:22px;">
+    <li><code>Departement(id, nom)</code></li>
+    <li><code>Etudiant(id, nom, prenom, age, id_dep)</code></li>
+    <li><code>Module(code, intitule, credits)</code></li>
+    <li><code>Inscription(id_etudiant, code_module, note)</code></li>
+  </ul>
+</div>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">1. Vocabulaire des bases de données relationnelles</h2>
+
+<p>Une <strong>base de données</strong> est un ensemble structuré de données mémorisées de façon durable et partagées par plusieurs utilisateurs. Un <strong>SGBD</strong> (Système de Gestion de Base de Données) est le logiciel qui gère cette base&nbsp;: il en assure le stockage, la cohérence et l'interrogation. Dans ce cours, le SGBD utilisé est <strong>SQLite</strong>, un SGBD léger qui stocke toute la base dans un seul fichier.</p>
+
+<p>Dans le <strong>modèle relationnel</strong>, les données sont organisées en <strong>tables</strong>. Le vocabulaire est le suivant&nbsp;:</p>
+
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#2c3e50;color:#fff;">
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Terme</th>
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Synonyme</th>
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Signification</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Table</strong></td><td style="border:1px solid #ddd;padding:9px;">relation</td><td style="border:1px solid #ddd;padding:9px;">Tableau à deux dimensions décrivant une catégorie d'objets.</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Attribut</strong></td><td style="border:1px solid #ddd;padding:9px;">colonne, champ</td><td style="border:1px solid #ddd;padding:9px;">Une propriété décrivant les objets (ex.&nbsp;: <code>nom</code>, <code>age</code>).</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Enregistrement</strong></td><td style="border:1px solid #ddd;padding:9px;">ligne, n-uplet, tuple</td><td style="border:1px solid #ddd;padding:9px;">Un objet de la table (une valeur par attribut).</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Domaine</strong></td><td style="border:1px solid #ddd;padding:9px;">type</td><td style="border:1px solid #ddd;padding:9px;">Ensemble des valeurs possibles d'un attribut (entier, texte…).</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Schéma</strong></td><td style="border:1px solid #ddd;padding:9px;">—</td><td style="border:1px solid #ddd;padding:9px;">Description de la table&nbsp;: nom + liste des attributs et de leurs domaines.</td></tr>
+</table>
+
+<p>Le <strong>schéma</strong> de la table des étudiants se note&nbsp;: <code>Etudiant(id, nom, prenom, age, id_dep)</code>. Voici un extrait du <strong>contenu</strong> (les enregistrements)&nbsp;:</p>
+
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#026573;color:#fff;">
+    <th style="border:1px solid #026573;padding:8px;">id</th><th style="border:1px solid #026573;padding:8px;">nom</th><th style="border:1px solid #026573;padding:8px;">prenom</th><th style="border:1px solid #026573;padding:8px;">age</th><th style="border:1px solid #026573;padding:8px;">id_dep</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:8px;text-align:center;">1</td><td style="border:1px solid #ddd;padding:8px;">Alami</td><td style="border:1px solid #ddd;padding:8px;">Sara</td><td style="border:1px solid #ddd;padding:8px;text-align:center;">19</td><td style="border:1px solid #ddd;padding:8px;text-align:center;">1</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:8px;text-align:center;">2</td><td style="border:1px solid #ddd;padding:8px;">Bennani</td><td style="border:1px solid #ddd;padding:8px;">Karim</td><td style="border:1px solid #ddd;padding:8px;text-align:center;">20</td><td style="border:1px solid #ddd;padding:8px;text-align:center;">1</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:8px;text-align:center;">3</td><td style="border:1px solid #ddd;padding:8px;">Chraibi</td><td style="border:1px solid #ddd;padding:8px;">Yasmine</td><td style="border:1px solid #ddd;padding:8px;text-align:center;">21</td><td style="border:1px solid #ddd;padding:8px;text-align:center;">2</td></tr>
+</table>
+
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Domaines (types SQLite).</strong> SQLite reconnaît principalement&nbsp;: <code>INTEGER</code> (entiers), <code>REAL</code> (réels), <code>TEXT</code> (chaînes), <code>NULL</code> (valeur absente). La valeur spéciale <code>NULL</code> signifie «&nbsp;information inconnue ou non renseignée&nbsp;»&nbsp;; elle n'est égale à rien, pas même à <code>NULL</code>.
+</div>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Le modèle entité-association</h2>
+
+<p>Avant de créer les tables, on conçoit la base au moyen d'un <strong>modèle entité-association</strong> (modèle E/A, ou modèle entité-relation). C'est un schéma de conception, indépendant du SGBD, qui décrit ce que représente la base.</p>
+
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#2c3e50;color:#fff;">
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Notion</th>
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Définition</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Entité</strong></td><td style="border:1px solid #ddd;padding:9px;">Un type d'objet du monde réel que l'on veut décrire (ex.&nbsp;: <em>Étudiant</em>, <em>Module</em>).</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Attribut</strong></td><td style="border:1px solid #ddd;padding:9px;">Une propriété d'une entité ou d'une association (ex.&nbsp;: <em>nom</em>, <em>age</em>).</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Identifiant</strong></td><td style="border:1px solid #ddd;padding:9px;">Un (ou plusieurs) attribut qui distingue de façon unique chaque objet de l'entité.</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><strong>Association</strong></td><td style="border:1px solid #ddd;padding:9px;">Un lien sémantique entre deux entités (ex.&nbsp;: un étudiant <em>s'inscrit à</em> un module).</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><strong>Cardinalités</strong></td><td style="border:1px solid #ddd;padding:9px;">Combien d'objets de chaque côté participent à l'association (1-1, 1-*, *-*).</td></tr>
+</table>
+
+<p>Une <strong>cardinalité</strong> indique, pour une entité, combien d'occurrences de l'autre entité lui sont reliées&nbsp;:</p>
+<ul style="padding-left:22px;">
+  <li><strong>1 - 1</strong>&nbsp;: à un objet d'un côté correspond au plus un objet de l'autre (ex.&nbsp;: un pays a une seule capitale).</li>
+  <li><strong>1 - *</strong> (un à plusieurs)&nbsp;: un département contient plusieurs étudiants, mais chaque étudiant appartient à un seul département.</li>
+  <li><strong>* - *</strong> (plusieurs à plusieurs)&nbsp;: un étudiant suit plusieurs modules et un module est suivi par plusieurs étudiants.</li>
+</ul>
+
+<!-- diagramme E/A en SVG -->
+<div style="text-align:center;margin:18px 0;">
+<svg viewBox="0 0 640 170" width="100%" style="max-width:640px;font-family:'Segoe UI',sans-serif;">
+  <rect x="20" y="55" width="150" height="60" rx="6" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+  <text x="95" y="90" text-anchor="middle" font-size="15" fill="#026573" font-weight="bold">Étudiant</text>
+  <rect x="470" y="55" width="150" height="60" rx="6" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+  <text x="545" y="90" text-anchor="middle" font-size="15" fill="#026573" font-weight="bold">Module</text>
+  <polygon points="320,55 390,85 320,115 250,85" fill="#fff" stroke="#026573" stroke-width="2"/>
+  <text x="320" y="90" text-anchor="middle" font-size="13" fill="#026573">s'inscrit</text>
+  <line x1="170" y1="85" x2="250" y2="85" stroke="#026573" stroke-width="2"/>
+  <line x1="390" y1="85" x2="470" y2="85" stroke="#026573" stroke-width="2"/>
+  <text x="210" y="76" text-anchor="middle" font-size="13" fill="#1f2d3d">*</text>
+  <text x="430" y="76" text-anchor="middle" font-size="13" fill="#1f2d3d">*</text>
+  <text x="320" y="140" text-anchor="middle" font-size="12" fill="#9aa7b2">attribut de l'association : note</text>
+</svg>
+</div>
+
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Idée clé.</strong> Le modèle E/A répond à la question «&nbsp;<em>de quoi parle ma base&nbsp;?</em>&nbsp;» avant de répondre à «&nbsp;<em>comment la stocker&nbsp;?</em>&nbsp;». On le traduit ensuite mécaniquement en tables (section 4).
+</div>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Clés primaires et clés étrangères</h2>
+
+<h3 style="color:#014a54;">Clé primaire</h3>
+<p>La <strong>clé primaire</strong> d'une table est un attribut (ou un groupe d'attributs) dont la valeur <strong>identifie de façon unique</strong> chaque enregistrement. Deux lignes ne peuvent pas avoir la même valeur de clé primaire, et celle-ci ne peut jamais être <code>NULL</code>. Dans <code>Etudiant</code>, la clé primaire est <code>id</code>.</p>
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  Une clé primaire n'est pas forcément réduite à une seule colonne, même si c'est le cas le plus fréquent. Dans <code>Inscription</code>, le couple <code>(id_etudiant, code_module)</code> joue le rôle de clé primaire&nbsp;: un étudiant ne s'inscrit qu'une fois à un module donné.
+</div>
+
+<h3 style="color:#014a54;">Clé étrangère</h3>
+<p>Une <strong>clé étrangère</strong> est un attribut d'une table qui <strong>référence la clé primaire</strong> d'une autre table. Elle matérialise le lien entre deux tables et garantit la <strong>cohérence référentielle</strong>&nbsp;: une valeur de clé étrangère doit correspondre à une ligne existante dans la table référencée.</p>
+<p>Dans <code>Etudiant</code>, l'attribut <code>id_dep</code> est une clé étrangère qui référence <code>Departement(id)</code>&nbsp;: il indique à quel département appartient chaque étudiant.</p>
+
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">CREATE TABLE Departement (
+    id   INTEGER PRIMARY KEY,
+    nom  TEXT NOT NULL
+);
+
+CREATE TABLE Etudiant (
+    id      INTEGER PRIMARY KEY,
+    nom     TEXT NOT NULL,
+    prenom  TEXT,
+    age     INTEGER,
+    id_dep  INTEGER,
+    FOREIGN KEY (id_dep) REFERENCES Departement(id)
+);</pre>
+
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#2c3e50;color:#fff;">
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Clé primaire</th>
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Clé étrangère</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;">Identifie une ligne de SA table.</td><td style="border:1px solid #ddd;padding:9px;">Pointe vers une ligne d'UNE AUTRE table.</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;">Unique, jamais <code>NULL</code>.</td><td style="border:1px solid #ddd;padding:9px;">Peut se répéter, peut être <code>NULL</code>.</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;">Une seule par table.</td><td style="border:1px solid #ddd;padding:9px;">Plusieurs possibles par table.</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Du modèle E/A au modèle relationnel</h2>
+
+<p>On transforme le schéma E/A en tables selon des règles systématiques.</p>
+
+<h3 style="color:#014a54;">Règle 1 — Une entité devient une table</h3>
+<p>Chaque entité devient une table. Ses attributs deviennent des colonnes et son identifiant devient la clé primaire. Ainsi&nbsp;: <em>Étudiant</em> &rArr; <code>Etudiant(id, nom, prenom, age)</code> et <em>Module</em> &rArr; <code>Module(code, intitule, credits)</code>.</p>
+
+<h3 style="color:#014a54;">Règle 2 — Association 1-1 ou 1-* : clé étrangère</h3>
+<p>Pour une association <strong>1 - *</strong>, on ajoute dans la table du côté «&nbsp;<strong>plusieurs</strong>&nbsp;» une <strong>clé étrangère</strong> référençant la clé primaire du côté «&nbsp;un&nbsp;». Un département contient plusieurs étudiants (1-*)&nbsp;: on ajoute donc <code>id_dep</code> dans <code>Etudiant</code>.</p>
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  Pour une association <strong>1 - 1</strong>, la clé étrangère peut être placée dans l'une ou l'autre des deux tables (souvent avec une contrainte d'unicité).
+</div>
+
+<h3 style="color:#014a54;">Règle 3 — Association *-* : une table de liaison</h3>
+<p>Une association <strong>* - *</strong> ne peut pas se traduire par une simple clé étrangère. On la <strong>décompose en deux associations 1 - *</strong> en créant une <strong>table de liaison</strong> (table d'association). Sa clé primaire est composée des deux clés étrangères vers les entités liées&nbsp;; les attributs de l'association y sont ajoutés.</p>
+
+<div style="text-align:center;margin:14px 0;">
+<svg viewBox="0 0 660 120" width="100%" style="max-width:660px;font-family:'Segoe UI',sans-serif;">
+  <rect x="20" y="40" width="130" height="46" rx="6" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+  <text x="85" y="68" text-anchor="middle" font-size="14" fill="#026573" font-weight="bold">Etudiant</text>
+  <rect x="265" y="40" width="130" height="46" rx="6" fill="#fff" stroke="#026573" stroke-width="2"/>
+  <text x="330" y="62" text-anchor="middle" font-size="13" fill="#026573" font-weight="bold">Inscription</text>
+  <text x="330" y="78" text-anchor="middle" font-size="10" fill="#9aa7b2">(id_etudiant, code_module, note)</text>
+  <rect x="510" y="40" width="130" height="46" rx="6" fill="#e4f1f2" stroke="#026573" stroke-width="2"/>
+  <text x="575" y="68" text-anchor="middle" font-size="14" fill="#026573" font-weight="bold">Module</text>
+  <line x1="150" y1="63" x2="265" y2="63" stroke="#026573" stroke-width="2"/>
+  <line x1="395" y1="63" x2="510" y2="63" stroke="#026573" stroke-width="2"/>
+  <text x="165" y="55" font-size="12" fill="#1f2d3d">1</text><text x="248" y="55" font-size="12" fill="#1f2d3d">*</text>
+  <text x="410" y="55" font-size="12" fill="#1f2d3d">*</text><text x="492" y="55" font-size="12" fill="#1f2d3d">1</text>
+</svg>
+</div>
+
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">CREATE TABLE Module (
+    code     TEXT PRIMARY KEY,
+    intitule TEXT NOT NULL,
+    credits  INTEGER
+);
+
+CREATE TABLE Inscription (
+    id_etudiant  INTEGER,
+    code_module  TEXT,
+    note         REAL,
+    PRIMARY KEY (id_etudiant, code_module),
+    FOREIGN KEY (id_etudiant) REFERENCES Etudiant(id),
+    FOREIGN KEY (code_module) REFERENCES Module(code)
+);</pre>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">5. SQL : manipulation des données</h2>
+
+<p>Le <strong>SQL</strong> (<em>Structured Query Language</em>) est le langage standard d'interrogation et de manipulation des bases relationnelles. Une instruction SQL s'appelle une <strong>requête</strong>. Cette section présente les trois requêtes qui modifient les données.</p>
+
+<h3 style="color:#014a54;">INSERT INTO — insérer des lignes</h3>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">INSERT INTO Etudiant (id, nom, prenom, age, id_dep)
+VALUES (1, 'Alami', 'Sara', 19, 1);
+
+-- plusieurs lignes d'un coup :
+INSERT INTO Departement (id, nom) VALUES
+    (1, 'Mathematiques'),
+    (2, 'Informatique');</pre>
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  Les chaînes de caractères sont entre <strong>apostrophes simples</strong> <code>'…'</code>. Si l'on omet la liste des colonnes, il faut fournir une valeur pour chaque colonne, dans l'ordre du schéma.
+</div>
+
+<h3 style="color:#014a54;">UPDATE — modifier des lignes</h3>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">UPDATE Etudiant
+SET age = 22
+WHERE id = 3;</pre>
+<div style="background:#fdeef0;border-left:4px solid #e74c3c;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Attention.</strong> Un <code>UPDATE</code> (ou <code>DELETE</code>) <strong>sans clause <code>WHERE</code></strong> s'applique à <strong>toutes</strong> les lignes de la table. Toujours vérifier la condition avant d'exécuter.
+</div>
+
+<h3 style="color:#014a54;">DELETE FROM — supprimer des lignes</h3>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">DELETE FROM Etudiant
+WHERE age &lt; 18;</pre>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">6. Interroger une base : SELECT, projection et sélection</h2>
+
+<p>La requête <strong>SELECT</strong> extrait des données sans les modifier. Sa forme de base&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT  &lt;colonnes&gt;        -- projection
+FROM    &lt;table&gt;
+WHERE   &lt;condition&gt;;      -- sélection</pre>
+
+<h3 style="color:#014a54;">Projection (choix des colonnes)</h3>
+<p>La <strong>projection</strong> garde certaines colonnes. En algèbre relationnelle on la note <strong>&pi;</strong> (pi). <code>SELECT nom, prenom FROM Etudiant;</code> correspond à <strong>&pi;<sub>nom, prenom</sub>(Etudiant)</strong>. Le symbole <code>*</code> sélectionne toutes les colonnes.</p>
+
+<h3 style="color:#014a54;">Sélection (choix des lignes)</h3>
+<p>La <strong>sélection</strong> garde les lignes vérifiant une condition. En algèbre relationnelle on la note <strong>&sigma;</strong> (sigma). <code>SELECT * FROM Etudiant WHERE age &ge; 20;</code> correspond à <strong>&sigma;<sub>age &ge; 20</sub>(Etudiant)</strong>.</p>
+
+<h3 style="color:#014a54;">DISTINCT — éliminer les doublons</h3>
+<p>Le mot-clé <strong>DISTINCT</strong> supprime les lignes en double dans le résultat. Pour obtenir la liste des âges sans répétition&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT DISTINCT age FROM Etudiant;</pre>
+
+<h3 style="color:#014a54;">Opérateurs de condition</h3>
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#2c3e50;color:#fff;">
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Opérateur</th>
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Rôle</th>
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Exemple</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><code>=</code> <code>!=</code> <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code></td><td style="border:1px solid #ddd;padding:9px;">Comparaisons</td><td style="border:1px solid #ddd;padding:9px;"><code>age &gt;= 20</code></td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><code>AND</code> <code>OR</code> <code>NOT</code></td><td style="border:1px solid #ddd;padding:9px;">Connecteurs logiques</td><td style="border:1px solid #ddd;padding:9px;"><code>age &gt; 18 AND id_dep = 1</code></td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><code>IN</code></td><td style="border:1px solid #ddd;padding:9px;">Appartenance à une liste</td><td style="border:1px solid #ddd;padding:9px;"><code>id_dep IN (1, 3)</code></td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><code>BETWEEN … AND …</code></td><td style="border:1px solid #ddd;padding:9px;">Encadrement (bornes incluses)</td><td style="border:1px solid #ddd;padding:9px;"><code>age BETWEEN 19 AND 21</code></td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><code>LIKE</code></td><td style="border:1px solid #ddd;padding:9px;">Motif texte (<code>%</code> = toute suite, <code>_</code> = un caractère)</td><td style="border:1px solid #ddd;padding:9px;"><code>nom LIKE 'A%'</code></td></tr>
+</table>
+
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Le motif <code>LIKE</code>.</strong> <code>'A%'</code> = commence par A&nbsp;; <code>'%i'</code> = finit par i&nbsp;; <code>'%ar%'</code> = contient «&nbsp;ar&nbsp;»&nbsp;; <code>'_a%'</code> = a un «&nbsp;a&nbsp;» en 2ᵉ position.
+</div>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">7. Opérateurs ensemblistes et produit cartésien</h2>
+
+<p>On peut combiner les résultats de deux requêtes <code>SELECT</code> qui ont le <strong>même nombre de colonnes</strong>, de types compatibles, par les opérateurs ensemblistes&nbsp;:</p>
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#2c3e50;color:#fff;">
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Opérateur</th>
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Ensemble</th>
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Résultat</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><code>UNION</code></td><td style="border:1px solid #ddd;padding:9px;">A &cup; B</td><td style="border:1px solid #ddd;padding:9px;">Lignes de l'une OU l'autre (doublons supprimés).</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><code>INTERSECT</code></td><td style="border:1px solid #ddd;padding:9px;">A &cap; B</td><td style="border:1px solid #ddd;padding:9px;">Lignes présentes dans les deux.</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><code>EXCEPT</code></td><td style="border:1px solid #ddd;padding:9px;">A &minus; B</td><td style="border:1px solid #ddd;padding:9px;">Lignes de A absentes de B (différence).</td></tr>
+</table>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT nom FROM Etudiant WHERE id_dep = 1
+EXCEPT
+SELECT nom FROM Etudiant WHERE age &gt; 20;</pre>
+
+<h3 style="color:#014a54;">Produit cartésien</h3>
+<p>Le <strong>produit cartésien</strong> de deux tables associe <strong>chaque ligne de la première à chaque ligne de la seconde</strong>. Si A a m lignes et B a n lignes, le résultat en a m&nbsp;&times;&nbsp;n. On l'obtient en listant deux tables dans le <code>FROM</code>&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT * FROM Etudiant, Departement;   -- toutes les combinaisons</pre>
+<div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  Le produit cartésien brut combine des lignes qui n'ont rien à voir entre elles&nbsp;: il faut le filtrer. C'est exactement ce que fait la jointure (section suivante).
+</div>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">8. Les jointures internes</h2>
+
+<p>Une <strong>jointure interne</strong> combine les lignes de deux tables en ne gardant que les couples qui <strong>vérifient une condition de liaison</strong>, typiquement l'égalité d'une clé étrangère et d'une clé primaire. C'est un produit cartésien immédiatement filtré.</p>
+
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT Etudiant.nom, Departement.nom
+FROM   Etudiant
+JOIN   Departement ON Etudiant.id_dep = Departement.id;</pre>
+
+<p>On relie ainsi chaque étudiant au nom de son département. Pour une requête croisant <strong>trois tables</strong> (les notes par module), on enchaîne les jointures&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT Etudiant.nom, Module.intitule, Inscription.note
+FROM   Inscription
+JOIN   Etudiant ON Inscription.id_etudiant = Etudiant.id
+JOIN   Module   ON Inscription.code_module = Module.code;</pre>
+
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <strong>Préfixer les colonnes.</strong> Quand une colonne porte le même nom dans deux tables (ici <code>nom</code>), on lève l'ambiguïté en écrivant <code>Table.colonne</code>.
+</div>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">9. Renommage avec AS</h2>
+
+<p>Le mot-clé <strong>AS</strong> donne un <strong>alias</strong> (nom temporaire) à une colonne ou à une table, le temps de la requête. Cela rend les résultats plus lisibles et raccourcit les jointures.</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT  E.nom AS etudiant,
+        D.nom AS departement
+FROM    Etudiant AS E
+JOIN    Departement AS D ON E.id_dep = D.id;</pre>
+<p>Ici la colonne résultat s'appelle <code>etudiant</code> au lieu de <code>nom</code>, et l'on écrit <code>E</code> et <code>D</code> à la place des noms complets. Le renommage de table est indispensable pour l'<strong>auto-jointure</strong> (joindre une table avec elle-même).</p>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">10. Fonctions d'agrégation et GROUP BY</h2>
+
+<p>Une <strong>fonction d'agrégation</strong> calcule une valeur unique à partir d'un ensemble de lignes&nbsp;:</p>
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#2c3e50;color:#fff;">
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Fonction</th><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Calcule</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><code>COUNT(*)</code></td><td style="border:1px solid #ddd;padding:9px;">le nombre de lignes</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><code>SUM(col)</code></td><td style="border:1px solid #ddd;padding:9px;">la somme</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><code>AVG(col)</code></td><td style="border:1px solid #ddd;padding:9px;">la moyenne</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><code>MIN(col)</code> / <code>MAX(col)</code></td><td style="border:1px solid #ddd;padding:9px;">le minimum / le maximum</td></tr>
+</table>
+
+<p>Sans <code>GROUP BY</code>, l'agrégat porte sur <strong>toute la table</strong> (un seul groupe)&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT COUNT(*), AVG(age) FROM Etudiant;   -- 1 ligne résultat</pre>
+
+<p>La clause <strong>GROUP BY</strong> <strong>partitionne</strong> les lignes selon une (ou plusieurs) colonnes, puis applique l'agrégat à <strong>chaque groupe</strong>. Pour la note moyenne par module&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT   code_module, AVG(note) AS moyenne
+FROM     Inscription
+GROUP BY code_module;</pre>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">11. Filtrer les agrégats avec HAVING</h2>
+
+<p>La clause <strong>HAVING</strong> filtre les <strong>groupes</strong> après agrégation, comme <code>WHERE</code> filtre les lignes avant. Pour ne garder que les modules dont la moyenne dépasse 12&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT   code_module, AVG(note) AS moyenne
+FROM     Inscription
+GROUP BY code_module
+HAVING   AVG(note) &gt; 12;</pre>
+
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#2c3e50;color:#fff;">
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">WHERE</th>
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">HAVING</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;">S'applique <strong>avant</strong> le regroupement.</td><td style="border:1px solid #ddd;padding:9px;">S'applique <strong>après</strong> le regroupement.</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;">Filtre des <strong>lignes</strong>.</td><td style="border:1px solid #ddd;padding:9px;">Filtre des <strong>groupes</strong>.</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;">Ne peut pas porter sur un agrégat.</td><td style="border:1px solid #ddd;padding:9px;">Peut porter sur un agrégat (<code>AVG</code>, <code>COUNT</code>…).</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">12. Tri et limitation : ORDER BY, LIMIT, OFFSET</h2>
+
+<p><strong>ORDER BY</strong> trie les lignes du résultat selon une ou plusieurs colonnes&nbsp;: <code>ASC</code> (croissant, par défaut) ou <code>DESC</code> (décroissant). <strong>LIMIT</strong> borne le nombre de lignes affichées, et <strong>OFFSET</strong> en saute un certain nombre au début.</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT nom, age FROM Etudiant
+ORDER BY age DESC, nom ASC
+LIMIT 5 OFFSET 2;    -- saute 2 lignes, en affiche 5</pre>
+<div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+  <code>ORDER BY age DESC, nom ASC</code>&nbsp;: tri principal par âge décroissant&nbsp;; en cas d'égalité, tri secondaire par nom croissant.
+</div>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">13. Requêtes imbriquées (sous-requêtes)</h2>
+
+<p>Une <strong>sous-requête</strong> est une requête <code>SELECT</code> placée à l'intérieur d'une autre, entre parenthèses. Elle peut apparaître dans une clause <code>WHERE</code>, <code>FROM</code> ou <code>HAVING</code>. Elle sert à comparer avec une valeur ou un ensemble calculés dynamiquement.</p>
+
+<p>Les étudiants plus âgés que la moyenne&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT nom, age FROM Etudiant
+WHERE age &gt; (SELECT AVG(age) FROM Etudiant);</pre>
+
+<p>Avec <code>IN</code> / <code>NOT IN</code>, on compare à un <strong>ensemble</strong> de valeurs renvoyé par la sous-requête. Les étudiants inscrits à au moins un module&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT nom FROM Etudiant
+WHERE id IN (SELECT id_etudiant FROM Inscription);</pre>
+
+<p>Avec <code>EXISTS</code> / <code>NOT EXISTS</code>, on teste si la sous-requête renvoie au moins une ligne. Les départements qui ont au moins un étudiant&nbsp;:</p>
+<pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;">SELECT nom FROM Departement D
+WHERE EXISTS (SELECT 1 FROM Etudiant E WHERE E.id_dep = D.id);</pre>
+
+<table style="border-collapse:collapse;width:100%;margin:14px 0;">
+  <tr style="background:#2c3e50;color:#fff;">
+    <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Opérateur</th><th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Usage avec une sous-requête</th>
+  </tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><code>=, &lt;, &gt;, !=, &lt;=, &gt;=</code></td><td style="border:1px solid #ddd;padding:9px;">Comparaison à une valeur unique renvoyée.</td></tr>
+  <tr style="background:#f4f9fc;"><td style="border:1px solid #ddd;padding:9px;"><code>IN</code> / <code>NOT IN</code></td><td style="border:1px solid #ddd;padding:9px;">Appartenance / non-appartenance à l'ensemble renvoyé.</td></tr>
+  <tr><td style="border:1px solid #ddd;padding:9px;"><code>EXISTS</code> / <code>NOT EXISTS</code></td><td style="border:1px solid #ddd;padding:9px;">Vrai si la sous-requête renvoie (n')au moins une ligne (aucune).</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">14. Récapitulatif</h2>
+<div style="background:#eafaf1;border-left:4px solid #27ae60;padding:14px 18px;border-radius:4px;margin:14px 0;">
+  <ul style="margin:0;padding-left:22px;">
+    <li>Une <strong>base relationnelle</strong> = des <strong>tables</strong> (relations) faites d'<strong>attributs</strong> (colonnes) et d'<strong>enregistrements</strong> (lignes)&nbsp;; chaque attribut a un <strong>domaine</strong>.</li>
+    <li>On conçoit avec un <strong>modèle E/A</strong> (entités, associations, attributs, identifiants, cardinalités 1-1, 1-*, *-*).</li>
+    <li>La <strong>clé primaire</strong> identifie une ligne&nbsp;; la <strong>clé étrangère</strong> référence la clé primaire d'une autre table et assure la cohérence.</li>
+    <li>Traduction E/A &rArr; relationnel&nbsp;: entité &rArr; table&nbsp;; 1-* &rArr; clé étrangère côté «&nbsp;plusieurs&nbsp;»&nbsp;; *-* &rArr; <strong>table de liaison</strong>.</li>
+    <li><strong>Manipulation</strong>&nbsp;: <code>INSERT INTO</code>, <code>UPDATE … SET … WHERE</code>, <code>DELETE FROM … WHERE</code>.</li>
+    <li><strong>Interrogation</strong>&nbsp;: <code>SELECT</code> = projection (&pi;, colonnes) + sélection (&sigma;, <code>WHERE</code>)&nbsp;; <code>DISTINCT</code> ôte les doublons.</li>
+    <li><strong>Combiner</strong>&nbsp;: <code>UNION</code>, <code>INTERSECT</code>, <code>EXCEPT</code>, produit cartésien, et surtout la <strong>jointure</strong> <code>JOIN … ON …</code>.</li>
+    <li><strong>Synthétiser</strong>&nbsp;: agrégats <code>COUNT/SUM/AVG/MIN/MAX</code> + <code>GROUP BY</code>, filtrés par <code>HAVING</code>.</li>
+    <li><strong>Présenter</strong>&nbsp;: <code>ORDER BY</code>, <code>LIMIT</code>, <code>OFFSET</code>&nbsp;; et <strong>sous-requêtes</strong> dans <code>WHERE/FROM/HAVING</code> avec <code>IN</code>, <code>EXISTS</code>…</li>
+  </ul>
+</div>
+
+<p style="text-align:center;color:#9aa7b2;font-size:0.85em;margin-top:30px;">Informatique CPGE MP/PSI · Les bases de données relationnelles</p>
+
+</div>
