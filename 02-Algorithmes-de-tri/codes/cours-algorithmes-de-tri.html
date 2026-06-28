@@ -117,7 +117,118 @@
       <td style="border:1px solid #ddd;padding:9px;">\(O(n^2)\)</td>
     </tr>
   </table>
-  <p>Le tri par sélection, par exemple, effectue \((n-1) + (n-2) + \dots + 1 = \frac{n(n-1)}{2}\) comparaisons, soit \(O(n^2)\). L'objectif de ce chapitre est d'atteindre une complexité bien meilleure, \(O(n \log n)\).</p>
+  <p>L'objectif de ce chapitre est d'atteindre une complexité bien meilleure, \(O(n \log n)\). Reprenons d'abord en détail les deux tris simples les plus utilisés.</p>
+
+  <!-- ===== 1.1 Tri par sélection ===== -->
+  <h3 style="color:#026573;margin-top:24px;">1.1 Le tri par sélection</h3>
+  <p><strong>Principe.</strong> À l'étape \(i\), on cherche le <strong>minimum</strong> de la partie non triée \(t[i..n-1]\) et on l'échange avec \(t[i]\). La partie gauche grandit d'une case à chaque étape jusqu'à ce que tout le tableau soit trié.</p>
+
+  <p><strong>Exemple de déroulement</strong> sur le tableau \(t = [29,\ 10,\ 14,\ 37,\ 13]\). À chaque passe, le minimum de la zone non triée (en gras) est amené en tête de cette zone :</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.93em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:8px;text-align:left;">Passe</th>
+      <th style="border:1px solid #2c3e50;padding:8px;text-align:left;">Zone non triée</th>
+      <th style="border:1px solid #2c3e50;padding:8px;text-align:left;">Minimum trouvé</th>
+      <th style="border:1px solid #2c3e50;padding:8px;text-align:left;">Tableau après échange</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:8px;">1</td>
+      <td style="border:1px solid #ddd;padding:8px;">[29, 10, 14, 37, 13]</td>
+      <td style="border:1px solid #ddd;padding:8px;">10 (indice 1)</td>
+      <td style="border:1px solid #ddd;padding:8px;"><strong>10</strong> | 29, 14, 37, 13</td>
+    </tr>
+    <tr style="background:#f7fbfc;">
+      <td style="border:1px solid #ddd;padding:8px;">2</td>
+      <td style="border:1px solid #ddd;padding:8px;">29, 14, 37, 13</td>
+      <td style="border:1px solid #ddd;padding:8px;">13 (indice 4)</td>
+      <td style="border:1px solid #ddd;padding:8px;"><strong>10, 13</strong> | 14, 37, 29</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:8px;">3</td>
+      <td style="border:1px solid #ddd;padding:8px;">14, 37, 29</td>
+      <td style="border:1px solid #ddd;padding:8px;">14 (déjà en place)</td>
+      <td style="border:1px solid #ddd;padding:8px;"><strong>10, 13, 14</strong> | 37, 29</td>
+    </tr>
+    <tr style="background:#f7fbfc;">
+      <td style="border:1px solid #ddd;padding:8px;">4</td>
+      <td style="border:1px solid #ddd;padding:8px;">37, 29</td>
+      <td style="border:1px solid #ddd;padding:8px;">29 (indice 4)</td>
+      <td style="border:1px solid #ddd;padding:8px;"><strong>10, 13, 14, 29</strong> | 37</td>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:8px;">Fin</td>
+      <td style="border:1px solid #ddd;padding:8px;">—</td>
+      <td style="border:1px solid #ddd;padding:8px;">—</td>
+      <td style="border:1px solid #ddd;padding:8px;"><strong>10, 13, 14, 29, 37</strong></td>
+    </tr>
+  </table>
+
+  <p><strong>Implémentation (en place).</strong> Une seule application directe du principe :</p>
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">tri_selection</span>(t):
+    n = <span style="color:#79c0ff;">len</span>(t)
+    <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(n - <span style="color:#79c0ff;">1</span>):
+        imin = i
+        <span style="color:#ff7b72;">for</span> j <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(i + <span style="color:#79c0ff;">1</span>, n):
+            <span style="color:#ff7b72;">if</span> t[j] &lt; t[imin]:
+                imin = j
+        t[i], t[imin] = t[imin], t[i]   <span style="color:#8b949e;"># échange le minimum en position i</span>
+    <span style="color:#ff7b72;">return</span> t</pre>
+
+  <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Exemple d'application.</strong> Comme le tri par sélection effectue <strong>au plus \(n-1\) échanges</strong> (un seul par passe), il est adapté aux situations où <em>écrire</em> une donnée coûte cher : tri de gros enregistrements en mémoire, ou supports dont le nombre d'écritures est limité (mémoires flash). Il minimise le nombre de déplacements, même s'il fait toujours autant de comparaisons.
+  </div>
+
+  <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Exemple de calcul de complexité.</strong> À la passe \(i\) (pour \(i\) de \(0\) à \(n-2\)), la recherche du minimum de \(t[i..n-1]\) demande \(n-1-i\) comparaisons. Le nombre total de comparaisons est donc
+    \[ C(n) = \sum_{i=0}^{n-2} (n-1-i) = (n-1) + (n-2) + \dots + 1 = \frac{n(n-1)}{2}. \]
+    Ce nombre ne dépend pas du contenu du tableau : la complexité est \(\Theta(n^2)\) dans <strong>tous les cas</strong> (meilleur, moyen, pire). Les échanges, eux, sont au plus \(n-1\), soit \(O(n)\).
+  </div>
+
+  <!-- ===== 1.2 Tri par insertion ===== -->
+  <h3 style="color:#026573;margin-top:24px;">1.2 Le tri par insertion</h3>
+  <p><strong>Principe.</strong> On parcourt le tableau de gauche à droite. À l'étape \(i\), l'élément \(t[i]\) est <strong>inséré à sa place</strong> dans la partie déjà triée \(t[0..i-1]\), en le décalant vers la gauche tant qu'il est plus petit que son voisin.</p>
+
+  <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">tri_insertion</span>(t):
+    <span style="color:#ff7b72;">for</span> i <span style="color:#ff7b72;">in</span> <span style="color:#79c0ff;">range</span>(<span style="color:#79c0ff;">1</span>, <span style="color:#79c0ff;">len</span>(t)):
+        cle = t[i]
+        j = i - <span style="color:#79c0ff;">1</span>
+        <span style="color:#ff7b72;">while</span> j &gt;= <span style="color:#79c0ff;">0</span> <span style="color:#ff7b72;">and</span> t[j] &gt; cle:
+            t[j + <span style="color:#79c0ff;">1</span>] = t[j]
+            j -= <span style="color:#79c0ff;">1</span>
+        t[j + <span style="color:#79c0ff;">1</span>] = cle
+    <span style="color:#ff7b72;">return</span> t</pre>
+
+  <div style="background:#eef5ff;border-left:4px solid #2c6fbf;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>✍️ Exercice (à faire avant de regarder la solution).</strong>
+    <ol style="margin:8px 0 0 0;padding-left:20px;">
+      <li><strong>Déroulez</strong> le tri par insertion sur le tableau \(t = [5,\ 2,\ 4,\ 6,\ 1,\ 3]\) en donnant l'état du tableau après chaque insertion.</li>
+      <li><strong>Calculez</strong> la complexité du tri par insertion dans le meilleur et dans le pire des cas.</li>
+    </ol>
+  </div>
+
+  <details style="margin:0 0 16px 0;border:1px solid #cfe0e2;border-radius:6px;overflow:hidden;">
+    <summary style="background:#026573;color:#fff;padding:9px 16px;cursor:pointer;font-weight:600;list-style:none;">👁️ Afficher / masquer la solution</summary>
+    <div style="padding:14px 18px;background:#fafbfc;">
+      <p style="margin-top:0;"><strong>1. Déroulement sur \([5, 2, 4, 6, 1, 3]\).</strong> La barre <code style="background:#eef1f3;padding:1px 4px;border-radius:3px;">|</code> sépare la partie triée (à gauche) du reste.</p>
+      <table style="border-collapse:collapse;width:100%;margin:8px 0;font-size:0.93em;">
+        <tr style="background:#2c3e50;color:#fff;">
+          <th style="border:1px solid #2c3e50;padding:7px;text-align:left;">Élément inséré</th>
+          <th style="border:1px solid #2c3e50;padding:7px;text-align:left;">Tableau après insertion</th>
+        </tr>
+        <tr><td style="border:1px solid #ddd;padding:7px;">départ</td><td style="border:1px solid #ddd;padding:7px;">5 | 2, 4, 6, 1, 3</td></tr>
+        <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:7px;">2</td><td style="border:1px solid #ddd;padding:7px;">2, 5 | 4, 6, 1, 3</td></tr>
+        <tr><td style="border:1px solid #ddd;padding:7px;">4</td><td style="border:1px solid #ddd;padding:7px;">2, 4, 5 | 6, 1, 3</td></tr>
+        <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:7px;">6</td><td style="border:1px solid #ddd;padding:7px;">2, 4, 5, 6 | 1, 3</td></tr>
+        <tr><td style="border:1px solid #ddd;padding:7px;">1</td><td style="border:1px solid #ddd;padding:7px;">1, 2, 4, 5, 6 | 3</td></tr>
+        <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:7px;">3</td><td style="border:1px solid #ddd;padding:7px;"><strong>1, 2, 3, 4, 5, 6</strong></td></tr>
+      </table>
+      <p><strong>2. Complexité.</strong> Notons \(c_i\) le nombre de décalages effectués pour insérer \(t[i]\).</p>
+      <p style="margin-left:6px;">• <strong>Meilleur cas</strong> — tableau <em>déjà trié</em> : la condition <code style="background:#eef1f3;padding:1px 4px;border-radius:3px;">t[j] &gt; cle</code> est fausse immédiatement, donc \(1\) comparaison par étape et \(0\) décalage. Total \(= n-1 = \Theta(n)\).</p>
+      <p style="margin-left:6px;">• <strong>Pire cas</strong> — tableau <em>trié à l'envers</em> : insérer \(t[i]\) demande \(i\) décalages. Le total est
+      \[ \sum_{i=1}^{n-1} i = \frac{n(n-1)}{2} = \Theta(n^2). \]</p>
+      <p style="margin-bottom:0;">Le tri par insertion est donc \(O(n^2)\) au pire, mais <strong>très efficace sur des données presque triées</strong> (proche de \(O(n)\)) — c'est sa grande qualité par rapport au tri par sélection.</p>
+    </div>
+  </details>
 
   <!-- ===== 2 ===== -->
   <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">2. Deux propriétés clés : tri en place et stabilité</h2>
@@ -128,11 +239,78 @@
   <div style="background:#e4f1f2;border-left:4px solid #026573;padding:10px 16px;border-radius:4px;margin:14px 0;">
     <strong>Stabilité.</strong> Un tri est <em>stable</em> s'il conserve l'ordre relatif initial des éléments ayant une clé égale. Utile lorsqu'on trie selon plusieurs critères successifs.
   </div>
-  <p>Exemple de stabilité : on trie une liste de personnes déjà triées par prénom, cette fois par âge. Un tri stable garde, parmi les personnes de même âge, l'ordre alphabétique acquis précédemment ; un tri non stable peut le détruire.</p>
+  <div style="background:#f3f6f8;border:1px solid #d4dde2;padding:10px 16px;border-radius:4px;margin:14px 0;">
+    <strong>Définition mathématique.</strong> Soit un tableau \(t = (t_0, t_1, \dots, t_{n-1})\) muni d'une fonction de clé \(\text{cl\'e}\). Un tri est <strong>stable</strong> si, pour tout couple d'indices \(i &lt; j\) tel que \(\text{cl\'e}(t_i) = \text{cl\'e}(t_j)\), l'élément issu de l'indice \(i\) apparaît <strong>avant</strong> celui issu de l'indice \(j\) dans le tableau trié.
+    <div style="text-align:center;margin-top:6px;">\( i &lt; j \ \text{ et } \ \text{cl\'e}(t_i) = \text{cl\'e}(t_j) \quad \Longrightarrow \quad \sigma(i) &lt; \sigma(j) \)</div>
+    <div style="font-size:0.9em;color:#5a6b78;text-align:center;margin-top:4px;">où \(\sigma\) est la permutation appliquée par le tri (position finale de chaque élément).</div>
+  </div>
+
+  <p>Pour <em>voir</em> la différence, ajoutons une étiquette à chaque valeur et trions selon la <strong>valeur</strong> uniquement. Partons de \([\,(3,a),\ (3,c),\ (2,b)\,]\) (l'étiquette \(a\) est avant \(c\) au départ) :</p>
+  <table style="border-collapse:collapse;width:100%;margin:14px 0;font-size:0.94em;">
+    <tr style="background:#2c3e50;color:#fff;">
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Tri</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Résultat</th>
+      <th style="border:1px solid #2c3e50;padding:9px;text-align:left;">Ordre de (3,a) et (3,c)</th>
+    </tr>
+    <tr>
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Tri par insertion</strong> (stable)</td>
+      <td style="border:1px solid #ddd;padding:9px;">(2,b), <strong>(3,a)</strong>, <strong>(3,c)</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;color:#1e7a44;">conservé : a avant c ✔</td>
+    </tr>
+    <tr style="background:#f7fbfc;">
+      <td style="border:1px solid #ddd;padding:9px;"><strong>Tri par sélection</strong> (non stable)</td>
+      <td style="border:1px solid #ddd;padding:9px;">(2,b), <strong>(3,c)</strong>, <strong>(3,a)</strong></td>
+      <td style="border:1px solid #ddd;padding:9px;color:#b03a2e;">inversé : c avant a ✘</td>
+    </tr>
+  </table>
+  <p style="font-size:0.95em;">Pourquoi le tri par sélection casse l'ordre ici : à la première passe, le minimum \(2\) (étiquette \(b\), en position 2) est <strong>échangé avec la position 0</strong>, occupée par \((3,a)\). Cet échange envoie \((3,a)\) <em>après</em> \((3,c)\), détruisant leur ordre initial. C'est le mécanisme d'échange « à distance » qui rend le tri par sélection non stable.</p>
+  <p>Application concrète : on trie une liste de personnes déjà triées par prénom, cette fois par âge. Un tri <strong>stable</strong> garde, parmi les personnes de même âge, l'ordre alphabétique acquis précédemment ; un tri <strong>non stable</strong> peut le détruire.</p>
 
   <!-- ===== 3 ===== -->
   <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">3. Le tri rapide (quicksort)</h2>
   <p><strong>Principe (diviser pour régner).</strong> On choisit un élément appelé <strong>pivot</strong>. On réorganise la liste (étape de <em>partition</em>) de sorte que les éléments plus petits que le pivot soient à sa gauche et les plus grands à sa droite. Le pivot est alors à sa place définitive. On applique ensuite récursivement le même procédé aux deux sous-listes gauche et droite.</p>
+
+  <p><strong>Illustration graphique (arbre d'appels)</strong> sur \([3,\ 8,\ 1,\ 5,\ 2]\), pivot = premier élément. Chaque nœud montre la liste reçue ; le pivot est <span style="color:#e74c3c;font-weight:700;">en rouge</span>, et les flèches mènent aux sous-listes « \(\leq\) pivot » (gauche) et « \(&gt;\) pivot » (droite). On remonte ensuite en concaténant <em>gauche + pivot + droite</em>.</p>
+  <div style="text-align:center;margin:16px 0;">
+  <svg viewBox="0 0 640 330" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%;font-family:Arial,Helvetica,sans-serif;">
+    <!-- edges -->
+    <g stroke="#9bb7bc" stroke-width="2">
+      <line x1="320" y1="42" x2="180" y2="112"/>
+      <line x1="320" y1="42" x2="470" y2="112"/>
+      <line x1="180" y1="142" x2="100" y2="212"/>
+      <line x1="180" y1="142" x2="260" y2="212"/>
+      <line x1="470" y1="142" x2="470" y2="212"/>
+    </g>
+    <!-- edge labels -->
+    <text x="230" y="82" fill="#5a6b78" font-size="12">≤3</text>
+    <text x="405" y="82" fill="#5a6b78" font-size="12">&gt;3</text>
+    <text x="120" y="182" fill="#5a6b78" font-size="12">≤1</text>
+    <text x="235" y="182" fill="#5a6b78" font-size="12">&gt;1</text>
+    <text x="485" y="182" fill="#5a6b78" font-size="12">≤8</text>
+    <!-- nodes -->
+    <g font-size="14" text-anchor="middle">
+      <!-- root -->
+      <rect x="262" y="18" width="116" height="26" rx="6" fill="#e4f1f2" stroke="#026573"/>
+      <text x="320" y="36"><tspan fill="#e74c3c" font-weight="700">3</tspan><tspan fill="#2c3e50">, 8, 1, 5, 2</tspan></text>
+      <!-- left child [1,2] -->
+      <rect x="138" y="116" width="84" height="26" rx="6" fill="#e4f1f2" stroke="#026573"/>
+      <text x="180" y="134"><tspan fill="#e74c3c" font-weight="700">1</tspan><tspan fill="#2c3e50">, 2</tspan></text>
+      <!-- right child [8,5] -->
+      <rect x="428" y="116" width="84" height="26" rx="6" fill="#e4f1f2" stroke="#026573"/>
+      <text x="470" y="134"><tspan fill="#e74c3c" font-weight="700">8</tspan><tspan fill="#2c3e50">, 5</tspan></text>
+      <!-- leaves -->
+      <rect x="74" y="216" width="52" height="26" rx="6" fill="#f0f4f5" stroke="#9bb7bc"/>
+      <text x="100" y="234" fill="#2c3e50">[ ]</text>
+      <rect x="234" y="216" width="52" height="26" rx="6" fill="#f0f4f5" stroke="#9bb7bc"/>
+      <text x="260" y="234" fill="#2c3e50">[2]</text>
+      <rect x="444" y="216" width="52" height="26" rx="6" fill="#f0f4f5" stroke="#9bb7bc"/>
+      <text x="470" y="234" fill="#2c3e50">[5]</text>
+    </g>
+    <!-- result -->
+    <text x="320" y="290" text-anchor="middle" font-size="13" fill="#5a6b78">Résultat en remontant : (1,2) + 3 + (5,8)</text>
+    <text x="320" y="312" text-anchor="middle" font-size="15" fill="#1e7a44" font-weight="700">[1, 2, 3, 5, 8]</text>
+  </svg>
+  </div>
 
   <p>Une implémentation simple et lisible (non en place, qui construit deux sous-listes) :</p>
   <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">tri_rapide</span>(L):
@@ -143,9 +321,23 @@
     grands = [x <span style="color:#ff7b72;">for</span> x <span style="color:#ff7b72;">in</span> L[<span style="color:#79c0ff;">1</span>:] <span style="color:#ff7b72;">if</span> x &gt; pivot]
     <span style="color:#ff7b72;">return</span> tri_rapide(petits) + [pivot] + tri_rapide(grands)</pre>
 
-  <div style="background:#fdeef0;border-left:4px solid #e74c3c;padding:10px 16px;border-radius:4px;margin:16px 0;">
-    <strong>Complexité.</strong> En <strong>moyenne</strong>, la partition équilibre les deux côtés et l'on obtient T(n) = 2 T(n/2) + \(O(n)\), soit <strong>\(O(n \log n)\)</strong>. Dans le <strong>pire des cas</strong> (pivot toujours minimal ou maximal, par exemple sur une liste déjà triée avec ce choix de pivot), une seule sous-liste est non vide à chaque étape : T(n) = T(n-1) + \(O(n)\), soit <strong>\(O(n^2)\)</strong>.
+  <p>L'étape de partition d'une liste de taille \(n\) parcourt les \(n-1\) autres éléments : son coût est \(\Theta(n)\). Notons \(T(n)\) le coût total du tri. Détaillons les deux cas extrêmes.</p>
+
+  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Meilleur des cas — pivot toujours « médian ».</strong> La partition coupe la liste en deux moitiés de taille \(\approx n/2\) :
+    \[ T(n) = 2\,T\!\left(\tfrac{n}{2}\right) + c\,n. \]
+    En déroulant, au niveau \(k\) il y a \(2^k\) sous-listes de taille \(n/2^k\), donc un travail de \(2^k \cdot c\,\tfrac{n}{2^k} = c\,n\) <strong>par niveau</strong>. L'arbre a \(\log_2 n\) niveaux, d'où
+    \[ T(n) = c\,n \times \log_2 n = \Theta(n \log n). \]
   </div>
+
+  <div style="background:#fdeef0;border-left:4px solid #e74c3c;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>Pire des cas — pivot toujours extrémal</strong> (minimum ou maximum, par ex. sur une liste <em>déjà triée</em> avec ce choix de pivot). Une seule sous-liste est non vide et perd un seul élément à chaque étape :
+    \[ T(n) = T(n-1) + c\,n. \]
+    En déroulant :
+    \[ T(n) = c\,n + c\,(n-1) + \dots + c\cdot 1 = c\,\frac{n(n+1)}{2} = \Theta(n^2). \]
+  </div>
+
+  <p style="font-size:0.95em;color:#5a6b78;">En <strong>moyenne</strong> (pivot quelconque), on démontre que le coût reste \(\Theta(n \log n)\) : le pire cas est rare dès que le pivot est bien choisi.</p>
 
   <div style="background:#fef9e7;border-left:4px solid #f39c12;padding:10px 16px;border-radius:4px;margin:16px 0;">
     <strong>Choix du pivot.</strong> Prendre systématiquement le premier élément rend le pire cas fréquent (listes déjà triées). On préfère un pivot <em>aléatoire</em>, ou la <em>médiane de trois</em> (premier, milieu, dernier), pour rendre le pire cas très improbable et garantir \(O(n \log n)\) en pratique.
@@ -155,6 +347,44 @@
   <!-- ===== 4 ===== -->
   <h2 style="color:#026573;border-bottom:2px solid #026573;padding-bottom:6px;">4. Le tri par fusion (merge sort)</h2>
   <p><strong>Principe (diviser pour régner).</strong> On coupe la liste en deux moitiés, on trie récursivement chacune, puis on <strong>fusionne</strong> les deux moitiés triées en une seule liste triée. La fusion parcourt les deux listes en parallèle et choisit à chaque étape le plus petit élément de tête.</p>
+
+  <p><strong>Illustration graphique (arbre de division puis de fusion)</strong> sur \([3,\ 8,\ 1,\ 5,\ 2]\). On <span style="color:#026573;font-weight:700;">descend</span> en coupant en deux jusqu'aux singletons, puis on <span style="color:#1e7a44;font-weight:700;">remonte</span> en fusionnant :</p>
+  <div style="text-align:center;margin:16px 0;">
+  <svg viewBox="0 0 660 340" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%;font-family:Arial,Helvetica,sans-serif;">
+    <g stroke="#9bb7bc" stroke-width="2">
+      <line x1="330" y1="38" x2="180" y2="98"/>
+      <line x1="330" y1="38" x2="490" y2="98"/>
+      <line x1="180" y1="124" x2="110" y2="184"/>
+      <line x1="180" y1="124" x2="250" y2="184"/>
+      <line x1="490" y1="124" x2="430" y2="184"/>
+      <line x1="490" y1="124" x2="560" y2="184"/>
+      <line x1="250" y1="210" x2="210" y2="262"/>
+      <line x1="250" y1="210" x2="300" y2="262"/>
+    </g>
+    <g font-size="13" text-anchor="middle">
+      <rect x="278" y="14" width="104" height="24" rx="6" fill="#e4f1f2" stroke="#026573"/>
+      <text x="330" y="31" fill="#2c3e50">3, 8, 1, 5, 2</text>
+      <rect x="144" y="100" width="72" height="24" rx="6" fill="#e4f1f2" stroke="#026573"/>
+      <text x="180" y="117" fill="#2c3e50">3, 8</text>
+      <rect x="446" y="100" width="88" height="24" rx="6" fill="#e4f1f2" stroke="#026573"/>
+      <text x="490" y="117" fill="#2c3e50">1, 5, 2</text>
+      <rect x="86" y="186" width="48" height="24" rx="6" fill="#f0f4f5" stroke="#9bb7bc"/>
+      <text x="110" y="203" fill="#2c3e50">[3]</text>
+      <rect x="226" y="186" width="48" height="24" rx="6" fill="#f0f4f5" stroke="#9bb7bc"/>
+      <text x="250" y="203" fill="#2c3e50">[8]</text>
+      <rect x="406" y="186" width="48" height="24" rx="6" fill="#f0f4f5" stroke="#9bb7bc"/>
+      <text x="430" y="203" fill="#2c3e50">[1]</text>
+      <rect x="536" y="186" width="48" height="24" rx="6" fill="#e4f1f2" stroke="#026573"/>
+      <text x="560" y="203" fill="#2c3e50">5, 2</text>
+      <rect x="186" y="264" width="48" height="24" rx="6" fill="#f0f4f5" stroke="#9bb7bc"/>
+      <text x="210" y="281" fill="#2c3e50">[5]</text>
+      <rect x="276" y="264" width="48" height="24" rx="6" fill="#f0f4f5" stroke="#9bb7bc"/>
+      <text x="300" y="281" fill="#2c3e50">[2]</text>
+    </g>
+    <text x="330" y="318" text-anchor="middle" font-size="13" fill="#1e7a44">Fusions : [3,8] · [2,5] → [1,2,5] · puis tout → </text>
+    <text x="330" y="335" text-anchor="middle" font-size="14" fill="#1e7a44" font-weight="700">[1, 2, 3, 5, 8]</text>
+  </svg>
+  </div>
 
   <p>L'étape de fusion de deux listes déjà triées :</p>
   <pre style="background:#0d1117;color:#e6edf3;font-family:Consolas,Monaco,monospace;padding:16px;border-radius:8px;overflow-x:auto;font-size:0.92em;"><span style="color:#ff7b72;">def</span> <span style="color:#d2a8ff;">fusion</span>(A, B):
@@ -176,9 +406,40 @@
     droite = tri_fusion(L[m:])
     <span style="color:#ff7b72;">return</span> fusion(gauche, droite)</pre>
 
-  <div style="background:#eafaf1;border-left:4px solid #27ae60;padding:10px 16px;border-radius:4px;margin:16px 0;">
-    <strong>Complexité.</strong> La liste est divisée en deux à chaque niveau (log<sub>2</sub> n niveaux) et la fusion d'un niveau coûte \(O(n)\). On a T(n) = 2 T(n/2) + \(O(n)\), soit <strong>\(O(n \log n)\) garanti</strong>, y compris dans le pire des cas — contrairement au tri rapide.
+  <div style="background:#eef5ff;border-left:4px solid #2c6fbf;padding:12px 16px;border-radius:4px;margin:16px 0;">
+    <strong>✍️ Exercice (à faire avant de regarder la solution).</strong>
+    <ol style="margin:8px 0 0 0;padding-left:20px;">
+      <li><strong>Déroulez</strong> la fusion des deux listes triées \(A = [1,\ 4,\ 7]\) et \(B = [2,\ 3,\ 9]\), étape par étape.</li>
+      <li><strong>Établissez</strong> la relation de récurrence vérifiée par \(T(n)\), le coût du tri par fusion, et déduisez-en la complexité dans le <strong>pire des cas</strong>.</li>
+    </ol>
   </div>
+
+  <details style="margin:0 0 16px 0;border:1px solid #cfe0e2;border-radius:6px;overflow:hidden;">
+    <summary style="background:#026573;color:#fff;padding:9px 16px;cursor:pointer;font-weight:600;list-style:none;">👁️ Afficher / masquer la solution</summary>
+    <div style="padding:14px 18px;background:#fafbfc;">
+      <p style="margin-top:0;"><strong>1. Fusion de \(A=[1,4,7]\) et \(B=[2,3,9]\).</strong> À chaque étape on compare les têtes \(A[i]\) et \(B[j]\) et on prend la plus petite.</p>
+      <table style="border-collapse:collapse;width:100%;margin:8px 0;font-size:0.92em;">
+        <tr style="background:#2c3e50;color:#fff;">
+          <th style="border:1px solid #2c3e50;padding:7px;text-align:left;">Comparaison</th>
+          <th style="border:1px solid #2c3e50;padding:7px;text-align:left;">Élément ajouté</th>
+          <th style="border:1px solid #2c3e50;padding:7px;text-align:left;">C (résultat)</th>
+        </tr>
+        <tr><td style="border:1px solid #ddd;padding:7px;">1 ≤ 2</td><td style="border:1px solid #ddd;padding:7px;">1 (de A)</td><td style="border:1px solid #ddd;padding:7px;">[1]</td></tr>
+        <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:7px;">4 &gt; 2</td><td style="border:1px solid #ddd;padding:7px;">2 (de B)</td><td style="border:1px solid #ddd;padding:7px;">[1, 2]</td></tr>
+        <tr><td style="border:1px solid #ddd;padding:7px;">4 &gt; 3</td><td style="border:1px solid #ddd;padding:7px;">3 (de B)</td><td style="border:1px solid #ddd;padding:7px;">[1, 2, 3]</td></tr>
+        <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:7px;">4 ≤ 9</td><td style="border:1px solid #ddd;padding:7px;">4 (de A)</td><td style="border:1px solid #ddd;padding:7px;">[1, 2, 3, 4]</td></tr>
+        <tr><td style="border:1px solid #ddd;padding:7px;">7 ≤ 9</td><td style="border:1px solid #ddd;padding:7px;">7 (de A)</td><td style="border:1px solid #ddd;padding:7px;">[1, 2, 3, 4, 7]</td></tr>
+        <tr style="background:#f7fbfc;"><td style="border:1px solid #ddd;padding:7px;">A vide</td><td style="border:1px solid #ddd;padding:7px;">9 (reste de B)</td><td style="border:1px solid #ddd;padding:7px;"><strong>[1, 2, 3, 4, 7, 9]</strong></td></tr>
+      </table>
+      <p>La fusion de deux listes de tailles \(m\) et \(p\) coûte \(\Theta(m+p)\) : chaque élément est ajouté une seule fois.</p>
+      <p><strong>2. Récurrence et pire cas.</strong> Le tri coupe la liste en deux moitiés de taille \(n/2\), les trie, puis les fusionne en \(\Theta(n)\). D'où, dans <strong>tous les cas</strong> :
+      \[ T(n) = 2\,T\!\left(\tfrac{n}{2}\right) + c\,n. \]
+      L'arbre de division a \(\log_2 n\) niveaux ; à chaque niveau, l'ensemble des fusions traite \(n\) éléments, soit un coût \(c\,n\) par niveau. Donc
+      \[ T(n) = c\,n \times \log_2 n = \Theta(n \log n). \]
+      Contrairement au tri rapide, la coupe en deux <strong>moitiés égales</strong> est garantie quel que soit le contenu : il n'y a <strong>pas de pire cas dégradé</strong>. La complexité est \(\Theta(n\log n)\) au meilleur, en moyenne <em>et</em> au pire.</p>
+    </div>
+  </details>
+
   <p>En contrepartie, le tri par fusion n'est <strong>pas en place</strong> : il nécessite \(O(n)\) de mémoire supplémentaire pour les listes fusionnées. Il est en revanche <strong>stable</strong> (à condition d'utiliser <code style="background:#eef1f3;padding:1px 5px;border-radius:3px;">&lt;=</code> dans la fusion).</p>
 
   <!-- ===== 5 ===== -->
