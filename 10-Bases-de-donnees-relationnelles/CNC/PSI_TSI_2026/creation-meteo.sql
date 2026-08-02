@@ -1,0 +1,35 @@
+CREATE TABLE Villes (code INTEGER PRIMARY KEY, nom TEXT NOT NULL, altitude REAL NOT NULL);
+CREATE TABLE Observations (
+    codV INTEGER NOT NULL REFERENCES Villes(code),
+    mois INTEGER NOT NULL,
+    année INTEGER NOT NULL,
+    temp REAL NOT NULL,
+    précip REAL NOT NULL
+);
+INSERT INTO Villes VALUES (900, 'Tanger', 56);
+INSERT INTO Villes VALUES (400, 'Marrakech', 465);
+INSERT INTO Villes VALUES (200, 'Casa Blanca', 115);
+INSERT INTO Villes VALUES (100, 'Rabat', 87);
+INSERT INTO Villes VALUES (300, 'Agadir', 25);
+INSERT INTO Villes VALUES (500, 'Fès', 410);
+INSERT INTO Observations VALUES (900, 1, 2024, 17, 10);
+INSERT INTO Observations VALUES (900, 2, 2024, 15, 14);
+INSERT INTO Observations VALUES (900, 3, 2024, 16, 79);
+INSERT INTO Observations VALUES (900, 7, 2024, 48, 0);
+INSERT INTO Observations VALUES (400, 1, 2024, 14, 4);
+INSERT INTO Observations VALUES (400, 2, 2024, 15, 12);
+INSERT INTO Observations VALUES (200, 1, 2024, 16, 20);
+INSERT INTO Observations VALUES (200, 2, 2024, 18, 30);
+INSERT INTO Observations VALUES (900, 1, 2025, 18, 125);
+INSERT INTO Observations VALUES (900, 10, 2025, 22, 95);
+INSERT INTO Observations VALUES (400, 7, 2025, 46, 0);
+INSERT INTO Observations VALUES (400, 8, 2025, 47, 0);
+INSERT INTO Observations VALUES (400, 10, 2025, 24, 7);
+INSERT INTO Observations VALUES (200, 7, 2025, 44, 2);
+INSERT INTO Observations VALUES (200, 10, 2025, 21, 30);
+INSERT INTO Observations VALUES (100, 8, 2025, 50, 3);
+INSERT INTO Observations VALUES (100, 10, 2025, 20, 41);
+INSERT INTO Observations VALUES (300, 7, 2025, 45, 1);
+INSERT INTO Observations VALUES (300, 10, 2025, 23, 14);
+INSERT INTO Observations VALUES (500, 1, 2025, 9, 300);
+INSERT INTO Observations VALUES (500, 2, 2025, 11, 180);
