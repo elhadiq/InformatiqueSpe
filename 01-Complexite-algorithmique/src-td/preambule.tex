@@ -1,0 +1,85 @@
+% ---- Préambule commun ----
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2.2cm,top=2.6cm,bottom=2.4cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\usepackage{hyperref}
+
+\definecolor{teal}{HTML}{026573}
+\definecolor{tealclair}{HTML}{E6F2F3}
+\definecolor{grisclair}{HTML}{F5F5F5}
+\definecolor{orangefonce}{HTML}{B35900}
+
+\hypersetup{colorlinks=true,linkcolor=teal,urlcolor=teal,citecolor=teal}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+
+% ---- Style Python ----
+\lstdefinestyle{python}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{teal}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{orangefonce},
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  frame=leftline,
+  framerule=1.2pt,
+  rulecolor=\color{teal},
+  xleftmargin=14pt,
+  backgroundcolor=\color{grisclair},
+  breaklines=true,
+  literate={é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {à}{{\`a}}1 {ô}{{\^o}}1 {û}{{\^u}}1 {î}{{\^i}}1 {ç}{{\c c}}1
+}
+\lstset{style=python}
+
+% ---- Compteur d'exercices ----
+\newcounter{exo}
+\newcommand{\exo}[1]{%
+  \stepcounter{exo}%
+  \vspace{10pt}%
+  \noindent\begin{tcolorbox}[colback=tealclair,colframe=teal,boxrule=1pt,
+      left=8pt,right=8pt,top=5pt,bottom=5pt,arc=2pt]
+    \textbf{\large Exercice \theexo} \;---\; \textbf{#1}
+  \end{tcolorbox}%
+  \vspace{4pt}%
+  \nopagebreak
+}
+
+\newcommand{\partiecours}[1]{%
+  \vspace{14pt}%
+  {\color{teal}\hrule height 2pt}%
+  \vspace{4pt}%
+  {\Large\bfseries\color{teal} #1}%
+  \vspace{2pt}%
+  {\color{teal}\hrule height 0.6pt}%
+  \vspace{8pt}%
+}
+
+\newtcolorbox{rappel}[1][Rappel]{
+  colback=white,colframe=gray!60,boxrule=0.8pt,
+  fonttitle=\bfseries,title=#1,coltitle=black,colbacktitle=grisclair,
+  left=6pt,right=6pt}
+
+\newtcolorbox{indication}{
+  colback=white,colframe=orangefonce!60,boxrule=0.8pt,
+  left=6pt,right=6pt,top=4pt,bottom=4pt}
+
+\newcommand{\reponse}{\vspace{4pt}\noindent{\color{teal}\textbf{Solution.}}\;}
+
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}

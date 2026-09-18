@@ -1,0 +1,545 @@
+\documentclass[11pt,a4paper]{article}
+\input{preambule.tex}
+\fancyhead[L]{\small\color{teal} TD --- Complexité algorithmique}
+\fancyhead[R]{\small\color{teal} Énoncé}
+
+\begin{document}
+
+\begin{center}
+  {\color{teal}\hrule height 2.5pt}
+  \vspace{10pt}
+  {\Huge\bfseries\color{teal} Travaux dirigés}\\[6pt]
+  {\LARGE\bfseries Calcul de complexité algorithmique}\\[10pt]
+  {\large Cas itératif \;$\bullet$\; Cas récursif}\\[8pt]
+  {\normalsize CPGE --- filières MP / PSI \quad$|$\quad Informatique pour tous}\\[6pt]
+  \vspace{6pt}
+  {\color{teal}\hrule height 1pt}
+\end{center}
+
+\vspace{6pt}
+
+\begin{rappel}[Conventions et notations]
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item $n$ désigne toujours la \emph{taille de l'entrée}. On compte le nombre
+        d'\emph{opérations élémentaires} (affectations, comparaisons, opérations
+        arithmétiques sur des entiers machine), chacune de coût $\Theta(1)$.
+  \item $f = O(g)$ : $\exists\, C>0,\ \exists\, n_0,\ \forall n\ge n_0,\ |f(n)|\le C\,g(n)$.
+  \item $f = \Omega(g)$ : $g = O(f)$. \qquad $f = \Theta(g)$ : $f=O(g)$ \emph{et} $f=\Omega(g)$.
+  \item $f = o(g)$ : $f(n)/g(n)\longrightarrow 0$.
+  \item Sommes usuelles : $\displaystyle\sum_{k=1}^{n}k=\frac{n(n+1)}{2}$, \quad
+        $\displaystyle\sum_{k=1}^{n}k^2=\frac{n(n+1)(2n+1)}{6}$, \quad
+        $\displaystyle\sum_{k=0}^{n}x^k=\frac{x^{n+1}-1}{x-1}\ (x\ne1)$,
+  \item Série harmonique : $\displaystyle H_n=\sum_{k=1}^{n}\frac1k=\ln n+\gamma+o(1)$.
+  \item Sauf mention contraire, $\log$ désigne le logarithme en base $2$.
+\end{itemize}
+\end{rappel}
+
+\begin{indication}
+\textbf{Méthode de travail.} Pour chaque exercice on demande, dans cet ordre :
+(1) l'\emph{expression exacte} du nombre d'opérations lorsqu'elle est accessible ;
+(2) un \emph{équivalent} ou un encadrement ; (3) la classe $\Theta$ finale.
+Répondre « c'est en $O(n^2)$ » sans justification ne vaut aucun point.
+\end{indication}
+
+% =====================================================================
+\partiecours{Partie I --- Le cas itératif : boucles \texttt{for} imbriquées}
+% =====================================================================
+
+\exo{Échauffement --- compter avant de majorer}
+Pour chacun des fragments suivants, donner le nombre \emph{exact} d'exécutions de
+l'instruction \texttt{s += 1}, puis la complexité en $\Theta$.
+
+\begin{lstlisting}
+# (a)
+s = 0
+for i in range(n):
+    s += 1
+
+# (b)
+s = 0
+for i in range(n):
+    for j in range(n):
+        s += 1
+
+# (c)  m et n sont deux entiers independants
+s = 0
+for i in range(n):
+    for j in range(m):
+        s += 1
+
+# (d)
+s = 0
+for i in range(n):
+    for j in range(5):
+        for k in range(n):
+            s += 1
+\end{lstlisting}
+
+\medskip
+\textbf{Question de synthèse.} Dans (c), peut-on dire que la complexité est
+$\Theta(n^2)$ ? Discuter selon la relation entre $m$ et $n$.
+
+% ---------------------------------------------------------------------
+\exo{Boucles triangulaires}
+Même travail. On donnera à chaque fois la somme exacte \emph{sous forme close}.
+
+\begin{lstlisting}
+# (a)
+for i in range(n):
+    for j in range(i):
+        s += 1
+
+# (b)
+for i in range(n):
+    for j in range(i, n):
+        s += 1
+
+# (c)
+for i in range(1, n+1):
+    for j in range(i, n+1):
+        for k in range(j, n+1):
+            s += 1
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Traiter (a) et (b) et vérifier que les deux sommes diffèrent de $n$.
+  \item Pour (c), montrer que le nombre d'itérations est le nombre de triplets
+        $1\le i\le j\le k\le n$, c'est-à-dire $\binom{n+2}{3}$. En déduire un équivalent.
+  \item \textbf{Généralisation.} Quelle est la complexité de $p$ boucles imbriquées
+        de ce type ($1\le i_1\le i_2\le\dots\le i_p\le n$) ?
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Indices strictement croissants}
+Soit \texttt{T} un tableau de $n$ entiers.
+
+\begin{lstlisting}
+# (a) recherche d'un triplet de somme nulle
+for i in range(n):
+    for j in range(i+1, n):
+        for k in range(j+1, n):
+            if T[i] + T[j] + T[k] == 0:
+                return True
+return False
+
+# (b)
+for i in range(n):
+    for j in range(i+1, n):
+        for k in range(n):
+            s += 1
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Pour (a), donner le nombre exact de tests effectués \emph{dans le pire des cas}
+        et la complexité correspondante.
+  \item Quelle est la complexité de (a) dans le \emph{meilleur} des cas ? Conclusion
+        sur l'écriture $\Theta(\cdot)$ pour cet algorithme.
+  \item Pour (b), donner le nombre exact d'itérations et la classe $\Theta$.
+        Comparer avec (a) : l'ordre de grandeur change-t-il ?
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Bornes non linéaires et pas variable}
+Donner pour chaque fragment le nombre d'itérations sous forme de somme, puis un
+équivalent et la classe $\Theta$.
+
+\begin{lstlisting}
+# (a)
+for i in range(n):
+    for j in range(i*i):
+        s += 1
+
+# (b)
+for i in range(1, n+1):
+    for j in range(1, n+1, i):     # pas egal a i
+        s += 1
+
+# (c)
+for i in range(1, n+1):
+    j = 0
+    while j*j <= i:
+        j += 1
+        s += 1
+\end{lstlisting}
+
+\begin{indication}
+Pour (b), le nombre d'itérations internes est $\big\lceil n/i\big\rceil$.
+On pensera à la série harmonique. Pour (c), encadrer $\sum_{i=1}^{n}\sqrt{i}$
+par des intégrales.
+\end{indication}
+
+% ---------------------------------------------------------------------
+\exo{Progression géométrique : attention aux fausses évidences}
+Les deux fragments ci-dessous ont une boucle externe qui ne fait que
+$\Theta(\log n)$ tours. Pourtant leurs complexités diffèrent radicalement.
+
+\begin{lstlisting}
+# (a)
+i = 1
+while i < n:
+    for j in range(i):
+        s += 1
+    i = 2*i
+
+# (b)
+i = 1
+while i < n:
+    for j in range(n):
+        s += 1
+    i = 2*i
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Calculer exactement le nombre d'exécutions de \texttt{s += 1} dans (a),
+        en supposant $n=2^p$. Conclure. Le résultat vous surprend-il ?
+  \item Même question pour (b).
+  \item \textbf{Moralité.} Énoncer en une phrase la règle qui distingue les deux cas
+        (« le coût total d'une boucle est la \emph{somme} des coûts des tours, pas le
+        produit \emph{nombre de tours} $\times$ \emph{coût du dernier tour} »).
+  \item Modifier (a) en remplaçant \texttt{i = 2*i} par \texttt{i = i*i} (avec
+        \texttt{i} initialisé à $2$). Quelle est alors la complexité ?
+\end{enumerate}
+
+% =====================================================================
+\partiecours{Partie II --- Le cas itératif : boucles \texttt{while}}
+% =====================================================================
+
+\begin{rappel}[Méthode pour une boucle \texttt{while}]
+Une boucle \texttt{while} n'a pas de nombre de tours écrit dans le code. On procède
+en trois temps :
+\textbf{(i)} on identifie un \emph{variant} de boucle, c'est-à-dire une quantité
+entière positive strictement décroissante à chaque tour (cela prouve la terminaison) ;
+\textbf{(ii)} on exprime la valeur de la variable de contrôle \emph{après $k$ tours} ;
+\textbf{(iii)} on résout l'inéquation d'arrêt en $k$.
+\end{rappel}
+
+\exo{Les trois schémas fondamentaux}
+Pour chaque boucle, exprimer la valeur de la variable après $k$ tours, en déduire le
+nombre exact de tours, puis la complexité en fonction de $n$ ($n\ge1$ entier).
+
+\begin{lstlisting}
+# (a)
+x = n
+while x > 0:
+    x = x - 1
+
+# (b)  c > 0 constante entiere
+x = n
+while x > 0:
+    x = x - c
+
+# (c)
+x = n
+while x > 1:
+    x = x // 2
+
+# (d)
+x = 1
+while x < n:
+    x = 3*x
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Traiter (a)--(d). Pour (c), montrer que le nombre de tours vaut exactement
+        $\lfloor \log_2 n\rfloor$.
+  \item Dans (b), la complexité dépend-elle de $c$ ? Que dit-on alors de $c$ vis-à-vis
+        du $\Theta$ ?
+  \item \textbf{Piège classique.} Dans (c), l'entrée est l'entier $n$. Si l'on convient
+        que la taille de l'entrée est le nombre de \emph{bits} de $n$, soit
+        $t=\lfloor\log_2 n\rfloor+1$, quelle est la complexité en fonction de $t$ ?
+        Commenter (a) à la lumière de cette convention.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Algorithme d'Euclide}
+\begin{lstlisting}
+def pgcd(a, b):
+    while b != 0:
+        a, b = b, a % b
+    return a
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Montrer que la suite des seconds arguments est strictement décroissante et
+        positive : en déduire la terminaison (préciser le variant).
+  \item Montrer que si $a > b > 0$ alors $a \bmod b < a/2$.
+        \emph{Indication :} distinguer $b\le a/2$ et $b > a/2$.
+  \item En déduire qu'après deux tours de boucle, le premier argument a été au moins
+        divisé par $2$, puis que le nombre de tours est $O(\log \min(a,b))$.
+  \item \textbf{Pire des cas.} On note $F_k$ la suite de Fibonacci ($F_0=0$, $F_1=1$).
+        Montrer que l'appel \texttt{pgcd(}$F_{k+1},F_k$\texttt{)} effectue exactement
+        $k$ tours de boucle. En déduire que la borne précédente est atteinte et
+        exprimer le nombre de tours en fonction de $\varphi=\frac{1+\sqrt5}{2}$.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Exponentiation rapide}
+\begin{lstlisting}
+def puissance(x, n):
+    r = 1
+    while n > 0:
+        if n % 2 == 1:
+            r = r * x
+        x = x * x
+        n = n // 2
+    return r
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Prouver la correction en exhibant l'invariant de boucle
+        $r\cdot x^{\,n} = x_0^{\,n_0}$ (où $x_0,n_0$ sont les valeurs initiales).
+  \item Donner le nombre exact de tours de boucle pour $n\ge1$.
+  \item Soit $\nu(n)$ le nombre de $1$ dans l'écriture binaire de $n$. Montrer que le
+        nombre total de multiplications vaut $\lfloor\log_2 n\rfloor + 1 + \nu(n)$.
+        (On distinguera les élévations au carré et les multiplications accumulées dans
+        \texttt{r}.) Quelle multiplication inutile pourrait-on économiser ?
+  \item En déduire un encadrement de la complexité, puis la classe $\Theta$ dans le
+        pire des cas et dans le meilleur des cas (on précisera pour quels $n$ ils sont
+        atteints).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Deux indices qui se croisent}
+Soit \texttt{T} un tableau \emph{trié par ordre croissant} de $n$ entiers deux à deux
+distincts et $s$ un entier. L'algorithme suivant cherche deux indices $g<d$ tels que
+\texttt{T[g] + T[d] == s}.
+
+\begin{lstlisting}
+def paire_de_somme(T, s):
+    g, d = 0, len(T) - 1
+    while g < d:
+        total = T[g] + T[d]
+        if total == s:
+            return (g, d)
+        elif total < s:
+            g = g + 1
+        else:
+            d = d - 1
+    return None
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Proposer un variant de boucle et prouver la terminaison.
+  \item Montrer que le nombre de tours est au plus $n-1$, et que cette borne est atteinte.
+  \item En déduire la complexité dans le pire des cas. Comparer avec l'algorithme naïf
+        à deux boucles \texttt{for} imbriquées.
+  \item \emph{(Correction, plus difficile.)} Montrer l'invariant : « si une solution
+        $(i,j)$ existe avec $i<j$, alors $g\le i$ et $j\le d$ ».
+\end{enumerate}
+
+% =====================================================================
+\partiecours{Partie III --- Le cas récursif : équation caractéristique}
+% =====================================================================
+
+\begin{rappel}[Récurrences linéaires à coefficients constants]
+Soit $(u_n)$ vérifiant, pour $n\ge p$,
+\[
+  u_n = a_1 u_{n-1} + a_2 u_{n-2} + \dots + a_p u_{n-p} + f(n).
+\]
+\textbf{1.} On résout d'abord l'équation \emph{homogène} ($f\equiv0$) : on cherche les
+racines de l'\emph{équation caractéristique}
+$\;r^{p} = a_1 r^{p-1} + \dots + a_p$.
+Si $r_1,\dots,r_m$ sont les racines de multiplicités $\mu_1,\dots,\mu_m$, la solution
+générale homogène est
+$\;u_n^{(h)} = \sum_{i=1}^{m} P_i(n)\, r_i^{\,n}$, avec $\deg P_i < \mu_i$.
+\textbf{2.} On cherche une solution \emph{particulière} de la même forme que $f$
+(constante si $f$ constante, polynomiale de degré $d$ si $f$ polynomiale de degré $d$),
+en majorant le degré de $1$ à chaque fois que la forme essayée est déjà solution de
+l'homogène.
+\textbf{3.} On somme, puis on détermine les constantes avec les conditions initiales.
+\end{rappel}
+
+\exo{Tours de Hanoï et variantes}
+On note $T(n)$ le nombre de déplacements effectués par l'algorithme récursif classique.
+\begin{lstlisting}
+def hanoi(n, depart, arrivee, inter):
+    if n == 0:
+        return
+    hanoi(n-1, depart, inter, arrivee)
+    deplacer(depart, arrivee)          # 1 deplacement
+    hanoi(n-1, inter, arrivee, depart)
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Écrire la relation de récurrence vérifiée par $T$ ainsi que sa condition initiale.
+  \item Résoudre par la méthode de l'équation caractéristique (homogène + particulière).
+        Vérifier le résultat pour $n=1,2,3$.
+  \item Résoudre de même les récurrences suivantes (avec $T(0)=0$) :
+        \begin{enumerate}[label=(\alph*)]
+          \item $T(n) = T(n-1) + n$
+          \item $T(n) = T(n-1) + n^2$
+          \item $T(n) = 2T(n-1) + n$
+          \item $T(n) = 3T(n-1) - 2T(n-2)$, avec $T(0)=1,\ T(1)=3$.
+        \end{enumerate}
+  \item Pour chacune, donner la classe $\Theta$.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Coût de Fibonacci naïf}
+\begin{lstlisting}
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n-1) + fib(n-2)
+\end{lstlisting}
+
+On note $C(n)$ le nombre total d'\emph{appels} à \texttt{fib} engendrés par
+\texttt{fib(n)} (l'appel initial compris).
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Établir la récurrence vérifiée par $C$, avec ses deux conditions initiales.
+  \item Résoudre par équation caractéristique. On notera
+        $\varphi=\frac{1+\sqrt5}{2}$ et $\psi=\frac{1-\sqrt5}{2}$.
+  \item Montrer que $C(n) = 2F_{n+1}-1$ où $(F_k)$ est la suite de Fibonacci.
+  \item En déduire $C(n)\sim \dfrac{2}{\sqrt5}\,\varphi^{\,n+1}$ et conclure :
+        la complexité de \texttt{fib} est $\Theta(\varphi^{\,n})$.
+  \item \textbf{Application numérique.} Si une machine effectue $10^{9}$ appels par
+        seconde, estimer le temps de calcul de \texttt{fib(80)}.
+  \item Que devient la complexité si l'on mémoïse les appels ? Justifier brièvement.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Racine double et second membre}
+Résoudre complètement, puis donner la classe $\Theta$ :
+
+\begin{enumerate}[label=(\alph*),leftmargin=*]
+  \item $T(n) = 4T(n-1) - 4T(n-2)$, \quad $T(0)=1$, $T(1)=6$.
+  \item $T(n) = 2T(n-1) - T(n-2) + 2$, \quad $T(0)=0$, $T(1)=1$.
+  \item $T(n) = T(n-1) + T(n-2) + 1$, \quad $T(0)=T(1)=1$.
+  \item $T(n) = 2T(n-1) + 2^{n}$, \quad $T(0)=1$.
+        \emph{(Attention : $2$ est racine de l'équation caractéristique.)}
+\end{enumerate}
+
+\begin{indication}
+Pour (d), chercher une solution particulière sous la forme $\alpha\,n\,2^n$ et non
+$\alpha\,2^n$.
+\end{indication}
+
+% =====================================================================
+\partiecours{Partie IV --- Le cas récursif : récurrences de partition}
+% =====================================================================
+
+\begin{rappel}[Récurrence de partition]
+Un algorithme « diviser pour régner » découpe une instance de taille $n$ en $a$
+sous-instances de taille $n/b$, avec un coût $f(n)$ de découpage et de recombinaison :
+\[
+  T(n) = a\,T\!\left(\frac{n}{b}\right) + f(n), \qquad a\ge1,\ b>1.
+\]
+On suppose systématiquement $n=b^{k}$ pour éviter les parties entières (le résultat
+asymptotique reste valable dans le cas général). Deux techniques :
+\textbf{déroulement} (on itère la relation jusqu'au cas de base et on somme la
+contribution de chaque niveau) ou \textbf{arbre des appels} (niveau $i$ :
+$a^{i}$ nœuds de coût $f(n/b^{i})$ chacun).
+\end{rappel}
+
+\exo{Déroulement à la main --- trois schémas de base}
+Aucun théorème général n'est autorisé dans cet exercice : on déroulera la récurrence.
+On prendra $n=2^k$ et $T(1)=1$.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item \textbf{Recherche dichotomique.} $T(n) = T(n/2) + 1$.
+        Écrire les $k+1$ niveaux, sommer, conclure.
+  \item \textbf{Somme des éléments d'un tableau par dichotomie.}
+\begin{lstlisting}
+def somme(T, g, d):          # somme de T[g..d]
+    if g == d:
+        return T[g]
+    m = (g + d) // 2
+    return somme(T, g, m) + somme(T, m+1, d)
+\end{lstlisting}
+        Établir $T(n)=2T(n/2)+\Theta(1)$ et la résoudre par déroulement. Conclure.
+        Cette version est-elle meilleure que la boucle \texttt{for} naïve ?
+  \item \textbf{Coût de recombinaison linéaire.} Résoudre $T(n) = 2T(n/2) + n$ par
+        déroulement : calculer le coût de chaque niveau, le nombre de niveaux, et conclure.
+  \item \textbf{Minimum et maximum simultanés.} On cherche le couple $(\min,\max)$ d'un
+        tableau de $n=2^k$ éléments en découpant en deux moitiés. Écrire la récurrence
+        du nombre de \emph{comparaisons} $C(n)$ avec $C(2)=1$, et montrer que
+        $C(n) = \dfrac{3n}{2} - 2$. Comparer aux $2n-3$ comparaisons de l'algorithme
+        itératif naïf.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Théorème général (Master Theorem)}
+\begin{rappel}[Théorème général]
+Soient $a\ge1$, $b>1$ et $f$ une fonction positive. Soit $T(n)=aT(n/b)+f(n)$.
+On pose $\alpha = \log_b a$. Alors :
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+  \item \textbf{Cas 1} : si $f(n)=O\!\left(n^{\alpha-\varepsilon}\right)$ pour un
+        $\varepsilon>0$, alors $T(n)=\Theta\!\left(n^{\alpha}\right)$.
+  \item \textbf{Cas 2} : si $f(n)=\Theta\!\left(n^{\alpha}\log^{c} n\right)$ avec $c\ge0$,
+        alors $T(n)=\Theta\!\left(n^{\alpha}\log^{c+1} n\right)$.
+  \item \textbf{Cas 3} : si $f(n)=\Omega\!\left(n^{\alpha+\varepsilon}\right)$ pour un
+        $\varepsilon>0$ \emph{et} s'il existe $c<1$ tel que $a f(n/b)\le c\,f(n)$ pour
+        $n$ assez grand (condition de régularité), alors $T(n)=\Theta\!\left(f(n)\right)$.
+\end{itemize}
+\end{rappel}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Appliquer le théorème général à chacune des récurrences suivantes, en
+        précisant à chaque fois $a$, $b$, $\alpha=\log_b a$ et le cas invoqué :
+        \begin{enumerate}[label=(\alph*),itemsep=1pt]
+          \item $T(n) = 9\,T(n/3) + n$
+          \item $T(n) = T(2n/3) + 1$
+          \item $T(n) = 4\,T(n/2) + n^2$
+          \item $T(n) = 3\,T(n/4) + n\log n$
+          \item $T(n) = 2\,T(n/2) + n/\log n$
+        \end{enumerate}
+  \item Pour celle(s) des récurrences ci-dessus qui \emph{échappe(nt)} au théorème,
+        expliquer précisément pourquoi aucun des trois cas ne s'applique.
+  \item Résoudre $T(n) = 2T(n/2) + n\log n$ par la méthode de l'arbre des appels
+        (le théorème ne s'applique pas directement sous la forme du cas 1 ou 3) et
+        montrer que $T(n) = \Theta(n\log^2 n)$.
+  \item Pourquoi la condition de régularité du cas 3 est-elle nécessaire ?
+        Donner l'idée sur l'exemple $f(n)=n^{2}\sin^{2} n$ avec $a=b=2$.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Multiplications rapides : gagner un appel récursif}
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item \textbf{Produit de deux entiers (Karatsuba).} Soient $x$ et $y$ deux entiers de
+        $n$ chiffres, $n=2m$. On écrit $x = x_1 10^{m} + x_0$ et $y = y_1 10^{m}+y_0$.
+        \begin{enumerate}[label=(\alph*)]
+          \item Écrire $xy$ en fonction de $x_1y_1$, $x_1y_0$, $x_0y_1$, $x_0y_0$.
+                En déduire la récurrence de l'algorithme naïf et sa complexité.
+          \item Vérifier l'identité
+                $x_1y_0 + x_0y_1 = (x_1+x_0)(y_1+y_0) - x_1y_1 - x_0y_0$.
+                Combien de multiplications récursives suffisent alors ?
+          \item En déduire $T(n) = 3\,T(n/2) + \Theta(n)$ et résoudre. Donner la valeur
+                numérique de l'exposant $\log_2 3$ à $10^{-3}$ près.
+        \end{enumerate}
+  \item \textbf{Produit de matrices (Strassen).} L'algorithme de Strassen multiplie deux
+        matrices $n\times n$ en $7$ produits de matrices $n/2 \times n/2$ et
+        $\Theta(n^2)$ additions.
+        \begin{enumerate}[label=(\alph*)]
+          \item Écrire la récurrence de l'algorithme par blocs naïf ($8$ produits) et
+                la résoudre : retrouve-t-on la complexité de l'algorithme usuel ?
+          \item Résoudre la récurrence de Strassen et comparer.
+          \item À partir de quelle valeur de $a$ la récurrence $T(n)=a\,T(n/2)+\Theta(n^2)$
+                cesse-t-elle d'être en $\Theta(n^2\log n)$ ?
+        \end{enumerate}
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Changement de variable}
+Lorsque l'argument récursif n'est pas de la forme $n/b$, on se ramène au cas standard
+par un changement de variable.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Résoudre $T(n) = T(\sqrt{n}) + 1$, $T(2)=1$, en posant $n = 2^{k}$ puis
+        $S(k)=T(2^{k})$. Conclure : $T(n)=\Theta(\log\log n)$.
+  \item Résoudre $T(n) = 2\,T(\sqrt{n}) + \log_2 n$, $T(2)=1$, par la même méthode.
+  \item Résoudre $T(n) = \sqrt{n}\; T(\sqrt{n}) + n$ (on posera $U(k)=S(k)/2^{k}$
+        après le changement de variable).
+  \item \textbf{Application.} Un algorithme sur un ensemble d'entiers de $\{1,\dots,n\}$
+        se ramène récursivement à un sous-problème sur $\{1,\dots,\sqrt n\}$ avec un coût
+        de recombinaison $\Theta(n)$. Écrire sa récurrence et donner sa complexité.
+\end{enumerate}
+
+\vspace{14pt}
+{\color{teal}\hrule height 1pt}
+\vspace{6pt}
+\begin{center}
+\small\itshape Fin de l'énoncé --- 16 exercices.
+\end{center}
+
+\end{document}

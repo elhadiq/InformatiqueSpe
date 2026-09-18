@@ -1,0 +1,511 @@
+\documentclass[11pt,a4paper]{article}
+\input{preambule.tex}
+\fancyhead[L]{\small\color{teal} TD --- Algorithmes de tri}
+\fancyhead[R]{\small\color{teal} Énoncé}
+
+\begin{document}
+
+\begin{center}
+  {\color{teal}\hrule height 2.5pt}
+  \vspace{10pt}
+  {\Huge\bfseries\color{teal} Travaux dirigés}\\[6pt]
+  {\LARGE\bfseries Les algorithmes de tri}\\[10pt]
+  {\large Complexité \;$\bullet$\; Correction \;$\bullet$\; Terminaison}\\[8pt]
+  {\normalsize CPGE --- filières MP / PSI \quad$|$\quad Programme officiel marocain 2023}\\[6pt]
+  \vspace{6pt}
+  {\color{teal}\hrule height 1pt}
+\end{center}
+
+\vspace{6pt}
+
+\begin{rappel}[Conventions]
+\begin{itemize}[leftmargin=*,itemsep=2pt]
+  \item $t$ (ou $L$) désigne un tableau (une liste Python) de $n$ éléments deux à deux
+        comparables ; on note $t[g..d]$ la tranche d'indices $g\le k\le d$.
+  \item L'\emph{opération élémentaire} de référence est la \textbf{comparaison} entre
+        deux éléments ; on compte séparément les \textbf{échanges} et les
+        \textbf{décalages} lorsque c'est pertinent.
+  \item Une \textbf{inversion} de $t$ est un couple $(i,j)$ tel que $i<j$ et $t[i]>t[j]$.
+        On note $I(t)$ leur nombre ; $0\le I(t)\le \binom n2$.
+  \item $H_n=\sum_{k=1}^n \frac1k = \ln n + \gamma + o(1)$ ; $\log$ est en base $2$.
+  \item Formule de Stirling : $n!\sim\sqrt{2\pi n}\left(\frac ne\right)^{n}$ ;
+        en particulier $n!\ge \left(\frac ne\right)^{n}$.
+\end{itemize}
+\end{rappel}
+
+\begin{rappel}[Méthode --- les trois preuves attendues]
+Pour chaque algorithme on demande systématiquement :
+\begin{description}[leftmargin=1.4cm,style=nextline,itemsep=2pt]
+  \item[Terminaison] un \emph{variant} : quantité entière $\ge0$ strictement
+        décroissante à chaque tour (boucle) ; ou une \emph{fonction de mesure} à valeurs
+        dans $\mathbb N$ strictement décroissante le long des appels (récursion).
+  \item[Correction] un \emph{invariant} de boucle : propriété vraie avant le premier
+        tour (initialisation), conservée par un tour (hérédité), et qui donne le résultat
+        voulu à la sortie (terminaison de la preuve) ; ou une récurrence bien fondée.
+  \item[Complexité] le nombre d'opérations dans le meilleur cas, le pire cas, et
+        lorsqu'on le demande en moyenne, avec la classe $\Theta$ finale.
+\end{description}
+\end{rappel}
+
+% =====================================================================
+\partiecours{Partie I --- Les tris quadratiques}
+% =====================================================================
+
+\exo{Tri par sélection : comptage exact et invariant}
+\begin{lstlisting}
+def tri_selection(t):
+    n = len(t)
+    for i in range(n - 1):
+        imin = i
+        for j in range(i + 1, n):
+            if t[j] < t[imin]:
+                imin = j
+        t[i], t[imin] = t[imin], t[i]
+    return t
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Donner le nombre \emph{exact} de comparaisons \texttt{t[j] < t[imin]} effectuées,
+        en fonction de $n$. Dépend-il du contenu du tableau ?
+  \item Donner le nombre exact d'échanges. En déduire la complexité en $\Theta$
+        dans le meilleur et dans le pire des cas.
+  \item \textbf{Terminaison.} Justifier la terminaison des deux boucles.
+  \item \textbf{Correction.} Montrer l'invariant de la boucle externe :
+        \begin{quote}
+          \emph{avant l'itération $i$, la tranche $t[0..i-1]$ est triée par ordre
+          croissant et contient les $i$ plus petits éléments du tableau initial.}
+        \end{quote}
+        Conclure que l'algorithme trie $t$.
+  \item Pourquoi la boucle externe s'arrête-t-elle à $i=n-2$ et non $i=n-1$ ?
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Tri par insertion : le rôle des inversions}
+\begin{lstlisting}
+def tri_insertion(t):
+    for i in range(1, len(t)):
+        cle = t[i]
+        j = i - 1
+        while j >= 0 and t[j] > cle:
+            t[j + 1] = t[j]
+            j -= 1
+        t[j + 1] = cle
+    return t
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Dérouler l'algorithme sur $t=[5,2,4,6,1,3]$ : donner l'état du tableau après
+        chaque itération de la boucle \texttt{for}.
+  \item \textbf{Meilleur cas.} Quel est le nombre de comparaisons si $t$ est déjà trié ?
+        En déduire la complexité.
+  \item \textbf{Pire cas.} Même question pour un tableau trié en ordre \emph{décroissant}
+        strict. Donner le nombre exact de comparaisons et de décalages.
+  \item \textbf{Cas général.} Montrer que le nombre total de décalages
+        \texttt{t[j+1] = t[j]} est exactement $I(t)$, le nombre d'inversions du tableau
+        initial. \emph{Indication :} montrer que chaque décalage supprime exactement une
+        inversion, et qu'aucune opération n'en crée.
+  \item En déduire que la complexité du tri par insertion est
+        $\Theta\big(n + I(t)\big)$. Pourquoi dit-on que ce tri est
+        « adapté aux tableaux presque triés » ? Que vaut la complexité si chaque élément
+        est à distance au plus $k$ de sa position finale ?
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Tri par insertion : preuves complètes}
+On reprend le code de l'exercice~2.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item \textbf{Terminaison de la boucle \texttt{while}.} Proposer un variant et rédiger
+        la preuve. Pourquoi l'accès \texttt{t[j]} ne provoque-t-il jamais d'erreur
+        d'indice ? (Le rôle de l'évaluation paresseuse du \texttt{and} en Python.)
+  \item \textbf{Correction de la boucle \texttt{while}.} Montrer l'invariant :
+        \begin{quote}
+          \emph{$t[j+2..i]$ contient, triés, les éléments de $t[j+1..i-1]$ initiaux, tous
+          strictement supérieurs à \texttt{cle} ; et $t[0..j]$ est inchangé et trié.}
+        \end{quote}
+  \item \textbf{Correction de la boucle \texttt{for}.} Énoncer et démontrer l'invariant
+        « $t[0..i-1]$ est trié et contient les $i$ premiers éléments initiaux ».
+        Conclure.
+  \item Justifier que le tri par insertion est un tri \textbf{en place}.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Tri à bulles et arrêt anticipé}
+\begin{lstlisting}
+def tri_bulles(t):
+    n = len(t)
+    for i in range(n - 1):
+        echange = False
+        for j in range(n - 1 - i):
+            if t[j] > t[j + 1]:
+                t[j], t[j + 1] = t[j + 1], t[j]
+                echange = True
+        if not echange:
+            return t
+    return t
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item \textbf{Correction.} Montrer l'invariant de la boucle interne : \emph{après le
+        tour d'indice $j$, $t[j+1]$ est le maximum de $t[0..j+1]$}. En déduire
+        l'invariant de la boucle externe : \emph{après l'itération $i$, la tranche
+        $t[n-1-i..n-1]$ est triée et contient les $i+1$ plus grands éléments}.
+  \item \textbf{Terminaison.} Donner un variant pour chacune des deux boucles.
+  \item Donner le nombre de comparaisons dans le pire des cas (exact), et la complexité
+        associée.
+  \item Grâce au drapeau \texttt{echange}, quelle est la complexité dans le meilleur des
+        cas ? Donner une famille de tableaux l'atteignant.
+  \item Montrer que le nombre d'échanges effectués est exactement $I(t)$.
+        Comparer avec le tri par insertion : lequel effectue le moins de comparaisons
+        sur un tableau presque trié ?
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Tri en place, tri stable}
+\begin{rappel}[Définitions]
+Un tri est \textbf{en place} s'il n'utilise qu'un nombre $\Theta(1)$ d'emplacements
+mémoire auxiliaires, indépendant de $n$ (la pile des appels récursifs comptant dans
+l'espace utilisé).
+Un tri est \textbf{stable} si, pour tout couple d'indices $i<j$ tel que
+$t[i]$ et $t[j]$ sont de clés \emph{égales}, l'élément initialement en position $i$ se
+retrouve, après le tri, à une position strictement inférieure à celle de l'élément
+initialement en position $j$.
+\end{rappel}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Pourquoi la stabilité n'a-t-elle de sens que lorsque l'on trie des
+        \emph{enregistrements} selon une \emph{clé} ? Donner une situation concrète où
+        elle est indispensable (tri d'une liste d'élèves par note, puis par classe).
+  \item Montrer que le tri par sélection donné en exercice~1 n'est \textbf{pas stable} :
+        exhiber un tableau de $3$ éléments (clés notées $2_a, 2_b, 1$) qui le prouve.
+  \item Montrer que le tri par insertion \textbf{est stable}. Quel est le rôle exact
+        du test \texttt{t[j] > cle} (et non \texttt{>=}) ?
+  \item Le tri à bulles est-il stable ? Justifier.
+  \item Compléter le tableau suivant (en place ? stable ?) pour les quatre tris
+        rencontrés jusqu'ici, et le compléter à la fin du TD pour le tri fusion et le
+        tri rapide.
+\end{enumerate}
+
+% =====================================================================
+\partiecours{Partie II --- Le tri par fusion}
+% =====================================================================
+
+\exo{La fonction \texttt{fusion} : spécification, invariant, variant}
+\begin{lstlisting}
+def fusion(A, B):
+    C = []
+    i, j = 0, 0
+    while i < len(A) and j < len(B):
+        if A[i] <= B[j]:
+            C.append(A[i]); i += 1
+        else:
+            C.append(B[j]); j += 1
+    return C + A[i:] + B[j:]
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item \textbf{Spécification.} Énoncer précisément : préconditions sur \texttt{A} et
+        \texttt{B}, postcondition sur la valeur renvoyée.
+  \item \textbf{Terminaison.} Donner un variant de la boucle \texttt{while} et rédiger
+        la preuve.
+  \item \textbf{Correction.} Démontrer l'invariant :
+        \begin{quote}
+          \emph{$C$ est trié, $C$ est formé exactement des éléments de $A[0..i-1]$ et
+          $B[0..j-1]$, et tout élément de $C$ est inférieur ou égal à tout élément
+          restant de $A[i..]$ et de $B[j..]$.}
+        \end{quote}
+        En déduire la correction de \texttt{fusion}.
+  \item \textbf{Complexité.} On note $p=|A|$ et $q=|B|$. Montrer que le nombre de
+        comparaisons $c$ vérifie
+        \[ \min(p,q) \;\le\; c \;\le\; p+q-1 .\]
+        Donner un exemple atteignant chacune des deux bornes. Conclure que
+        \texttt{fusion} est en $\Theta(p+q)$.
+  \item Quelle est la complexité \emph{spatiale} de \texttt{fusion} ?
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{\texttt{tri\_fusion} : terminaison et correction}
+\begin{lstlisting}
+def tri_fusion(L):
+    if len(L) <= 1:
+        return L
+    m = len(L) // 2
+    gauche = tri_fusion(L[:m])
+    droite = tri_fusion(L[m:])
+    return fusion(gauche, droite)
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item \textbf{Terminaison.} Proposer une fonction de mesure et montrer qu'elle
+        décroît strictement à chaque appel récursif. On vérifiera soigneusement que
+        $0<m<|L|$ dès que $|L|\ge2$ --- que se passerait-il si l'on avait écrit
+        \texttt{m = 0} ou \texttt{m = len(L)} ?
+  \item \textbf{Correction.} Démontrer par récurrence forte sur $n=|L|$ que
+        \texttt{tri\_fusion(L)} renvoie une permutation triée de \texttt{L}.
+  \item \texttt{tri\_fusion} est-il \textbf{en place} ? Évaluer l'espace mémoire total
+        utilisé (tranches créées par \texttt{L[:m]} et \texttt{L[m:]}, pile d'appels).
+  \item Dérouler l'arbre des appels sur $L=[5,2,4,6,1,3]$ : dessiner l'arbre de
+        découpage puis les fusions successives.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Complexité du tri fusion}
+On note $C(n)$ le nombre de comparaisons dans le \emph{pire} des cas pour $n$ éléments.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Établir la récurrence
+        $\;C(n)=C(\lfloor n/2\rfloor)+C(\lceil n/2\rceil)+ (n-1)$ pour $n\ge2$,
+        avec $C(1)=0$.
+  \item On suppose $n=2^{k}$. Résoudre exactement la récurrence
+        $C(2^{k}) = 2\,C(2^{k-1}) + 2^{k}-1$ et montrer que
+        \[
+          C(n) = n\log_2 n - n + 1 .
+        \]
+        Vérifier pour $n=2$ et $n=4$.
+  \item En déduire que le tri fusion est en $\Theta(n\log n)$ dans le pire des cas.
+        Que vaut la complexité dans le meilleur des cas ? Le tri fusion est-il sensible
+        à l'ordre initial des données ?
+  \item \textbf{Cas général.} Montrer par récurrence forte que
+        $C(n)\le n\lceil\log_2 n\rceil$ pour tout $n\ge1$.
+  \item Comparer numériquement $n\log_2 n$ et $n^2/2$ pour $n=10^{3}$ et $n=10^{6}$.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Stabilité du tri fusion}
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Montrer que \texttt{tri\_fusion} est stable. On identifiera précisément
+        l'endroit du code qui assure cette propriété.
+  \item On remplace le test \texttt{A[i] <= B[j]} par \texttt{A[i] < B[j]}.
+        L'algorithme reste-t-il correct ? Reste-t-il stable ? Donner un contre-exemple
+        explicite avec des clés égales.
+  \item On remplace \texttt{m = len(L) // 2} par \texttt{m = 1}. L'algorithme
+        reste-t-il correct ? Quelle est alors sa complexité ? Quel tri connu
+        retrouve-t-on ?
+\end{enumerate}
+
+% =====================================================================
+\partiecours{Partie III --- Le tri rapide}
+% =====================================================================
+
+\exo{\texttt{tri\_rapide} : preuves et cas extrêmes}
+\begin{lstlisting}
+def tri_rapide(L):
+    if len(L) <= 1:
+        return L
+    pivot = L[0]
+    petits  = [x for x in L[1:] if x <= pivot]
+    grands  = [x for x in L[1:] if x >  pivot]
+    return tri_rapide(petits) + [pivot] + tri_rapide(grands)
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item \textbf{Terminaison.} Proposer une fonction de mesure. Justifier soigneusement
+        que $|\texttt{petits}|<|L|$ \emph{et} $|\texttt{grands}|<|L|$ --- où intervient
+        le fait que le pivot est retiré de la liste ?
+  \item \textbf{Correction.} Démontrer par récurrence forte sur $|L|$ que
+        \texttt{tri\_rapide(L)} renvoie une permutation triée de \texttt{L}.
+        On précisera pourquoi la concaténation
+        \texttt{tri\_rapide(petits) + [pivot] + tri\_rapide(grands)} est bien triée.
+  \item \textbf{Meilleur cas.} On suppose qu'à chaque appel le pivot est un élément
+        médian, c'est-à-dire $|\texttt{petits}|=\lfloor (n-1)/2\rfloor$. Écrire la
+        récurrence du nombre de comparaisons et la résoudre. Conclusion.
+  \item \textbf{Pire cas.} Montrer que si $L$ est déjà trié par ordre croissant, alors
+        \texttt{petits} est vide à chaque appel. Écrire la récurrence
+        correspondante, la résoudre exactement et conclure.
+        \emph{Le tri rapide est donc quadratique sur une entrée déjà triée} :
+        commenter ce paradoxe apparent.
+  \item Déterminer la profondeur maximale de la pile d'appels dans le meilleur et dans
+        le pire des cas. Quel risque pratique cela représente-t-il pour $n=10^{6}$ ?
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Complexité en moyenne du tri rapide}
+On suppose que $L$ est une permutation aléatoire uniforme de $n$ éléments deux à deux
+distincts. On note $C(n)$ l'espérance du nombre de comparaisons, avec $C(0)=C(1)=0$.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Justifier que le rang du pivot dans $L$ suit la loi uniforme sur
+        $\{0,1,\dots,n-1\}$, puis établir
+        \[
+          C(n) = (n-1) + \frac1n\sum_{k=0}^{n-1}\big(C(k)+C(n-1-k)\big)
+               = (n-1) + \frac2n\sum_{k=0}^{n-1}C(k).
+        \]
+  \item Multiplier par $n$, écrire la même relation au rang $n-1$ et soustraire pour
+        obtenir
+        \[
+          n\,C(n) = (n+1)\,C(n-1) + 2(n-1).
+        \]
+  \item Poser $D(n)=\dfrac{C(n)}{n+1}$ et montrer que
+        $D(n)=D(n-1)+\dfrac{2(n-1)}{n(n+1)}$.
+        Décomposer $\dfrac{2(n-1)}{n(n+1)}$ en éléments simples.
+  \item En déduire $D(n) = 2H_n + \dfrac{4}{n+1} - 4$, puis
+        \[
+          \boxed{\;C(n) = 2(n+1)H_n - 4n\;}
+        \]
+        Vérifier la formule pour $n=2$ et $n=3$.
+  \item En déduire $C(n)\sim 2n\ln n = 2\ln 2\cdot n\log_2 n \approx 1{,}39\,n\log_2 n$.
+        Comparer au tri fusion ($\approx 1\cdot n\log_2 n$) : de combien de pour cent le
+        tri rapide effectue-t-il plus de comparaisons en moyenne ?
+  \item Le tri rapide est pourtant réputé plus rapide en pratique. Proposer deux raisons.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Partition en place (schéma de Lomuto)}
+La version par compréhension de l'exercice~10 n'est \emph{pas} en place. On lui
+substitue la partition suivante, qui trie la tranche $t[g..d]$ en utilisant $t[d]$
+comme pivot.
+
+\begin{lstlisting}
+def partition(t, g, d):
+    p = t[d]
+    i = g - 1
+    for j in range(g, d):
+        if t[j] <= p:
+            i += 1
+            t[i], t[j] = t[j], t[i]
+    t[i+1], t[d] = t[d], t[i+1]
+    return i + 1
+
+def tri_rapide_place(t, g, d):
+    if g < d:
+        m = partition(t, g, d)
+        tri_rapide_place(t, g, m - 1)
+        tri_rapide_place(t, m + 1, d)
+\end{lstlisting}
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Dérouler \texttt{partition} sur $t=[2,8,7,1,3,5,6,4]$ avec $g=0$, $d=7$ :
+        donner l'état du tableau et les valeurs de $i,j$ à chaque tour.
+  \item \textbf{Correction.} Démontrer l'invariant de la boucle \texttt{for} :
+        \begin{quote}
+          \emph{pour $g\le k\le i$ : $t[k]\le p$ ; \quad pour $i+1\le k\le j-1$ :
+          $t[k]>p$ ; \quad et $t[d]=p$.}
+        \end{quote}
+        En déduire qu'après l'échange final, l'indice $m=i+1$ renvoyé vérifie :
+        $t[m]=p$, tous les éléments de $t[g..m-1]$ sont $\le p$ et tous ceux de
+        $t[m+1..d]$ sont $>p$.
+  \item \textbf{Terminaison.} Justifier la terminaison de \texttt{partition}, puis celle
+        de \texttt{tri\_rapide\_place} (fonction de mesure sur $d-g$).
+  \item Donner le nombre exact de comparaisons effectuées par un appel à
+        \texttt{partition(t,g,d)}.
+  \item Quelle est la complexité \emph{spatiale} de \texttt{tri\_rapide\_place} dans le
+        meilleur et le pire des cas ? Cet algorithme est-il en place au sens strict ?
+  \item Cette version est-elle stable ? Justifier par un contre-exemple.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Choix du pivot et entrées dégénérées}
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Soit $t$ un tableau dont tous les éléments sont \emph{égaux}. Montrer qu'avec la
+        partition de Lomuto (test \texttt{t[j] <= p}), la fonction \texttt{partition}
+        renvoie toujours $m=d$. En déduire la complexité de
+        \texttt{tri\_rapide\_place} sur un tel tableau. Même question pour la version
+        par compréhension de l'exercice~10.
+  \item On choisit désormais le pivot \emph{au hasard} parmi $t[g..d]$ (en l'échangeant
+        d'abord avec $t[d]$). Le pire des cas $\Theta(n^2)$ existe-t-il encore ?
+        Qu'est-ce qui change exactement ?
+  \item \textbf{Pivot médian de trois.} On prend pour pivot la médiane de
+        $t[g]$, $t[(g+d)//2]$, $t[d]$. Montrer que sur un tableau déjà trié, la
+        partition devient équilibrée. Existe-t-il encore des entrées quadratiques ?
+  \item \textbf{Partition ternaire (ouverture).} On partitionne en trois zones
+        $(<p)$, $(=p)$, $(>p)$ et l'on ne rappelle récursivement que sur les zones
+        extrêmes. Quelle est alors la complexité sur un tableau constant ?
+        Sur un tableau ne prenant que $d$ valeurs distinctes ?
+\end{enumerate}
+
+% =====================================================================
+\partiecours{Partie IV --- Borne inférieure, applications, synthèse}
+% =====================================================================
+
+\exo{La borne $\Omega(n\log n)$ : arbre de décision}
+On appelle \emph{tri par comparaisons} tout algorithme dont les seules opérations sur
+les éléments sont des comparaisons deux à deux. Un tel algorithme, exécuté sur $n$
+éléments deux à deux distincts, se représente par un \textbf{arbre de décision} :
+chaque nœud interne est une comparaison $t[i]<t[j]$ (deux fils : oui / non), chaque
+feuille est une permutation renvoyée.
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Dessiner l'arbre de décision du tri par insertion pour $n=3$.
+        Combien a-t-il de feuilles ? Quelle est sa hauteur ?
+  \item Justifier qu'un arbre de décision correct pour $n$ éléments possède
+        \emph{au moins} $n!$ feuilles.
+  \item Montrer qu'un arbre binaire de hauteur $h$ a au plus $2^{h}$ feuilles.
+        En déduire $h \ge \log_2(n!)$.
+  \item À l'aide de $n!\ge (n/e)^{n}$, montrer que
+        \[
+          h \;\ge\; n\log_2 n - n\log_2 e \;=\; n\log_2 n - 1{,}4427\,n .
+        \]
+        Conclure : tout tri par comparaisons effectue $\Omega(n\log n)$ comparaisons
+        dans le pire des cas.
+  \item Le tri fusion est-il optimal au sens de cette borne ? Et le tri rapide ?
+  \item Pourquoi cette borne ne s'applique-t-elle pas à un tri qui utiliserait les
+        éléments comme des \emph{indices} de tableau (tri par comptage) ?
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Trier pour résoudre}
+Dans tous les cas on comparera l'approche naïve et l'approche « on trie d'abord ».
+
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item \textbf{Doublons.} Écrire une fonction qui décide si un tableau de $n$ entiers
+        contient deux éléments égaux. Donner la complexité de la version naïve à deux
+        boucles, puis celle de la version par tri. Conclure.
+  \item \textbf{Paire de somme donnée.} Étant donnés $t$ et $s$, décider s'il existe
+        $i\ne j$ avec $t[i]+t[j]=s$. Proposer un algorithme en $\Theta(n\log n)$ et
+        justifier sa complexité (on pourra réutiliser la méthode des deux indices).
+  \item \textbf{Les $k$ plus grands éléments.} Comparer :
+        (i) $k$ tours de tri par sélection, de complexité $\Theta(kn)$ ;
+        (ii) un tri complet suivi d'une lecture, en $\Theta(n\log n)$.
+        Pour quelles valeurs de $k$ la première approche est-elle préférable ?
+  \item \textbf{Élément majoritaire.} Un élément est majoritaire s'il apparaît
+        strictement plus de $n/2$ fois. Proposer un algorithme en $\Theta(n\log n)$
+        fondé sur le tri, et en prouver la correction.
+  \item \textbf{Médiane.} Quelle est la complexité du calcul de la médiane par tri ?
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\exo{Synthèse et questions de cours}
+\begin{enumerate}[label=\arabic*.,leftmargin=*]
+  \item Compléter le tableau récapitulatif :
+        \begin{center}\small
+        \begin{tabular}{|l|c|c|c|c|c|}
+        \hline
+        \textbf{Tri} & \textbf{Meilleur} & \textbf{Moyenne} & \textbf{Pire} &
+        \textbf{En place} & \textbf{Stable} \\\hline
+        Sélection  & & & & & \\\hline
+        Insertion  & & & & & \\\hline
+        Bulles     & & & & & \\\hline
+        Fusion     & & & & & \\\hline
+        Rapide (Lomuto) & & & & & \\\hline
+        \end{tabular}
+        \end{center}
+  \item \textbf{Vrai ou faux}, en justifiant systématiquement :
+        \begin{enumerate}[label=(\alph*),itemsep=1pt]
+          \item Un tri en place est nécessairement stable.
+          \item Un algorithme en $\Theta(n\log n)$ est toujours plus rapide qu'un
+                algorithme en $\Theta(n^2)$.
+          \item Le tri rapide est en $\Theta(n\log n)$.
+          \item Si $I(t)=O(n)$, le tri par insertion est linéaire.
+          \item Aucun tri ne peut faire moins de $n\log_2 n$ comparaisons.
+        \end{enumerate}
+  \item \textbf{Tri hybride.} On modifie \texttt{tri\_fusion} : lorsque
+        $|L|\le S$ (seuil fixé), on trie $L$ par insertion au lieu de découper.
+        \begin{enumerate}[label=(\alph*),itemsep=1pt]
+          \item Justifier que l'algorithme reste correct.
+          \item Montrer que la complexité dans le pire des cas est
+                $\Theta\!\big(nS + n\log(n/S)\big)$.
+          \item Pour quel ordre de grandeur de $S$ cette expression reste-t-elle
+                $\Theta(n\log n)$ ? Que se passe-t-il si $S=\Theta(n)$ ?
+          \item Pourquoi ce choix améliore-t-il les performances réelles alors que
+                la classe de complexité est inchangée ?
+        \end{enumerate}
+\end{enumerate}
+
+\vspace{14pt}
+{\color{teal}\hrule height 1pt}
+\vspace{6pt}
+\begin{center}
+\small\itshape Fin de l'énoncé --- 16 exercices.
+\end{center}
+
+\end{document}

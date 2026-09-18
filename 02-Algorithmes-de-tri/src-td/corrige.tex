@@ -1,0 +1,800 @@
+\documentclass[11pt,a4paper]{article}
+\input{preambule.tex}
+\fancyhead[L]{\small\color{teal} TD --- Algorithmes de tri}
+\fancyhead[R]{\small\color{teal} Corrigé}
+
+\begin{document}
+
+\begin{center}
+  {\color{teal}\hrule height 2.5pt}
+  \vspace{10pt}
+  {\Huge\bfseries\color{teal} Corrigé du TD}\\[6pt]
+  {\LARGE\bfseries Les algorithmes de tri}\\[10pt]
+  {\large Complexité \;$\bullet$\; Correction \;$\bullet$\; Terminaison}\\[8pt]
+  {\normalsize CPGE --- filières MP / PSI \quad$|$\quad Programme officiel marocain 2023}\\[6pt]
+  \vspace{6pt}
+  {\color{teal}\hrule height 1pt}
+\end{center}
+
+\vspace{8pt}
+
+% =====================================================================
+\partiecours{Partie I --- Les tris quadratiques}
+% =====================================================================
+
+\exo{Tri par sélection : comptage exact et invariant}
+\reponse
+\textbf{1.} Pour chaque $i\in\{0,\dots,n-2\}$, la boucle interne parcourt
+$j\in\{i+1,\dots,n-1\}$, soit $n-1-i$ comparaisons. Au total
+\[
+  \sum_{i=0}^{n-2}(n-1-i) = \sum_{p=1}^{n-1}p = \frac{n(n-1)}{2}.
+\]
+Ce nombre ne dépend \emph{pas} du contenu de $t$ : les deux boucles sont des
+\texttt{for} de bornes fixées.
+
+\textbf{2.} Un échange par tour de la boucle externe, soit exactement $n-1$ échanges
+(y compris les échanges « à vide » lorsque $\texttt{imin}=i$). Meilleur cas comme pire
+cas : $\Theta(n^{2})$. Le tri par sélection est le seul des tris étudiés dont la
+complexité ne dépend pas de l'entrée.
+
+\textbf{3.} \emph{Terminaison.} Les deux boucles sont des \texttt{for} sur des
+intervalles finis : elles terminent. (Formellement, le variant de la boucle interne est
+$n-j$, celui de la boucle externe $n-1-i$.)
+
+\textbf{4.} \emph{Invariant} $\mathcal I_i$ : « $t[0..i-1]$ est trié par ordre croissant
+et contient les $i$ plus petits éléments du tableau initial (multiensemble) ».
+
+\emph{Initialisation.} Pour $i=0$, $t[0..-1]$ est vide : $\mathcal I_0$ est vraie.
+
+\emph{Hérédité.} Supposons $\mathcal I_i$ vraie. La boucle interne calcule
+$\texttt{imin}=\arg\min_{i\le j\le n-1} t[j]$ (invariant interne immédiat :
+« $t[\texttt{imin}]=\min t[i..j-1]$ »). Comme $t[0..i-1]$ contient les $i$ plus petits
+éléments, $t[\texttt{imin}]$ est le $(i+1)$-ième plus petit élément du tableau initial,
+et il est $\ge$ tous les éléments de $t[0..i-1]$. Après l'échange, $t[0..i]$ est donc
+trié et contient les $i+1$ plus petits éléments : $\mathcal I_{i+1}$ est vraie.
+
+\emph{Conclusion.} À la sortie, $i=n-1$ et $\mathcal I_{n-1}$ dit que $t[0..n-2]$ est
+trié et contient les $n-1$ plus petits éléments ; le dernier élément restant est donc le
+maximum et $t$ est trié. De plus seules des transpositions ont été effectuées : le
+résultat est bien une permutation de l'entrée.
+
+\textbf{5.} Précisément pour la raison ci-dessus : quand les $n-1$ plus petits éléments
+sont placés, le dernier l'est automatiquement. Un tour supplémentaire serait correct mais
+inutile.
+
+% ---------------------------------------------------------------------
+\exo{Tri par insertion : le rôle des inversions}
+\reponse
+\textbf{1.} Sur $t=[5,2,4,6,1,3]$ :
+\begin{center}\small
+\begin{tabular}{|c|c|l|}
+\hline
+$i$ & \texttt{cle} & tableau après l'itération \\\hline
+1 & 2 & $[\,2,5\,|\,4,6,1,3]$ \\
+2 & 4 & $[\,2,4,5\,|\,6,1,3]$ \\
+3 & 6 & $[\,2,4,5,6\,|\,1,3]$ \\
+4 & 1 & $[\,1,2,4,5,6\,|\,3]$ \\
+5 & 3 & $[\,1,2,3,4,5,6\,]$ \\\hline
+\end{tabular}
+\end{center}
+(la barre sépare la partie déjà triée du reste.)
+
+\textbf{2.} Si $t$ est trié, le test \texttt{t[j] > cle} est faux dès la première
+évaluation : une comparaison par valeur de $i$, soit $n-1$ comparaisons et $0$ décalage.
+Complexité $\Theta(n)$.
+
+\textbf{3.} Si $t$ est trié en ordre strictement décroissant, pour chaque $i$ la boucle
+\texttt{while} parcourt tout $j=i-1,\dots,0$ puis s'arrête sur $j\ge0$ faux :
+$i$ comparaisons et $i$ décalages. Total :
+\[
+  \sum_{i=1}^{n-1} i = \frac{n(n-1)}{2}\ \text{comparaisons et autant de décalages},
+  \qquad \Theta(n^{2}).
+\]
+
+\textbf{4.} Considérons un décalage \texttt{t[j+1] = t[j]} : il fait passer l'élément
+$t[j]$ (qui vérifie $t[j]>\texttt{cle}$) à droite de \texttt{cle}. Le couple
+$(t[j],\texttt{cle})$ était une inversion : il cesse de l'être. Aucun autre couple ne
+voit son ordre relatif modifié par ce décalage (les éléments de $t[0..j-1]$ et ceux de
+$t[i+1..]$ ne bougent pas, et les éléments déplacés le sont tous d'une case vers la
+droite, donc dans le même ordre entre eux). Chaque décalage supprime donc \emph{exactement}
+une inversion et n'en crée aucune. Comme le tableau final n'a plus d'inversion, le nombre
+total de décalages vaut $I(t)$.
+
+\textbf{5.} Le coût total est : $n-1$ tours de boucle externe à $\Theta(1)$ chacun, plus
+$I(t)$ décalages, plus au plus une comparaison « d'arrêt » par tour. D'où
+\[
+  \Theta\big(n + I(t)\big).
+\]
+Le tri est donc \emph{adaptatif} : sur un tableau presque trié, $I(t)$ est petit et le
+coût est quasi linéaire. Si chaque élément est à distance $\le k$ de sa position finale,
+alors $I(t)\le nk$ et la complexité est $\Theta(nk)$ : linéaire à $k$ fixé.
+Dans le pire des cas $I(t)=\binom n2$ et l'on retrouve $\Theta(n^2)$.
+
+% ---------------------------------------------------------------------
+\exo{Tri par insertion : preuves complètes}
+\reponse
+\textbf{1.} \emph{Variant} : $V=j+1$. C'est un entier, positif ou nul tant que la
+condition $j\ge0$ est vraie, et chaque tour exécute \texttt{j -= 1}, donc $V$ décroît
+strictement de $1$. La boucle termine (en au plus $i$ tours).
+
+Quant à l'indice : le \texttt{and} de Python est \emph{paresseux}, il n'évalue
+\texttt{t[j] > cle} que si \texttt{j >= 0} est vrai. Sans cela, $j=-1$ donnerait en
+Python $t[-1]$ --- le \emph{dernier} élément du tableau --- et l'algorithme serait faux
+sans lever d'erreur. C'est un piège classique : l'ordre des deux conditions est
+essentiel.
+
+\textbf{2.} \emph{Invariant} $\mathcal J$ : « $t[0..j]$ est inchangé et trié ;
+$t[j+2..i]$ contient, dans le même ordre, les éléments initialement en $t[j+1..i-1]$,
+et ils sont tous $>\texttt{cle}$ ; la valeur \texttt{cle} est sauvegardée ».
+
+\emph{Initialisation.} Avant le premier tour, $j=i-1$ : $t[j+2..i]=t[i+1..i]$ est vide
+et $t[0..i-1]$ est trié par l'invariant externe. \checkmark
+
+\emph{Hérédité.} Si le test est vrai, $t[j]>\texttt{cle}$ ; après
+\texttt{t[j+1]=t[j]} puis \texttt{j -= 1}, la tranche $t[j'+2..i]$ (avec $j'=j-1$)
+contient exactement l'ancienne tranche augmentée de $t[j]$, en tête, tous
+$>\texttt{cle}$, et $t[0..j']$ est inchangé et trié. \checkmark
+
+\emph{Sortie.} La boucle s'arrête soit parce que $j=-1$, soit parce que
+$t[j]\le\texttt{cle}$. Dans les deux cas tous les éléments de $t[0..j]$ sont
+$\le\texttt{cle}$ (le tableau $t[0..i-1]$ était trié) et tous ceux de $t[j+2..i]$ sont
+$>\texttt{cle}$ : l'affectation \texttt{t[j+1] = cle} place \texttt{cle} à sa place et
+rend $t[0..i]$ trié.
+
+\textbf{3.} \emph{Invariant} $\mathcal I_i$ : « $t[0..i-1]$ est trié et est une
+permutation des $i$ premiers éléments initiaux ». Initialisation : $i=1$, un seul
+élément. Hérédité : c'est exactement la conclusion du point \textbf{2}. Sortie : $i=n$,
+donc $t[0..n-1]$ est trié et est une permutation de $t$. \checkmark
+
+\textbf{4.} Les seules variables auxiliaires sont \texttt{cle}, \texttt{i} et
+\texttt{j} : $\Theta(1)$ mémoire supplémentaire, indépendamment de $n$. Le tri par
+insertion est donc \textbf{en place}.
+
+% ---------------------------------------------------------------------
+\exo{Tri à bulles et arrêt anticipé}
+\reponse
+\textbf{1.} \emph{Invariant interne} : « après le tour d'indice $j$, $t[j+1]=\max
+t[0..j+1]$ ». Initialisation ($j=0$) : le test place le plus grand de $t[0],t[1]$ en
+$t[1]$. Hérédité : si $t[j]=\max t[0..j]$, alors après le test/échange à l'indice $j$,
+$t[j+1]=\max(t[j],t[j+1])=\max t[0..j+1]$. \checkmark
+
+\emph{Invariant externe} $\mathcal I_i$ : « après l'itération $i$, la tranche
+$t[n-1-i..n-1]$ est triée et contient les $i+1$ plus grands éléments ». En effet la
+boucle interne, parcourue jusqu'à $j=n-2-i$, amène le maximum de $t[0..n-1-i]$ en
+position $n-1-i$, lequel est $\le$ tous les éléments déjà placés à droite.
+
+\textbf{2.} Variant interne : $(n-1-i)-j$ ; variant externe : $(n-1)-i$.
+
+\textbf{3.} Pire des cas (aucun arrêt anticipé) :
+$\sum_{i=0}^{n-2}(n-1-i)=\dfrac{n(n-1)}{2}$ comparaisons, soit $\Theta(n^{2})$.
+
+\textbf{4.} Si $t$ est déjà trié, aucun échange n'a lieu au premier passage :
+\texttt{echange} reste \texttt{False} et l'algorithme renvoie après $n-1$ comparaisons.
+Complexité $\Theta(n)$ ; la famille est celle des tableaux déjà triés.
+
+\textbf{5.} Un échange n'a lieu que si $t[j]>t[j+1]$, c'est-à-dire sur une inversion de
+deux éléments \emph{adjacents} ; l'échange la supprime et ne modifie l'ordre relatif
+d'aucun autre couple. Donc le nombre d'échanges vaut exactement $I(t)$ --- même comptage
+que pour les décalages du tri par insertion.
+
+\emph{Comparaison.} Les deux tris font le même nombre de « mouvements » $I(t)$, mais pas
+le même nombre de \emph{comparaisons}. Le tri à bulles refait un passage complet
+($\Theta(n)$ comparaisons) tant qu'un seul échange subsiste. Exemple :
+$t=[2,3,4,\dots,n,1]$ a $I(t)=n-1$ inversions ; le tri par insertion coûte $\Theta(n)$,
+alors que le tri à bulles a besoin de $n-1$ passages (le $1$ ne remonte que d'une case
+par passage) soit $\Theta(n^{2})$. \textbf{Le tri par insertion est nettement préférable
+sur un tableau presque trié.}
+
+% ---------------------------------------------------------------------
+\exo{Tri en place, tri stable}
+\reponse
+\textbf{1.} Si les éléments sont de simples nombres, deux éléments égaux sont
+indiscernables : échanger leurs positions ne se voit pas. La stabilité n'a de sens que
+pour des \emph{enregistrements} (nom, note, classe\dots) triés selon une \emph{clé}
+partielle.
+\emph{Application.} Pour obtenir une liste d'élèves triée par classe, puis par note
+\emph{à l'intérieur de chaque classe}, il suffit de trier d'abord par note, puis par
+classe \textbf{avec un tri stable} : le second tri préserve l'ordre des notes au sein
+d'une même classe. Avec un tri instable, ce procédé échoue.
+
+\textbf{2.} Soit $t=[2_a,\,2_b,\,1]$.
+$i=0$ : $2_b<2_a$ ? non ; $1<2_a$ ? oui, donc $\texttt{imin}=2$. Échange de $t[0]$ et
+$t[2]$ : $t=[1,\,2_b,\,2_a]$.
+$i=1$ : $2_a<2_b$ ? non, $\texttt{imin}=1$, échange à vide.
+Résultat : $[1,\,2_b,\,2_a]$ : $2_b$ précède $2_a$ alors que $2_a$ était initialement
+avant. \textbf{Le tri par sélection n'est pas stable.}
+
+\textbf{3.} Dans le tri par insertion, la boucle \texttt{while} s'arrête dès que
+$t[j]\le\texttt{cle}$ : la clé est donc insérée \emph{juste après} le dernier élément qui
+lui est inférieur ou égal, donc après tous ses égaux déjà placés --- lesquels venaient de
+positions plus petites. L'ordre relatif des égaux est préservé : le tri est
+\textbf{stable}. Avec \texttt{t[j] >= cle}, la boucle continuerait à décaler les éléments
+égaux et \texttt{cle} passerait devant eux : le tri deviendrait instable (tout en restant
+correct).
+
+\textbf{4.} Oui : l'échange n'a lieu que si $t[j]>t[j+1]$ (inégalité \emph{stricte}),
+donc deux éléments égaux ne sont jamais permutés. Le tri à bulles est \textbf{stable}.
+
+\textbf{5.} Tableau (complété avec les parties II et III) :
+\begin{center}\small
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Tri} & \textbf{En place} & \textbf{Stable} \\\hline
+Sélection & oui & \textbf{non} \\\hline
+Insertion & oui & oui \\\hline
+Bulles & oui & oui \\\hline
+Fusion & \textbf{non} ($\Theta(n)$ auxiliaire) & oui \\\hline
+Rapide (Lomuto) & oui ($\Theta(\log n)$ de pile) & \textbf{non} \\\hline
+\end{tabular}
+\end{center}
+
+% =====================================================================
+\partiecours{Partie II --- Le tri par fusion}
+% =====================================================================
+
+\exo{La fonction \texttt{fusion} : spécification, invariant, variant}
+\reponse
+\textbf{1.} \emph{Précondition} : \texttt{A} et \texttt{B} sont deux listes triées par
+ordre croissant (au sens large).
+\emph{Postcondition} : \texttt{fusion(A,B)} renvoie une \emph{nouvelle} liste triée par
+ordre croissant dont le multiensemble des éléments est la réunion de ceux de \texttt{A}
+et \texttt{B} ; \texttt{A} et \texttt{B} ne sont pas modifiées.
+
+\textbf{2.} \emph{Variant} : $V=(|A|-i)+(|B|-j)$, entier positif tant que la condition
+de boucle est vraie, et chaque tour incrémente exactement l'un de $i$ ou $j$, donc $V$
+décroît strictement de $1$. La boucle termine (en au plus $|A|+|B|$ tours).
+
+\textbf{3.} \emph{Invariant} $\mathcal K$ :
+\begin{quote}
+$C$ est trié ; $C$ contient exactement les éléments de $A[0..i-1]$ et $B[0..j-1]$ ;
+et $\max C \le \min\big(A[i..],B[j..]\big)$ (avec la convention $\max\varnothing=-\infty$).
+\end{quote}
+
+\emph{Initialisation.} $i=j=0$, $C=[\,]$ : les trois clauses sont vraies. \checkmark
+
+\emph{Hérédité.} Supposons $\mathcal K$ vraie et le test de boucle vrai. Posons
+$v=\min(A[i],B[j])$ ; comme $A$ et $B$ sont triées, $v$ est le minimum de tous les
+éléments restants, et par $\mathcal K$ il est $\ge\max C$. L'instruction exécutée
+(\texttt{C.append(A[i])} si $A[i]\le B[j]$, sinon \texttt{C.append(B[j])}) ajoute
+précisément $v$ à la fin de $C$ : $C$ reste trié, la deuxième clause est mise à jour par
+l'incrémentation correspondante, et la troisième reste vraie puisque $v$ est retiré des
+restes. \checkmark
+
+\emph{Sortie.} La boucle s'arrête quand $i=|A|$ ou $j=|B|$. Supposons $i=|A|$ (l'autre
+cas est symétrique) : alors \texttt{A[i:]} est vide et $C + \texttt{B[j:]}$ est trié car
+$\max C\le\min B[j..]$ et $B[j..]$ est trié. Les éléments sont exactement ceux de $A$ et
+$B$. La postcondition est satisfaite. \checkmark
+
+\textbf{4.} Chaque tour de boucle effectue exactement une comparaison et ajoute
+exactement un élément à $C$.
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+  \item \emph{Minoration.} La boucle ne s'arrête que lorsqu'une des deux listes est
+        épuisée, ce qui demande au moins $\min(p,q)$ ajouts : $c\ge\min(p,q)$.
+        Borne atteinte si tous les éléments de $A$ sont $\le$ tous ceux de $B$
+        (par exemple $A=[1,2]$, $B=[3,4,5]$ : $c=2=\min(p,q)$).
+  \item \emph{Majoration.} Après $p+q-1$ ajouts, il ne reste qu'un seul élément, donc
+        l'une des deux listes est nécessairement épuisée et la boucle s'est arrêtée :
+        $c\le p+q-1$. Borne atteinte pour des listes « en alternance », par exemple
+        $A=[1,3,5]$, $B=[2,4,6]$ : $c=5=p+q-1$.
+\end{itemize}
+Dans tous les cas $c=\Theta(p+q)$, et le coût total (avec les concaténations finales)
+est $\Theta(p+q)$.
+
+\textbf{5.} La liste $C$ puis la concaténation occupent $\Theta(p+q)$ emplacements :
+\texttt{fusion} n'est \textbf{pas} en place.
+
+% ---------------------------------------------------------------------
+\exo{\texttt{tri\_fusion} : terminaison et correction}
+\reponse
+\textbf{1.} \emph{Fonction de mesure} : $\mu(L)=|L|\in\mathbb N$.
+Si $|L|\ge2$, alors $m=\lfloor |L|/2\rfloor$ vérifie $1\le m\le |L|-1$ :
+en effet $m\ge1$ car $|L|\ge2$, et $m\le |L|/2<|L|$. Donc
+$|L[:m]|=m<|L|$ et $|L[m:]|=|L|-m<|L|$ (car $m\ge1$) : la mesure décroît strictement
+sur chacun des deux appels. Comme $\mathbb N$ est bien fondé, la récursion termine.
+
+Si l'on avait écrit \texttt{m = 0}, l'appel \texttt{tri\_fusion(L[0:])} porterait sur
+$L$ tout entier : mesure non décroissante, récursion infinie
+(\texttt{RecursionError}). Même problème avec \texttt{m = len(L)}.
+
+\textbf{2.} \emph{Récurrence forte sur $n=|L|$.}
+\emph{Base} : $n\le1$, la liste est triviallement triée et renvoyée telle quelle.
+\emph{Hérédité} : soit $n\ge2$ et supposons la propriété vraie pour toute liste de
+longueur $<n$. Comme $|L[:m]|<n$ et $|L[m:]|<n$, \texttt{gauche} et \texttt{droite} sont,
+par hypothèse de récurrence, des permutations triées de $L[:m]$ et $L[m:]$.
+La précondition de \texttt{fusion} est donc satisfaite, et l'exercice~6 garantit que
+\texttt{fusion(gauche,droite)} est une liste triée dont les éléments sont exactement ceux
+de $L[:m]$ et $L[m:]$, c'est-à-dire ceux de $L$ (car $L=L[:m]+L[m:]$). \checkmark
+
+\textbf{3.} \textbf{Non}, \texttt{tri\_fusion} n'est pas en place : chaque appel crée
+deux tranches puis une liste fusionnée.
+À un instant donné, la somme des tailles vivantes le long d'une branche vaut
+$n+\frac n2+\frac n4+\dots = \Theta(n)$, et la pile d'appels a une profondeur
+$\Theta(\log n)$. L'espace auxiliaire est donc $\Theta(n)$ --- c'est le prix à payer pour
+la garantie $\Theta(n\log n)$.
+
+\textbf{4.} Sur $L=[5,2,4,6,1,3]$ :
+\begin{center}\small
+\begin{tabular}{ll}
+\emph{découpage} & $[5,2,4,6,1,3] \to [5,2,4]\ /\ [6,1,3]$\\
+                 & $[5,2,4]\to[5]\ /\ [2,4]\to[2]\,/\,[4]$ \\
+                 & $[6,1,3]\to[6]\ /\ [1,3]\to[1]\,/\,[3]$ \\[4pt]
+\emph{fusions}   & $[2]+[4]\to[2,4]$ ; $[5]+[2,4]\to[2,4,5]$\\
+                 & $[1]+[3]\to[1,3]$ ; $[6]+[1,3]\to[1,3,6]$\\
+                 & $[2,4,5]+[1,3,6]\to[1,2,3,4,5,6]$\\
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------------
+\exo{Complexité du tri fusion}
+\reponse
+\textbf{1.} Un appel sur $n\ge2$ éléments découpe en deux listes de tailles
+$\lfloor n/2\rfloor$ et $\lceil n/2\rceil$, les trie récursivement, puis les fusionne.
+D'après l'exercice~6, la fusion coûte au plus $n-1$ comparaisons (et ce pire cas est
+atteignable). D'où
+\[
+  C(n)=C(\lfloor n/2\rfloor)+C(\lceil n/2\rceil)+(n-1),\qquad C(1)=C(0)=0.
+\]
+
+\textbf{2.} Pour $n=2^{k}$ la récurrence devient $C(2^{k})=2C(2^{k-1})+2^{k}-1$.
+Posons $D(k)=C(2^{k})$ : $D(k)=2D(k-1)+2^{k}-1$, $D(0)=0$.
+\emph{Homogène} : $A\,2^{k}$.
+\emph{Particulière pour $2^{k}$} : $2$ étant racine de l'équation caractéristique, on
+cherche $\alpha k2^{k}$ :
+$\alpha k 2^{k}=2\alpha(k-1)2^{k-1}+2^{k}=\alpha(k-1)2^{k}+2^{k}$ donne $\alpha=1$.
+\emph{Particulière pour $-1$} : $c=2c-1$ donne $c=1$.
+Donc $D(k)=A2^{k}+k2^{k}+1$ et $D(0)=A+1=0$ donne $A=-1$ :
+\[
+  D(k)=(k-1)2^{k}+1 \qquad\Longrightarrow\qquad
+  \boxed{C(n)=n\log_2 n - n + 1}.
+\]
+Vérifications : $n=2$ ($k=1$) : $C=0\cdot2+1=1$ (une comparaison pour fusionner deux
+singletons) \checkmark ; $n=4$ ($k=2$) : $C=1\cdot4+1=5$ \checkmark.
+
+\textbf{3.} $C(n)=n\log_2 n-n+1=\Theta(n\log n)$.
+Dans le \emph{meilleur} des cas, chaque fusion coûte au moins $\min(p,q)=\lfloor n/2\rfloor$
+comparaisons, d'où $C_{\min}(n)\ge \frac n2\log_2 n$ : la complexité est encore
+$\Theta(n\log n)$. \textbf{Le tri fusion n'est pas sensible à l'ordre initial} : c'est
+sa force (garantie) et sa faiblesse (aucun gain sur un tableau presque trié).
+
+\textbf{4.} Montrons $C(n)\le n\lceil\log_2 n\rceil$ par récurrence forte, en posant
+$k=\lceil\log_2 n\rceil$. Pour $n=1$, $C(1)=0$. Pour $n\ge2$, on a
+$\lceil\log_2\lceil n/2\rceil\rceil = k-1$ et $\lceil\log_2\lfloor n/2\rfloor\rceil\le k-1$,
+donc par hypothèse de récurrence
+\[
+  C(n)\le \Big\lfloor\frac n2\Big\rfloor (k-1)+\Big\lceil\frac n2\Big\rceil (k-1)+n-1
+       = n(k-1)+n-1 = nk-1 \le n\lceil\log_2 n\rceil . \qquad\checkmark
+\]
+
+\textbf{5.}
+\begin{center}\small
+\begin{tabular}{|c|c|c|c|}
+\hline
+$n$ & $n\log_2 n$ & $n^{2}/2$ & rapport \\\hline
+$10^{3}$ & $\approx 9{,}97\cdot10^{3}$ & $5\cdot10^{5}$ & $\approx 50$ \\\hline
+$10^{6}$ & $\approx 2{,}0\cdot10^{7}$ & $5\cdot10^{11}$ & $\approx 2{,}5\cdot10^{4}$ \\\hline
+\end{tabular}
+\end{center}
+À $10^{8}$ opérations par seconde, $n=10^{6}$ demande $0{,}2$ s au tri fusion contre
+environ $1$ heure et $20$ minutes à un tri quadratique.
+
+% ---------------------------------------------------------------------
+\exo{Stabilité du tri fusion}
+\reponse
+\textbf{1.} La liste \texttt{gauche} contient les éléments d'indices initiaux $<m$ et
+\texttt{droite} ceux d'indices $\ge m$. Dans \texttt{fusion}, en cas d'\emph{égalité}
+le test \texttt{A[i] <= B[j]} est vrai et c'est l'élément de \texttt{A} --- donc celui
+d'indice initial le plus petit --- qui est ajouté en premier. Par récurrence forte
+(chaque moitié est triée de façon stable), l'ordre relatif des éléments de clés égales
+est préservé : \textbf{\texttt{tri\_fusion} est stable}. Tout tient dans le
+\texttt{<=}.
+
+\textbf{2.} Avec \texttt{A[i] < B[j]}, l'algorithme reste \textbf{correct} (le résultat
+est toujours une permutation triée : en cas d'égalité, l'ordre entre les deux éléments
+est indifférent pour le tri). Mais il n'est plus \textbf{stable}.
+\emph{Contre-exemple} : $L=[2_a,2_b]$. Alors $m=1$, \texttt{gauche}$=[2_a]$,
+\texttt{droite}$=[2_b]$. Le test $2_a<2_b$ est faux (clés égales), donc $2_b$ est
+ajouté en premier : le résultat est $[2_b,2_a]$.
+
+\textbf{3.} Avec \texttt{m = 1}, l'algorithme reste correct : les hypothèses de
+terminaison ($1\le m\le|L|-1$) et de correction sont toujours vérifiées. Mais la
+récurrence devient
+\[
+  C(n)=C(1)+C(n-1)+\Theta(n)=C(n-1)+\Theta(n)\ \Longrightarrow\ C(n)=\Theta(n^{2}).
+\]
+On retrouve essentiellement le \textbf{tri par insertion} : à chaque étape on insère un
+élément isolé dans une liste déjà triée. Le découpage \emph{équilibré} est donc ce qui
+fait tout le gain du tri fusion.
+
+% =====================================================================
+\partiecours{Partie III --- Le tri rapide}
+% =====================================================================
+
+\exo{\texttt{tri\_rapide} : preuves et cas extrêmes}
+\reponse
+\textbf{1.} \emph{Mesure} : $\mu(L)=|L|$. Les listes \texttt{petits} et \texttt{grands}
+sont construites à partir de \texttt{L[1:]} : c'est le retrait du pivot qui garantit
+\[
+  |\texttt{petits}|+|\texttt{grands}| = n-1 < n,
+\]
+donc chacune est de taille $\le n-1<n$. La mesure décroît strictement : la récursion
+termine. \emph{Sans} le retrait du pivot (par exemple \texttt{[x for x in L if x <= pivot]}),
+la liste \texttt{petits} contiendrait toujours le pivot et pourrait valoir $L$ tout
+entier : récursion infinie.
+
+\textbf{2.} \emph{Récurrence forte sur $n=|L|$.} Base : $n\le1$, liste triée.
+Hérédité : par hypothèse de récurrence, \texttt{tri\_rapide(petits)} et
+\texttt{tri\_rapide(grands)} sont des permutations triées de \texttt{petits} et
+\texttt{grands}. Par construction, tout élément de \texttt{petits} est $\le$
+\texttt{pivot} et tout élément de \texttt{grands} est $>$ \texttt{pivot} ; la
+concaténation
+\[
+  \underbrace{\text{trié},\ \le \text{pivot}}_{\text{tri\_rapide(petits)}}
+  \ \Vert\ [\text{pivot}]\ \Vert\
+  \underbrace{\text{trié},\ >\text{pivot}}_{\text{tri\_rapide(grands)}}
+\]
+est donc triée. Enfin \texttt{petits}, \texttt{[pivot]} et \texttt{grands} forment une
+partition du multiensemble $L$ : le résultat est bien une permutation de $L$. \checkmark
+
+\textbf{3.} En comptant une comparaison par élément confronté au pivot, un appel sur $n$
+éléments coûte $n-1$ comparaisons (l'implémentation par deux compréhensions en fait
+$2(n-1)$, soit un facteur constant $2$). Avec un pivot médian :
+\[
+  C(n)=(n-1)+2\,C\!\Big(\frac{n-1}{2}\Big).
+\]
+C'est (à un décalage près) la récurrence du tri fusion : par le théorème général
+($a=2$, $b=2$, $\alpha=1$, $f(n)=n$, cas 2) on obtient $C(n)=\Theta(n\log n)$.
+
+\textbf{4.} Si $L$ est trié par ordre croissant, $\texttt{pivot}=L[0]=\min L$, donc
+aucun élément de \texttt{L[1:]} n'est $<$ pivot au sens strict : \texttt{petits} est vide
+(ou ne contient que les doublons du minimum) et \texttt{grands}$=$\texttt{L[1:]}. D'où
+\[
+  C(n)=(n-1)+C(n-1),\quad C(0)=0 \quad\Longrightarrow\quad
+  C(n)=\sum_{k=1}^{n-1}k=\frac{n(n-1)}{2}=\Theta(n^{2}).
+\]
+\emph{Paradoxe apparent} : l'entrée la mieux structurée est la pire pour l'algorithme.
+Il n'y a pas de contradiction : le tri rapide ne tire sa vitesse que de la
+\emph{répartition équilibrée} autour du pivot, et prendre systématiquement le premier
+élément d'une liste triée produit le pire déséquilibre possible. C'est un cas fréquent en
+pratique (données déjà partiellement ordonnées), d'où l'importance du choix du pivot
+(exercice~13).
+
+\textbf{5.} Profondeur de pile : $\Theta(\log n)$ dans le meilleur cas,
+$\Theta(n)$ dans le pire. Pour $n=10^{6}$, la version dégénérée provoque un
+\texttt{RecursionError} en Python (limite par défaut $\approx1000$), voire un
+débordement de pile dans un langage compilé : le problème n'est pas seulement de temps,
+mais de \emph{mémoire}.
+
+% ---------------------------------------------------------------------
+\exo{Complexité en moyenne du tri rapide}
+\reponse
+\textbf{1.} Si $L$ est une permutation uniforme de $n$ éléments distincts, $L[0]$ est
+uniformément distribué parmi les $n$ éléments : son rang $k$ (nombre d'éléments qui lui
+sont strictement inférieurs) suit la loi uniforme sur $\{0,\dots,n-1\}$. Dans ce cas
+$|\texttt{petits}|=k$ et $|\texttt{grands}|=n-1-k$, et ces deux sous-listes sont
+elles-mêmes des permutations uniformes (propriété classique, admise ici). En
+conditionnant sur $k$ et par linéarité de l'espérance :
+\[
+  C(n)=(n-1)+\frac1n\sum_{k=0}^{n-1}\big(C(k)+C(n-1-k)\big)
+      =(n-1)+\frac2n\sum_{k=0}^{n-1}C(k),
+\]
+la dernière égalité venant du changement d'indice $k\mapsto n-1-k$ dans la seconde somme.
+
+\textbf{2.} En multipliant par $n$ :
+$\;n\,C(n)=n(n-1)+2\sum_{k=0}^{n-1}C(k)$.
+Au rang $n-1$ :
+$\;(n-1)C(n-1)=(n-1)(n-2)+2\sum_{k=0}^{n-2}C(k)$.
+Par différence :
+\[
+  n\,C(n)-(n-1)C(n-1) = (n-1)\big[n-(n-2)\big]+2C(n-1) = 2(n-1)+2C(n-1),
+\]
+soit $\;\boxed{n\,C(n)=(n+1)\,C(n-1)+2(n-1)}$.
+
+\textbf{3.} En divisant par $n(n+1)$ et en posant $D(n)=C(n)/(n+1)$ :
+\[
+  D(n)=D(n-1)+\frac{2(n-1)}{n(n+1)} .
+\]
+Décomposition : $\dfrac{n-1}{n(n+1)}=\dfrac{A}{n}+\dfrac{B}{n+1}$ donne
+$n-1=A(n+1)+Bn$, d'où $A=-1$ (en $n=0$) et $B=2$ (en $n=-1$). Ainsi
+\[
+  \frac{2(n-1)}{n(n+1)} = -\frac2n+\frac{4}{n+1}.
+\]
+
+\textbf{4.} Comme $D(1)=C(1)/2=0$, en sommant de $k=2$ à $n$ :
+\[
+  D(n)=\sum_{k=2}^{n}\Big(-\frac2k+\frac4{k+1}\Big)
+      = -2(H_n-1) + 4\Big(H_{n+1}-1-\tfrac12\Big)
+      = 4H_{n+1}-2H_n-4 .
+\]
+Avec $H_{n+1}=H_n+\frac1{n+1}$ :
+$\;D(n)=2H_n+\dfrac4{n+1}-4$. Enfin
+\[
+  C(n)=(n+1)D(n) = 2(n+1)H_n - 4(n+1) + 4
+  \qquad\Longrightarrow\qquad \boxed{C(n)=2(n+1)H_n-4n}.
+\]
+\emph{Vérifications.} $n=2$ : $2\cdot3\cdot\frac32-8=9-8=1$, et deux éléments demandent
+bien une comparaison. \checkmark
+$n=3$ : $2\cdot4\cdot\frac{11}{6}-12=\frac{44}{3}-12=\frac83\approx2{,}67$ ;
+directement $C(3)=2+\frac23\big(C(0)+C(1)+C(2)\big)=2+\frac23=\frac83$. \checkmark
+
+\textbf{5.} $H_n=\ln n+\gamma+o(1)$ donc
+\[
+  C(n)\sim 2n\ln n = 2\ln 2\cdot n\log_2 n \approx 1{,}386\,n\log_2 n .
+\]
+Le tri fusion en effectue environ $n\log_2 n$ : le tri rapide fait donc en moyenne
+environ $\mathbf{39\,\%}$ de comparaisons en plus.
+
+\textbf{6.} Et pourtant il est souvent plus rapide :
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+  \item dans sa version en place (exercice~12) il n'alloue aucune mémoire et travaille
+        sur des zones contiguës : bien meilleure \emph{localité de cache} ;
+  \item la boucle interne de la partition est extrêmement simple (une comparaison, un
+        échange conditionnel), donc sa constante multiplicative est petite, alors que la
+        fusion recopie chaque élément dans un tableau auxiliaire.
+\end{itemize}
+Une comparaison de complexités ne dit rien des constantes ni du comportement mémoire :
+c'est la limite de l'analyse asymptotique.
+
+% ---------------------------------------------------------------------
+\exo{Partition en place (schéma de Lomuto)}
+\reponse
+\textbf{1.} Sur $t=[2,8,7,1,3,5,6,4]$, $g=0$, $d=7$, $p=t[7]=4$, $i=-1$ :
+\begin{center}\small
+\begin{tabular}{|c|c|c|c|l|}
+\hline
+$j$ & $t[j]$ & $t[j]\le4$ ? & $i$ & tableau après le tour\\\hline
+0 & 2 & oui & 0 & $[2,8,7,1,3,5,6,4]$ \\
+1 & 8 & non & 0 & $[2,8,7,1,3,5,6,4]$ \\
+2 & 7 & non & 0 & $[2,8,7,1,3,5,6,4]$ \\
+3 & 1 & oui & 1 & $[2,1,7,8,3,5,6,4]$ \\
+4 & 3 & oui & 2 & $[2,1,3,8,7,5,6,4]$ \\
+5 & 5 & non & 2 & $[2,1,3,8,7,5,6,4]$ \\
+6 & 6 & non & 2 & $[2,1,3,8,7,5,6,4]$ \\\hline
+\multicolumn{4}{|l|}{échange final $t[3]\leftrightarrow t[7]$} & $[2,1,3,\mathbf4,7,5,6,8]$ \\\hline
+\end{tabular}
+\end{center}
+La fonction renvoie $m=3$.
+
+\textbf{2.} \emph{Invariant} $\mathcal P$ : « $t[g..i]$ ne contient que des éléments
+$\le p$ ; $t[i+1..j-1]$ ne contient que des éléments $>p$ ; $t[d]=p$ ; et $t[g..d]$ est
+une permutation du contenu initial ».
+
+\emph{Initialisation.} $i=g-1$, $j=g$ : les deux tranches sont vides. \checkmark
+
+\emph{Hérédité.} Deux cas.
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+  \item $t[j]>p$ : rien n'est modifié, $j$ augmente de $1$ et la tranche
+        $t[i+1..j-1]$ s'allonge d'un élément $>p$. \checkmark
+  \item $t[j]\le p$ : on incrémente $i$ puis on échange $t[i]$ et $t[j]$.
+        Avant l'échange, $t[i]$ (nouveau $i$, donc l'ancien $i+1$) appartenait à la zone
+        des $>p$ ; après l'échange, $t[i]=$ ancien $t[j]\le p$ rejoint la zone de gauche
+        et l'élément $>p$ est envoyé en position $j$, qui devient la fin de la zone du
+        milieu après incrémentation de $j$. \checkmark
+\end{itemize}
+
+\emph{Sortie.} $j=d$ : $t[g..i]\le p$, $t[i+1..d-1]>p$ et $t[d]=p$. L'échange final
+$t[i+1]\leftrightarrow t[d]$ place le pivot en $m=i+1$, envoie en $t[d]$ un élément
+$>p$ (ou $t[d]$ lui-même si $i+1=d$). On obtient bien
+\[
+  t[g..m-1]\le p=t[m]<t[m+1..d].
+\]
+
+\textbf{3.} \texttt{partition} est une boucle \texttt{for} sur un intervalle fini : elle
+termine. Pour \texttt{tri\_rapide\_place}, la mesure $\mu(g,d)=d-g+1\in\mathbb N$
+décroît strictement : les appels portent sur $(g,m-1)$ et $(m+1,d)$, de mesures
+$m-g$ et $d-m$, toutes deux $\le d-g<d-g+1$ puisque $g\le m\le d$. La récursion termine.
+
+\textbf{4.} Exactement $d-g$ comparaisons (une par valeur de $j$ dans
+\texttt{range(g,d)}).
+
+\textbf{5.} Chaque appel n'utilise que $\Theta(1)$ variables auxiliaires, mais la pile
+d'appels a une profondeur $\Theta(\log n)$ dans le meilleur cas et $\Theta(n)$ dans le
+pire. L'algorithme est donc « en place » au sens usuel (aucun tableau auxiliaire), mais
+son espace total est $\Theta(\log n)$ en moyenne --- et non $\Theta(1)$ au sens le plus
+strict. \emph{Remarque pratique :} rappeler récursivement sur la \emph{plus petite}
+moitié et traiter l'autre par une boucle garantit une pile $O(\log n)$ même dans le pire
+cas.
+
+\textbf{6.} \textbf{Non, ce tri n'est pas stable.} Sur $t=[2_a,2_b,1]$ avec $g=0,d=2$ :
+$p=t[2]=1$, aucun $t[j]\le1$ pour $j\in\{0,1\}$, donc $i$ reste $-1$ et l'échange final
+$t[0]\leftrightarrow t[2]$ donne $[1,2_b,2_a]$. Les deux clés égales ont été permutées.
+Plus généralement, les échanges de la partition font « sauter » des éléments par-dessus
+de grandes distances, ce qui détruit l'ordre initial.
+
+% ---------------------------------------------------------------------
+\exo{Choix du pivot et entrées dégénérées}
+\reponse
+\textbf{1.} Si tous les éléments sont égaux à $v$, alors $p=v$ et le test
+\texttt{t[j] <= p} est \emph{toujours} vrai : $i$ est incrémenté à chaque tour et vaut
+$d-1$ à la sortie, donc $m=i+1=d$. La partition est maximalement déséquilibrée :
+$[g..d-1]$ de taille $n-1$ et $[d+1..d]$ vide. D'où
+\[
+  C(n)=(n-1)+C(n-1)=\frac{n(n-1)}{2}=\Theta(n^{2}).
+\]
+Même phénomène pour la version par compréhension : $x\le\texttt{pivot}$ est vrai pour
+tous les $x$, donc \texttt{petits}$=$\texttt{L[1:]} et \texttt{grands}$=[\,]$.
+\emph{Un tableau constant --- cas fréquent en pratique --- est donc le pire cas du tri
+rapide}, ce qui est contre-intuitif.
+
+\textbf{2.} Avec un pivot tiré au hasard, le pire cas $\Theta(n^2)$ \emph{existe encore}
+comme \emph{déroulement} possible, mais sa probabilité est infime (il faudrait tomber
+systématiquement sur un extremum). Ce qui change est fondamental : il n'y a plus
+d'\emph{entrée} mauvaise. La complexité devient une variable aléatoire dont l'espérance
+est $\Theta(n\log n)$ \textbf{pour toute entrée}, y compris un tableau déjà trié ; un
+adversaire qui connaît l'algorithme ne peut plus construire d'entrée piège.
+
+\textbf{3.} Sur un tableau trié, la médiane de $t[g]$, $t[\lfloor(g+d)/2\rfloor]$,
+$t[d]$ est $t[\lfloor(g+d)/2\rfloor]$, c'est-à-dire l'élément \emph{médian} de la
+tranche : la partition est parfaitement équilibrée et la complexité devient
+$\Theta(n\log n)$. En revanche des entrées quadratiques existent toujours : on peut
+construire des suites (dites « tueuses de médiane-de-trois ») pour lesquelles ces trois
+positions sont systématiquement extrêmes. Seule la randomisation supprime la notion
+d'entrée pire cas.
+
+\textbf{4.} Avec une partition ternaire $(<p)\,(=p)\,(>p)$ et récursion sur les seules
+zones extrêmes :
+\begin{itemize}[leftmargin=*,itemsep=1pt]
+  \item tableau constant : une seule partition en $\Theta(n)$, la zone $(=p)$ absorbe
+        tout et il n'y a aucun appel récursif : $\boxed{\Theta(n)}$ ;
+  \item tableau à $d$ valeurs distinctes : chaque niveau élimine au moins une valeur et
+        la profondeur de l'arbre est $O(\log d)$ en moyenne, d'où $\Theta(n\log d)$ --
+        excellent quand $d\ll n$ (notes sur $20$, codes postaux, etc.).
+\end{itemize}
+
+% =====================================================================
+\partiecours{Partie IV --- Borne inférieure, applications, synthèse}
+% =====================================================================
+
+\exo{La borne $\Omega(n\log n)$ : arbre de décision}
+\reponse
+\textbf{1.} Pour $n=3$ et $t=[a,b,c]$, le tri par insertion compare d'abord $a$ et $b$,
+puis insère $c$ (une ou deux comparaisons). L'arbre a $3!=6$ feuilles et une hauteur
+de $3$ (branche la plus longue : $c$ plus petit que les deux autres).
+Noter que $\lceil\log_2 6\rceil = 3$ : pour $n=3$ ce tri est \emph{optimal}.
+
+\textbf{2.} Soient $\sigma\ne\sigma'$ deux permutations des indices. Il existe une entrée
+dont le tri exige de renvoyer $\sigma$, et une autre exigeant $\sigma'$. Deux entrées
+conduisant à la même feuille produisent la même suite de réponses aux comparaisons, donc
+la même permutation renvoyée. Chaque permutation doit donc être étiquette d'au moins une
+feuille : l'arbre a au moins $n!$ feuilles.
+
+\textbf{3.} Par récurrence immédiate sur $h$ : un arbre binaire de hauteur $0$ a $1=2^0$
+feuille, et un arbre de hauteur $h$ a au plus deux sous-arbres de hauteur $h-1$, donc au
+plus $2\cdot2^{h-1}=2^{h}$ feuilles. Avec le point \textbf{2} : $2^{h}\ge n!$, soit
+\[
+  h\ \ge\ \log_2(n!).
+\]
+
+\textbf{4.} De $n!\ge\left(\frac ne\right)^{n}$ on tire
+\[
+  \log_2(n!)\ \ge\ n\log_2\frac ne = n\log_2 n - n\log_2 e
+  = n\log_2 n - 1{,}4427\,n .
+\]
+Donc $h=\Omega(n\log n)$ : la hauteur de l'arbre étant le nombre de comparaisons dans le
+pire des cas, \textbf{tout tri par comparaisons effectue $\Omega(n\log n)$ comparaisons
+dans le pire des cas.}
+
+\textbf{5.} Le tri fusion effectue $n\log_2 n - n + 1$ comparaisons au pire, à comparer
+à la borne $n\log_2 n - 1{,}44n$ : il est \textbf{optimal à un terme d'ordre $n$ près},
+donc asymptotiquement optimal. Le tri rapide ne l'est pas dans le pire des cas
+($\Theta(n^2)$), mais l'est à un facteur constant près ($\approx1{,}39$) en moyenne.
+
+\textbf{6.} Parce que le tri par comptage n'effectue \emph{aucune} comparaison entre
+éléments : il utilise leur valeur comme \emph{indice} d'un tableau de compteurs. Il
+sort donc du modèle de l'arbre de décision, et la borne ne s'y applique pas : il trie
+$n$ entiers de $\{0,\dots,k\}$ en $\Theta(n+k)$, ce qui est linéaire lorsque $k=O(n)$.
+\emph{Il n'y a pas de contradiction : la borne ne vaut que dans le modèle des
+comparaisons.}
+
+% ---------------------------------------------------------------------
+\exo{Trier pour résoudre}
+\reponse
+\textbf{1.} \emph{Doublons.}
+\begin{lstlisting}
+def doublons(t):
+    u = sorted(t)                 # Theta(n log n)
+    for i in range(len(u) - 1):   # Theta(n)
+        if u[i] == u[i+1]:
+            return True
+    return False
+\end{lstlisting}
+\emph{Correction} : deux éléments égaux sont nécessairement \emph{adjacents} dans le
+tableau trié. Version naïve à deux boucles : $\binom n2=\Theta(n^2)$ comparaisons.
+Version par tri : $\Theta(n\log n)+\Theta(n)=\Theta(n\log n)$. \emph{Le tri est ici un
+prétraitement qui fait tomber la complexité d'un ordre de grandeur.}
+
+\textbf{2.} \emph{Paire de somme $s$.} On trie ($\Theta(n\log n)$) puis on applique la
+méthode des deux indices $g=0$, $d=n-1$ : si $t[g]+t[d]<s$ on incrémente $g$, si
+$>s$ on décrémente $d$, sinon on a trouvé. Cette phase coûte $\Theta(n)$ (chaque tour
+diminue $d-g$ de $1$). Total : $\Theta(n\log n)$, contre $\Theta(n^2)$ pour la version
+naïve.
+
+\textbf{3.} \emph{Les $k$ plus grands.}
+(i) $k$ tours de tri par sélection : $\sum_{i=0}^{k-1}(n-i)=\Theta(kn)$.
+(ii) Tri complet puis lecture des $k$ derniers : $\Theta(n\log n)$.
+La première est préférable dès que $kn = O(n\log n)$, c'est-à-dire
+$\boxed{k=O(\log n)}$. Pour $k$ grand (par exemple $k=n/2$), le tri complet l'emporte
+largement.
+
+\textbf{4.} \emph{Élément majoritaire.} On trie, puis on regarde $u[\lfloor n/2\rfloor]$
+et l'on compte ses occurrences en $\Theta(n)$.
+\emph{Correction} : si $x$ apparaît $c>n/2$ fois dans le tableau trié, ses occurrences
+occupent un bloc d'indices consécutifs $[s,\,s+c-1]$. Si ce bloc ne contenait pas
+l'indice $\lfloor n/2\rfloor$, il serait entièrement contenu dans
+$[0,\lfloor n/2\rfloor-1]$ ou dans $[\lfloor n/2\rfloor+1,n-1]$, deux intervalles de
+longueur $\le n/2$ : contradiction avec $c>n/2$. Donc le majoritaire, s'il existe, est
+$u[\lfloor n/2\rfloor]$ ; le comptage final vérifie qu'il existe bien.
+Complexité : $\Theta(n\log n)$.
+
+\textbf{5.} \emph{Médiane.} Trier puis lire l'élément central : $\Theta(n\log n)$.
+(Il existe des algorithmes de sélection en $\Theta(n)$ --- « médiane des médianes » ---
+mais ils sortent du cadre de ce TD.)
+
+% ---------------------------------------------------------------------
+\exo{Synthèse et questions de cours}
+\reponse
+\textbf{1.}
+\begin{center}\small
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+\textbf{Tri} & \textbf{Meilleur} & \textbf{Moyenne} & \textbf{Pire} &
+\textbf{En place} & \textbf{Stable} \\\hline
+Sélection & $\Theta(n^2)$ & $\Theta(n^2)$ & $\Theta(n^2)$ & oui & non \\\hline
+Insertion & $\Theta(n)$ & $\Theta(n^2)$ & $\Theta(n^2)$ & oui & oui \\\hline
+Bulles & $\Theta(n)$ & $\Theta(n^2)$ & $\Theta(n^2)$ & oui & oui \\\hline
+Fusion & $\Theta(n\log n)$ & $\Theta(n\log n)$ & $\Theta(n\log n)$ & non & oui \\\hline
+Rapide (Lomuto) & $\Theta(n\log n)$ & $\Theta(n\log n)$ & $\Theta(n^2)$ &
+oui$^{*}$ & non \\\hline
+\end{tabular}
+\end{center}
+{\footnotesize $^{*}$ aucun tableau auxiliaire, mais $\Theta(\log n)$ de pile en moyenne.}
+
+\textbf{2.} \emph{Vrai ou faux.}
+\begin{enumerate}[label=(\alph*),leftmargin=*,itemsep=3pt]
+  \item \textbf{Faux.} Les deux notions sont indépendantes : le tri par sélection est en
+        place et instable, le tri fusion est stable et non en place.
+  \item \textbf{Faux.} $\Theta$ est une propriété \emph{asymptotique} : elle ne dit rien
+        pour $n$ petit ni sur les constantes. En pratique le tri par insertion bat le tri
+        fusion pour $n\lesssim20$, ce qui justifie les tris hybrides (question \textbf{3}).
+  \item \textbf{Faux} tel quel : il faut préciser. Le tri rapide est $\Theta(n\log n)$
+        \emph{en moyenne} (et dans le meilleur cas) mais $\Theta(n^2)$ \emph{dans le pire
+        des cas}. Une complexité sans quantificateur de cas n'a pas de sens ici.
+  \item \textbf{Vrai.} La complexité vaut $\Theta(n+I(t))$ ; si $I(t)=O(n)$ alors
+        $\Theta(n+I(t))=\Theta(n)$.
+  \item \textbf{Faux}, deux fois. D'une part la borne porte sur le \emph{pire} des cas :
+        le tri par insertion n'effectue que $n-1$ comparaisons sur un tableau déjà trié.
+        D'autre part elle ne concerne que les tris \emph{par comparaisons} : le tri par
+        comptage est en $\Theta(n+k)$.
+\end{enumerate}
+
+\textbf{3.} \emph{Tri hybride.}
+\begin{enumerate}[label=(\alph*),leftmargin=*,itemsep=3pt]
+  \item La correction est préservée : le cas de base « $|L|\le S$ » renvoie une
+        permutation triée de $L$ (correction du tri par insertion, exercice~3), ce qui est
+        exactement la précondition requise par \texttt{fusion}. La récurrence bien fondée
+        de l'exercice~7 s'applique sans changement, avec un cas de base plus large.
+  \item L'arbre de découpage est arrêté lorsque les blocs ont une taille $\le S$ : il y a
+        donc environ $n/S$ feuilles, chacune triée par insertion en $O(S^{2})$, soit
+        $\dfrac nS\cdot O(S^{2})=O(nS)$ pour l'ensemble des feuilles. Au-dessus, il reste
+        $\log_2(n/S)$ niveaux de fusions coûtant $\Theta(n)$ chacun. Total :
+        \[
+          \Theta\!\Big(nS + n\log\frac nS\Big).
+        \]
+  \item Cette expression reste $\Theta(n\log n)$ tant que $nS = O(n\log n)$, c'est-à-dire
+        $S=O(\log n)$. Si $S=\Theta(n)$, le terme $nS$ domine et l'on retombe sur
+        $\Theta(n^{2})$ : le tri hybride dégénère en tri par insertion.
+  \item Parce que la classe $\Theta$ masque les constantes. Sur un bloc de $10$ à $30$
+        éléments, le tri par insertion ne fait aucune allocation, travaille sur une zone
+        contiguë de mémoire (bonne localité de cache) et a une boucle interne très
+        simple, alors que le tri fusion paie à chaque niveau la création de tranches et
+        la recopie. C'est exactement la stratégie utilisée par les bibliothèques
+        standard (\emph{Timsort} en Python, \emph{introsort} en C++).
+\end{enumerate}
+
+\vspace{14pt}
+{\color{teal}\hrule height 1pt}
+\vspace{6pt}
+\begin{center}
+\small\itshape Fin du corrigé --- 16 exercices.
+\end{center}
+
+\end{document}

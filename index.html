@@ -43,7 +43,7 @@
   :root{
     --teal:#026573; --teal-d:#013f48; --teal-l:#0a8a9c;
     --bg:#f4f7f8; --card:#ffffff; --txt:#1f2d31; --muted:#5b6b70;
-    --cours:#026573; --pres:#b8860b; --step:#7a3ea1; --exo:#c0392b;
+    --cours:#026573; --pres:#b8860b; --step:#7a3ea1; --exo:#c0392b; --td:#2e7d32;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.5}
@@ -64,6 +64,7 @@
   .links a::before{content:"";width:9px;height:9px;border-radius:50%;flex-shrink:0}
   a.cours::before{background:var(--cours)} a.pres::before{background:var(--pres)}
   a.step::before{background:var(--step)} a.exo::before{background:var(--exo)}
+  a.td::before{background:var(--td)}
   .tag{margin-left:auto;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
   footer{text-align:center;padding:28px;color:var(--muted);font-size:.85rem;border-top:1px solid #e3eaec}
   .legend{max-width:1100px;margin:0 auto;padding:0 20px 8px;display:flex;flex-wrap:wrap;gap:18px;justify-content:center;font-size:.82rem;color:var(--muted)}
@@ -84,6 +85,7 @@
   <span><i style="background:var(--pres)"></i>Présentation</span>
   <span><i style="background:var(--step)"></i>Pas à pas</span>
   <span><i style="background:var(--exo)"></i>Exercices</span>
+  <span><i style="background:var(--td)"></i>TD (PDF)</span>
 </div>
 
 <main>
@@ -95,6 +97,7 @@
         <a class="cours" href="01-Complexite-algorithmique/cours-complexite-algorithmique.html">Cours</a>
         <a class="pres" href="01-Complexite-algorithmique/presentation-complexite-algorithmique.html">Présentation</a>
         <a class="exo" href="01-Complexite-algorithmique/exercices-complexite.html">Exercices</a>
+        <a class="td" href="01-Complexite-algorithmique/td-complexite-enonce.pdf">TD &mdash; Énoncé<span class="tag">PDF</span></a>
       </div>
     </div>
 
@@ -106,6 +109,7 @@
         <a class="step" href="02-Algorithmes-de-tri/codes/visualisation-tris-pas-a-pas.html">Visualisation pas à pas</a>
         <a class="step" href="02-Algorithmes-de-tri/analyse/analyse-correction-terminaison-tri.html">Analyse correction / terminaison</a>
         <a class="exo" href="02-Algorithmes-de-tri/codes/exercices-tri.html">Exercices</a>
+        <a class="td" href="02-Algorithmes-de-tri/td-tris-enonce.pdf">TD &mdash; Énoncé<span class="tag">PDF</span></a>
       </div>
     </div>
 
