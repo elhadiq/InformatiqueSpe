@@ -288,34 +288,14 @@ exactement les mêmes éléments que $L$ (chaque élément de $L[1:]$ va dans
 \end{correction}
 \end{frame}
 
-\begin{frame}[fragile]{Remarque : la version en place}
-Cette écriture est lisible, mais elle \textbf{recopie} les données : environ $\Th(n)$
-de mémoire supplémentaire. La version classique partitionne le tableau \emph{sur place} :
-\begin{lstlisting}
-def partition(t, g, d):
-    p = t[d]                   # pivot
-    i = g
-    for j in range(g, d):
-        if t[j] <= p:
-            t[i], t[j] = t[j], t[i]
-            i += 1
-    t[i], t[d] = t[d], t[i]
-    return i                   # place definitive du pivot
-\end{lstlisting}
-\begin{encadre}\small
-Même coût en comparaisons, mais \textbf{aucune liste auxiliaire} : c'est cette version
-qui fait du tri rapide un \motcle{tri en place}.
-\end{encadre}
-\end{frame}
-
-\begin{frame}{Complexité : tout dépend du pivot}
+\begin{frame}[shrink=8]{Complexité : tout dépend du pivot}
 \begin{encadre}[title=Le meilleur cas : le pivot coupe en deux,fonttitle=\bfseries]
 $C(n)=2\,C(n/2)+n$ \; d'où \; $C(n)=\Th(n\log n)$, comme le tri par fusion.
 \end{encadre}
 \vspace{4pt}
 \begin{attention}
 \textbf{Le pire cas : le pivot est toujours le plus grand (ou le plus petit)}\\[3pt]
-C'est ce qui arrive si le tableau est \emph{déjà trié} : une tranche vide, une tranche
+C'est ce qui arrive si la liste est \emph{déjà triée} : une liste \tab{petits} vide et une liste \tab{grands}
 de taille $n-1$.
 \[
 C(n)=C(n-1)+(n-1)\quad\Longrightarrow\quad C(n)=\frac{n(n-1)}2=\Th(n^2).
@@ -333,18 +313,20 @@ seulement $39\,\%$ de plus que l'optimum.
 Le pire cas vient d'un pivot mal choisi. Trois parades classiques :
 \vspace{4pt}
 \begin{encadre}
-\textbf{1. Pivot aléatoire} --- tirer au hasard l'indice du pivot puis l'échanger avec
-\tab{t[d]}. Aucune entrée particulière n'est plus « mauvaise » qu'une autre : le
-$\Th(n\log n)$ devient vrai \emph{en moyenne pour toute entrée}.
+\textbf{1. Pivot aléatoire} --- remplacer \tab{pivot = L[0]} par
+\tab{pivot = L[random.randrange(len(L))]}. Aucune entrée particulière n'est plus
+« mauvaise » qu'une autre : le $\Th(n\log n)$ devient vrai
+\emph{en moyenne pour toute entrée}.
 \end{encadre}
 \vspace{3pt}
 \begin{encadre}
-\textbf{2. Médiane de trois} --- prendre la médiane de $t[g]$, $t[(g+d)//2]$ et $t[d]$.
-Élimine le pire cas « tableau déjà trié », de loin le plus fréquent en pratique.
+\textbf{2. Médiane de trois} --- prendre comme pivot la médiane du premier, du
+dernier et de l'élément central de \tab{L}. Élimine le pire cas « liste déjà triée »,
+de loin le plus fréquent en pratique.
 \end{encadre}
 \vspace{3pt}
 \begin{encadre}
-\textbf{3. Bascule} --- pour une tranche de moins de $15$ éléments, terminer par un
+\textbf{3. Bascule} --- pour une liste de moins de $15$ éléments, terminer par un
 tri par insertion, plus rapide sur les petites tailles.
 \end{encadre}
 \end{frame}
@@ -356,9 +338,8 @@ tri par insertion, plus rapide sur les petites tailles.
 Meilleur cas & $\Th(n\log n)$\\
 Cas moyen & $\Th(n\log n)$, environ $1{,}39\,n\log_2 n$\\
 Pire cas & $\Th(n^2)$ (tableau déjà trié, pivot extrême)\\
-Mémoire auxiliaire & version ci-dessus : $\Th(n)$ ; version partition : $\Th(\log n)$\\
-En place & \textbf{oui}, avec la version partition (pas avec les listes)\\
-Stabilité & \textbf{non stable} : les échanges se font à distance\\
+Mémoire auxiliaire & $\Th(n)$ : les listes \tab{petits} et \tab{grands} sont recopiées\\
+Stabilité & \textbf{non stable}\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -366,8 +347,7 @@ Stabilité & \textbf{non stable} : les échanges se font à distance\\
 \begin{attention}\small
 \textbf{À ne pas dire.} « Le tri rapide est en $\Th(n\log n)$ » est incomplet :
 il l'est \textbf{en moyenne}, et il est en $\Th(n^2)$ dans le pire cas.
-C'est pourtant le plus rapide en pratique, car il travaille en place,
-sans recopie de tableau.
+C'est pourtant, en moyenne, l'un des plus rapides en pratique.
 \end{attention}
 \end{frame}
 
@@ -388,7 +368,7 @@ Bulles & $\Th(n)$ & $\Th(n^2)$ & $\Th(n^2)$ & $\Th(1)$ & oui & oui\\
 \rowcolor{tealclair}
 Fusion & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n)$ & non & oui\\
 \rowcolor{tealclair}
-Rapide & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n^2)$ & $\Th(\log n)$ & oui & non\\
+Rapide & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n^2)$ & $\Th(n)$ & non & non\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -407,8 +387,9 @@ tri quadratique (plus d'une heure) contre $2\cdot10^{7}$ pour un tri en $n\log n
         l'effort à des endroits opposés : la fusion pour l'un, la partition pour l'autre.
   \item Le \motcle{tri par fusion} est en $\Th(n\log n)$ \emph{toujours}, et il est
         \emph{stable} ; en revanche il n'est pas en place ($\Th(n)$ de mémoire).
-  \item Le \motcle{tri rapide} est \emph{en place} et le plus rapide en pratique,
-        mais il est en $\Th(n^2)$ dans le pire cas et il n'est pas stable.
+  \item Le \motcle{tri rapide} est en $\Th(n\log n)$ \emph{en moyenne} et très
+        rapide en pratique, mais il est en $\Th(n^2)$ dans le pire cas et il n'est
+        pas stable.
   \item Le \motcle{choix du pivot} (aléatoire, médiane de trois) est ce qui rend le
         tri rapide fiable.
 \end{enumerate}

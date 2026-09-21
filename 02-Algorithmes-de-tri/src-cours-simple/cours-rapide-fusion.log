@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.9.11)  21 SEP 2026 14:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.9.11)  21 SEP 2026 15:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1261,27 +1261,27 @@ LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <8> not available
 
 ] [14
 
+] [15
+
 ]
-\openout4 = `cours-rapide-fusion.vrb'.
+Underfull \hbox (badness 10000) in paragraph at lines 332--332
+[]\T1/lmss/bx/n/10.95 1. Pivot aléa-toire \T1/lmss/m/n/10.95 --- rem-placer \T1
+/lmtt/m/n/10.95 pivot = L[0] \T1/lmss/m/n/10.95 par \T1/lmtt/m/n/10.95 pivot =
+ []
 
- (./cours-rapide-fusion.vrb)
-[15
-
-] [16
+[16
 
 ] [17
 
-] [18
+] (./cours-rapide-fusion.toc) [18
 
-] (./cours-rapide-fusion.toc) [19
+] [19
 
 ] [20
 
 ] [21
 
 ] [22
-
-] [23
 
 ]
 \tf@nav=\write6
@@ -1299,10 +1299,10 @@ Package rerunfilecheck Info: File `cours-rapide-fusion.out' has not changed.
 (rerunfilecheck)             Checksum: 21B1AF9D8B0D752CE868123158EB21E8;349.
  ) 
 Here is how much of TeX's memory you used:
- 33174 strings out of 480247
- 690260 string characters out of 5896151
- 1313362 words of memory out of 5000000
- 50394 multiletter control sequences out of 15000+600000
+ 33167 strings out of 480247
+ 690311 string characters out of 5896151
+ 1311362 words of memory out of 5000000
+ 50391 multiletter control sequences out of 15000+600000
  565784 words of font info for 96 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  105i,14n,113p,422b,1366s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1320,10 +1320,10 @@ ublic/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/sha
 re/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/public/
 lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt8.pfb></usr/share/tex
 mf/fonts/type1/public/lm/lmtti10.pfb>
-Output written on cours-rapide-fusion.pdf (23 pages, 309476 bytes).
+Output written on cours-rapide-fusion.pdf (22 pages, 306896 bytes).
 PDF statistics:
- 317 PDF objects out of 1000 (max. 8388607)
- 225 compressed objects within 3 object streams
- 50 named destinations out of 1000 (max. 500000)
+ 310 PDF objects out of 1000 (max. 8388607)
+ 219 compressed objects within 3 object streams
+ 48 named destinations out of 1000 (max. 500000)
  211 words of extra memory for PDF output out of 10000 (max. 10000000)
 

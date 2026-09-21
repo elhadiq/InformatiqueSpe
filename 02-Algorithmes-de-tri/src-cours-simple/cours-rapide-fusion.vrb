@@ -1,18 +1,16 @@
-\frametitle{Remarque : la version en place}
-Cette écriture est lisible, mais elle \textbf{recopie} les données : environ $\Th(n)$
-de mémoire supplémentaire. La version classique partitionne le tableau \emph{sur place} :
+\frametitle{Tri rapide --- implémentation}
 \begin{lstlisting}
-def partition(t, g, d):
-    p = t[d]                   # pivot
-    i = g
-    for j in range(g, d):
-        if t[j] <= p:
-            t[i], t[j] = t[j], t[i]
-            i += 1
-    t[i], t[d] = t[d], t[i]
-    return i                   # place definitive du pivot
+def tri_rapide(L):
+    if len(L) <= 1:
+        return L
+    pivot = L[0]
+    petits = [x for x in L[1:] if x <= pivot]
+    grands = [x for x in L[1:] if x > pivot]
+    return tri_rapide(petits) + [pivot] + tri_rapide(grands)
 \end{lstlisting}
 \begin{encadre}\small
-Même coût en comparaisons, mais \textbf{aucune liste auxiliaire} : c'est cette version
-qui fait du tri rapide un \motcle{tri en place}.
+Le pivot choisi est le \textbf{premier élément}. Les deux listes en compréhension
+réalisent la partition : chacune parcourt $L[1:]$, soit $n-1$ comparaisons au total
+pour l'une et $n-1$ pour l'autre, donc un coût $\Th(n)$ par appel.
+La concaténation finale place le pivot \emph{définitivement} entre les deux parties.
 \end{encadre}
