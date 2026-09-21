@@ -251,48 +251,61 @@ récursivement les deux côtés --- \textbf{sans rien recombiner}.
 \end{center}
 \end{frame}
 
-\begin{frame}[fragile]{La partition}
+\begin{frame}[fragile]{Tri rapide --- implémentation}
+\begin{lstlisting}
+def tri_rapide(L):
+    if len(L) <= 1:
+        return L
+    pivot = L[0]
+    petits = [x for x in L[1:] if x <= pivot]
+    grands = [x for x in L[1:] if x > pivot]
+    return tri_rapide(petits) + [pivot] + tri_rapide(grands)
+\end{lstlisting}
+\begin{encadre}\small
+Le pivot choisi est le \textbf{premier élément}. Les deux listes en compréhension
+réalisent la partition : chacune parcourt $L[1:]$, soit $n-1$ comparaisons au total
+pour l'une et $n-1$ pour l'autre, donc un coût $\Th(n)$ par appel.
+La concaténation finale place le pivot \emph{définitivement} entre les deux parties.
+\end{encadre}
+\end{frame}
+
+\begin{frame}{Terminaison et correction}
+\begin{terminaisonrec}
+La longueur $|L|$ est un entier positif. Comme \tab{petits} et \tab{grands} sont
+extraits de $L[1:]$, on a $|\text{petits}|\le n-1$ et $|\text{grands}|\le n-1$ :
+la taille décroît strictement à chaque appel, et le cas de base $|L|\le1$ est atteint.
+\end{terminaisonrec}
+\vspace{4pt}
+\begin{correction}[Correction --- récurrence forte sur la longueur]
+\small
+\emph{Base :} une liste de $0$ ou $1$ élément est triée.\\[2pt]
+\emph{Hérédité :} par construction, tout élément de \tab{petits} est $\le$ \tab{pivot}
+et tout élément de \tab{grands} est $>$ \tab{pivot}. Par hypothèse de récurrence,
+\tab{tri\_rapide(petits)} et \tab{tri\_rapide(grands)} sont triées ; la concaténation
+\tab{petits\_triés + [pivot] + grands\_triés} est donc triée, et elle contient
+exactement les mêmes éléments que $L$ (chaque élément de $L[1:]$ va dans
+\emph{exactement} une des deux listes).
+\end{correction}
+\end{frame}
+
+\begin{frame}[fragile]{Remarque : la version en place}
+Cette écriture est lisible, mais elle \textbf{recopie} les données : environ $\Th(n)$
+de mémoire supplémentaire. La version classique partitionne le tableau \emph{sur place} :
 \begin{lstlisting}
 def partition(t, g, d):
-    """Partitionne t[g..d] autour du pivot t[d] ; renvoie la place du pivot."""
-    p = t[d]
-    i = g                      # t[g..i-1] contient les elements <= p
+    p = t[d]                   # pivot
+    i = g
     for j in range(g, d):
         if t[j] <= p:
             t[i], t[j] = t[j], t[i]
             i += 1
-    t[i], t[d] = t[d], t[i]    # on place enfin le pivot
-    return i
+    t[i], t[d] = t[d], t[i]
+    return i                   # place definitive du pivot
 \end{lstlisting}
 \begin{encadre}\small
-Un seul parcours du tableau, avec une comparaison par tour :
-la partition de $n$ éléments coûte $n-1$ comparaisons, donc $\Th(n)$,
-et n'utilise \textbf{aucune mémoire supplémentaire}.
+Même coût en comparaisons, mais \textbf{aucune liste auxiliaire} : c'est cette version
+qui fait du tri rapide un \motcle{tri en place}.
 \end{encadre}
-\end{frame}
-
-\begin{frame}[fragile]{L'algorithme}
-\begin{lstlisting}
-def tri_rapide(t, g=0, d=None):
-    if d is None:
-        d = len(t) - 1
-    if g < d:                    # cas de base : 0 ou 1 element
-        k = partition(t, g, d)   # diviser
-        tri_rapide(t, g, k - 1)  # regner a gauche
-        tri_rapide(t, k + 1, d)  # regner a droite
-    return t
-\end{lstlisting}
-\vspace{2pt}
-\begin{terminaisonrec}
-Le pivot est \emph{exclu} des deux appels récursifs : la taille de la tranche
-$d-g+1$ décroît donc strictement à chaque appel.
-\end{terminaisonrec}
-\begin{correction}[Correction (récurrence sur la taille de la tranche)]
-\small
-Après la partition, $t[k]$ est à sa place et tout élément à sa gauche lui est
-inférieur ou égal, tout élément à sa droite lui est supérieur. Si les deux tranches
-sont triées, le tout est trié.
-\end{correction}
 \end{frame}
 
 \begin{frame}{Complexité : tout dépend du pivot}
@@ -343,7 +356,8 @@ tri par insertion, plus rapide sur les petites tailles.
 Meilleur cas & $\Th(n\log n)$\\
 Cas moyen & $\Th(n\log n)$, environ $1{,}39\,n\log_2 n$\\
 Pire cas & $\Th(n^2)$ (tableau déjà trié, pivot extrême)\\
-Mémoire auxiliaire & $\Th(\log n)$ (pile d'appels) : \textbf{tri en place}\\
+Mémoire auxiliaire & version ci-dessus : $\Th(n)$ ; version partition : $\Th(\log n)$\\
+En place & \textbf{oui}, avec la version partition (pas avec les listes)\\
 Stabilité & \textbf{non stable} : les échanges se font à distance\\
 \bottomrule
 \end{tabular}

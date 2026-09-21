@@ -1,22 +1,18 @@
-\frametitle{L'algorithme}
+\frametitle{Remarque : la version en place}
+Cette écriture est lisible, mais elle \textbf{recopie} les données : environ $\Th(n)$
+de mémoire supplémentaire. La version classique partitionne le tableau \emph{sur place} :
 \begin{lstlisting}
-def tri_rapide(t, g=0, d=None):
-    if d is None:
-        d = len(t) - 1
-    if g < d:                    # cas de base : 0 ou 1 element
-        k = partition(t, g, d)   # diviser
-        tri_rapide(t, g, k - 1)  # regner a gauche
-        tri_rapide(t, k + 1, d)  # regner a droite
-    return t
+def partition(t, g, d):
+    p = t[d]                   # pivot
+    i = g
+    for j in range(g, d):
+        if t[j] <= p:
+            t[i], t[j] = t[j], t[i]
+            i += 1
+    t[i], t[d] = t[d], t[i]
+    return i                   # place definitive du pivot
 \end{lstlisting}
-\vspace{2pt}
-\begin{terminaisonrec}
-Le pivot est \emph{exclu} des deux appels récursifs : la taille de la tranche
-$d-g+1$ décroît donc strictement à chaque appel.
-\end{terminaisonrec}
-\begin{correction}[Correction (récurrence sur la taille de la tranche)]
-\small
-Après la partition, $t[k]$ est à sa place et tout élément à sa gauche lui est
-inférieur ou égal, tout élément à sa droite lui est supérieur. Si les deux tranches
-sont triées, le tout est trié.
-\end{correction}
+\begin{encadre}\small
+Même coût en comparaisons, mais \textbf{aucune liste auxiliaire} : c'est cette version
+qui fait du tri rapide un \motcle{tri en place}.
+\end{encadre}
