@@ -1,0 +1,23 @@
+\frametitle{Le tri rapide}
+\begin{lstlisting}
+def tri_rapide(t, g=0, d=None):
+    if d is None:
+        d = len(t) - 1
+    if g < d:                    # cas de base : tranche de taille <= 1
+        k = partition(t, g, d)   # diviser  (le travail est ici)
+        tri_rapide(t, g, k - 1)  # regner
+        tri_rapide(t, k + 1, d)
+    return t
+\end{lstlisting}
+\begin{terminaisonrec}
+$\mu(g,d)=d-g+1$ (taille de la tranche), entier $\ge0$. Comme $g\le k\le d$, les deux
+appels portent sur des tranches de tailles $k-g$ et $d-k$, toutes deux
+$\le \mu-1<\mu$ : la mesure décroît strictement. \emph{C'est le fait que le pivot soit
+exclu des deux appels qui assure la terminaison.}
+\end{terminaisonrec}
+\begin{correction}[Correction --- récurrence forte sur la taille de la tranche]
+\small
+Base : tranche de taille $\le1$, triée. Hérédité : après partition, $t[k]$ est à sa place,
+tout $t[g..k-1]$ est $\le t[k]\le$ tout $t[k+1..d]$ ; par hypothèse de récurrence les deux
+tranches sont triées, donc $t[g..d]$ l'est.
+\end{correction}

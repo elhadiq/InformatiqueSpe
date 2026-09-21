@@ -1,0 +1,176 @@
+% =====================================================================
+%  theme-cpge.sty --- thème Beamer « maison » CPGE (accent teal #026573)
+%  Zouhair El Hadiq --- Informatique MP/PSI/TSI
+% =====================================================================
+\ProvidesPackage{theme-cpge}[2026/09/21 Theme Beamer CPGE teal]
+
+\RequirePackage[utf8]{inputenc}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern}
+% Typographie française.
+% Si babel-french est installé sur votre machine (MiKTeX/TeX Live complet),
+% décommentez la ligne suivante pour la césure et les espacements français :
+% \RequirePackage[french]{babel}
+\frenchspacing
+\RequirePackage{amsmath,amssymb}
+\RequirePackage{xcolor}
+\RequirePackage{listings}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{tikz}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{colortbl}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric}
+
+% ---------------------------------------------------------------- couleurs
+\definecolor{teal}{HTML}{026573}
+\definecolor{tealfonce}{HTML}{014A54}
+\definecolor{tealclair}{HTML}{E4F1F2}
+\definecolor{tealbord}{HTML}{B7DADD}
+\definecolor{grisclair}{HTML}{F5F5F5}
+\definecolor{orangefonce}{HTML}{B35900}
+\definecolor{orangeclair}{HTML}{FDF0E0}
+\definecolor{violetc}{HTML}{5B21B6}   % correction
+\definecolor{bleuit}{HTML}{1E3A8A}    % terminaison itérative
+\definecolor{vertrec}{HTML}{047857}   % terminaison récursive
+
+% ---------------------------------------------------------------- squelette
+\usetheme{default}
+\useinnertheme{rectangles}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{sections/subsections in toc}[circle]
+
+\setbeamercolor{structure}{fg=teal}
+\setbeamercolor{title}{fg=teal}
+\setbeamercolor{frametitle}{fg=white,bg=teal}
+\setbeamercolor{framesubtitle}{fg=tealfonce}
+\setbeamercolor{section in head/foot}{fg=white,bg=teal}
+\setbeamercolor{item}{fg=teal}
+\setbeamercolor{block title}{fg=white,bg=teal}
+\setbeamercolor{block body}{fg=black,bg=tealclair}
+\setbeamercolor{block title alerted}{fg=white,bg=orangefonce}
+\setbeamercolor{block body alerted}{fg=black,bg=orangeclair}
+\setbeamercolor{block title example}{fg=white,bg=vertrec}
+\setbeamercolor{block body example}{fg=black,bg=vertrec!8}
+\setbeamerfont{frametitle}{series=\bfseries,size=\large}
+\setbeamerfont{title}{series=\bfseries,size=\LARGE}
+\setbeamersize{text margin left=10pt,text margin right=10pt}
+
+% titre de frame : bandeau plein teal avec filet clair
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,sep=6pt,leftskip=10pt,rightskip=10pt]{frametitle}
+    \strut\insertframetitle\strut%
+    \ifx\insertframesubtitle\@empty\else
+      \\[2pt]{\normalsize\normalfont\color{tealclair}\insertframesubtitle}%
+    \fi
+  \end{beamercolorbox}%
+  \vskip-1pt{\color{tealbord}\hrule height 2pt}\vskip4pt
+}
+
+% pied de page : chapitre | section | numéro
+\setbeamertemplate{footline}{%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.6ex,dp=1.2ex,left,leftskip=8pt]{section in head/foot}%
+    \tiny Algorithmes de tri --- CPGE MP/PSI/TSI
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.6ex,dp=1.2ex,center]{section in head/foot}%
+    \tiny\insertsectionhead
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.10\paperwidth,ht=2.6ex,dp=1.2ex,right,rightskip=8pt]{section in head/foot}%
+    \tiny\insertframenumber
+  \end{beamercolorbox}}%
+}
+
+% page de section
+\AtBeginSection[]{%
+  \begin{frame}[plain]
+    \vfill
+    \begin{center}
+      {\color{teal}\hrule height 2.5pt}\vspace{10pt}
+      {\usebeamerfont{title}\color{teal}\insertsectionhead}\\[10pt]
+      {\color{teal}\hrule height 1pt}
+    \end{center}
+    \vspace{8pt}
+    \begin{center}\footnotesize
+      \begin{minipage}{0.8\textwidth}\tableofcontents[currentsection,hideothersubsections]\end{minipage}
+    \end{center}
+    \vfill
+  \end{frame}%
+}
+
+% ---------------------------------------------------------------- code Python
+\lstdefinestyle{python}{
+  language=Python,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{teal}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{orangefonce},
+  showstringspaces=false,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=6pt,
+  frame=leftline,
+  framerule=1.2pt,
+  rulecolor=\color{teal},
+  xleftmargin=12pt,
+  backgroundcolor=\color{grisclair},
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  literate={é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {à}{{\`a}}1 {ô}{{\^o}}1
+           {û}{{\^u}}1 {î}{{\^i}}1 {ç}{{\c c}}1 {É}{{\'E}}1 {È}{{\`E}}1
+}
+\lstset{style=python}
+
+% ---------------------------------------------------------------- boîtes
+\newtcolorbox{encadre}[1][]{
+  colback=tealclair,colframe=teal,boxrule=1pt,arc=2pt,
+  left=5pt,right=5pt,top=4pt,bottom=4pt,#1}
+
+\newtcolorbox{attention}[1][]{
+  colback=orangeclair,colframe=orangefonce,boxrule=1pt,arc=2pt,
+  left=5pt,right=5pt,top=4pt,bottom=4pt,#1}
+
+% environnements « preuve » aux codes couleur de la maison
+\newtcolorbox{correction}[1][Correction --- invariant de boucle]{
+  enhanced,colback=violetc!6,colframe=violetc,boxrule=1pt,arc=2pt,
+  fonttitle=\bfseries\small,title=#1,
+  left=5pt,right=5pt,top=3pt,bottom=3pt}
+
+\newtcolorbox{terminaisonit}[1][Terminaison --- variant de boucle]{
+  enhanced,colback=bleuit!6,colframe=bleuit,boxrule=1pt,arc=2pt,
+  fonttitle=\bfseries\small,title=#1,
+  left=5pt,right=5pt,top=3pt,bottom=3pt}
+
+\newtcolorbox{terminaisonrec}[1][Terminaison --- fonction de mesure]{
+  enhanced,colback=vertrec!6,colframe=vertrec,boxrule=1pt,arc=2pt,
+  fonttitle=\bfseries\small,title=#1,
+  left=5pt,right=5pt,top=3pt,bottom=3pt}
+
+% ---------------------------------------------------------------- exercices
+% Numérotation explicite : les frames en mode « shrink » sont composées deux
+% fois par Beamer, ce qui ferait doubler un compteur automatique.
+\newtcolorbox{exercice}[2]{
+  enhanced,colback=tealclair,colframe=teal,boxrule=1pt,arc=2pt,
+  fonttitle=\bfseries,coltitle=white,
+  title={Exercice #1 \;---\; #2},
+  left=5pt,right=5pt,top=3pt,bottom=3pt}
+
+\newtcolorbox{soluce}[1][Solution]{
+  enhanced,colback=orangeclair,colframe=orangefonce,boxrule=1pt,arc=2pt,
+  fonttitle=\bfseries,coltitle=white,title=#1,
+  left=5pt,right=5pt,top=3pt,bottom=3pt}
+
+% ---------------------------------------------------------------- raccourcis
+\providecommand{\lt}{<}
+\providecommand{\gt}{>}
+\newcommand{\Th}{\Theta}
+\newcommand{\Oh}{\mathcal{O}}
+\newcommand{\dinf}{\,\big|\,}
+\newcommand{\tab}[1]{\texttt{#1}}
+\newcommand{\motcle}[1]{\textcolor{teal}{\textbf{#1}}}
+
+\endinput

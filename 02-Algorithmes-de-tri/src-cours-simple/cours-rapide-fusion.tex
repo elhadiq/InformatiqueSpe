@@ -1,0 +1,429 @@
+% =====================================================================
+%  Cours simple : LE TRI RAPIDE ET LE TRI PAR FUSION
+%  CPGE deuxieme annee --- filieres MP / PSI / TSI
+%  Compilation :  latexmk -pdf cours-rapide-fusion.tex
+% =====================================================================
+\documentclass[11pt,aspectratio=169]{beamer}
+\usepackage{theme-cpge}
+
+\begin{document}
+
+% ---------------------------------------------------------------- titre
+\begin{frame}[plain]
+  \vfill
+  \begin{center}
+    {\color{teal}\hrule height 2.5pt}\vspace{12pt}
+    {\Huge\bfseries\color{teal} Le tri rapide et le tri par fusion}\\[12pt]
+    {\large Diviser pour régner}\\[6pt]
+    {\normalsize Tri en place \;$\bullet$\; Stabilité \;$\bullet$\; Complexité}\\[14pt]
+    {\normalsize CPGE deuxième année --- filières MP / PSI / TSI}\\[10pt]
+    {\color{teal}\hrule height 1pt}
+  \end{center}
+  \vfill
+\end{frame}
+
+% ---------------------------------------------------------------- programme
+\begin{frame}{Objectifs}
+\begin{encadre}
+\small
+Cette section fait suite à celle étudiée en première année. L'objectif est d'explorer
+des algorithmes de tri plus efficaces, tel que le \motcle{tri rapide} et le
+\motcle{tri par fusion}, et de mettre l'accent sur la notion de
+\motcle{tri en place} et de \motcle{stabilité}.
+\end{encadre}
+\vspace{8pt}
+\begin{center}\small
+\begin{tabular}{p{3cm}p{8cm}}
+\toprule
+\textbf{Tri rapide} & Définir le principe de l'algorithme. L'implémenter.
+Comparer sa complexité avec celles des autres algorithmes. Discuter le choix du pivot.\\
+\midrule
+\textbf{Tri par fusion} & Définir le principe de la méthode. L'implémenter.
+Comparer sa complexité avec celles des autres méthodes.\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+% ---------------------------------------------------------------- rappels
+\begin{frame}{Trois mots de vocabulaire}
+\begin{encadre}
+\textbf{Tri en place} --- l'algorithme n'utilise qu'une mémoire auxiliaire
+$\Oh(1)$ ou $\Oh(\log n)$ : il réorganise le tableau sans en fabriquer une copie.
+\end{encadre}
+\vspace{4pt}
+\begin{encadre}
+\textbf{Tri stable} --- deux éléments de même clé restent dans leur ordre d'origine.
+Indispensable dès qu'on trie successivement sur plusieurs critères.
+\end{encadre}
+\vspace{4pt}
+\begin{encadre}
+\textbf{Complexité} --- on compte le nombre de \emph{comparaisons} entre éléments,
+dans le meilleur cas, dans le pire cas, et en moyenne.
+\end{encadre}
+\vspace{6pt}
+\centering\small
+Rappel de première année : sélection, insertion et bulles coûtent
+$\Th(n^2)$ comparaisons dans le pire cas.
+\end{frame}
+
+% ---------------------------------------------------------------- DPR
+\begin{frame}{L'idée commune : diviser pour régner}
+\begin{encadre}
+\begin{itemize}\setlength\itemsep{2pt}
+  \item \motcle{Diviser} : découper le tableau en deux parties ;
+  \item \motcle{Régner} : trier chaque partie \emph{récursivement} ;
+  \item \motcle{Combiner} : reconstituer le tableau trié.
+\end{itemize}
+\end{encadre}
+\vspace{6pt}
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+& \textbf{Diviser} & \textbf{Combiner}\\
+\midrule
+Tri par fusion & facile : couper au milieu & difficile : fusionner ($\Th(n)$)\\
+Tri rapide & difficile : partitionner ($\Th(n)$) & rien à faire\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{6pt}
+\centering\motcle{Les deux algorithmes se partagent le travail de façon opposée.}
+\end{frame}
+
+% =====================================================================
+\section{Le tri par fusion}
+% =====================================================================
+
+\begin{frame}{Principe}
+\begin{encadre}
+Fusionner deux listes \emph{déjà triées} est facile : on compare les deux premiers
+éléments et on prend le plus petit. D'où l'algorithme :
+\textbf{couper en deux, trier chaque moitié, fusionner}.
+\end{encadre}
+\vspace{4pt}
+\begin{center}
+\begin{tikzpicture}[scale=0.8,transform shape,font=\scriptsize,
+  b/.style={draw=teal,fill=tealclair,inner sep=3pt,rounded corners=1.5pt},
+  r/.style={draw=vertrec,fill=vertrec!12,inner sep=3pt,rounded corners=1.5pt},
+  >=Stealth]
+  \node[b] (a0) at (0,2.2) {6 \ 2 \ 8 \ 4};
+  \node[b] (a1) at (-2,1.2) {6 \ 2}; \node[b] (a2) at (2,1.2) {8 \ 4};
+  \node[b] (b1) at (-3,0.2) {6}; \node[b] (b2) at (-1,0.2) {2};
+  \node[b] (b3) at (1,0.2) {8}; \node[b] (b4) at (3,0.2) {4};
+  \node[r] (c1) at (-2,-0.9) {2 \ 6}; \node[r] (c2) at (2,-0.9) {4 \ 8};
+  \node[r] (d0) at (0,-1.9) {2 \ 4 \ 6 \ 8};
+  \draw[->,teal] (a0)--(a1); \draw[->,teal] (a0)--(a2);
+  \draw[->,teal] (a1)--(b1); \draw[->,teal] (a1)--(b2);
+  \draw[->,teal] (a2)--(b3); \draw[->,teal] (a2)--(b4);
+  \draw[->,vertrec] (b1)--(c1); \draw[->,vertrec] (b2)--(c1);
+  \draw[->,vertrec] (b3)--(c2); \draw[->,vertrec] (b4)--(c2);
+  \draw[->,vertrec] (c1)--(d0); \draw[->,vertrec] (c2)--(d0);
+  \node[teal] at (-4.6,1.7) {\textbf{diviser}};
+  \node[vertrec] at (-4.6,-1.4) {\textbf{fusionner}};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{L'étape de fusion}
+\begin{lstlisting}
+def fusion(u, v):
+    """u et v sont triees ; renvoie la liste triee de tous leurs elements."""
+    res = []
+    i, j = 0, 0
+    while i < len(u) and j < len(v):
+        if u[i] <= v[j]:
+            res.append(u[i]); i += 1
+        else:
+            res.append(v[j]); j += 1
+    return res + u[i:] + v[j:]
+\end{lstlisting}
+\begin{encadre}\small
+Chaque tour de boucle place définitivement un élément dans \tab{res} :
+la fusion de deux listes totalisant $n$ éléments coûte au plus $n-1$ comparaisons,
+donc $\Th(n)$.
+\end{encadre}
+\end{frame}
+
+\begin{frame}[fragile]{L'algorithme}
+\begin{lstlisting}
+def tri_fusion(t):
+    n = len(t)
+    if n <= 1:                      # cas de base
+        return t
+    m = n // 2                      # diviser
+    return fusion(tri_fusion(t[:m]), # regner
+                  tri_fusion(t[m:])) # puis combiner
+\end{lstlisting}
+\vspace{2pt}
+\begin{terminaisonrec}
+La taille $|t|$ est un entier positif qui décroît strictement à chaque appel
+($m<n$ et $n-m<n$) : on atteint nécessairement le cas de base $n\le1$.
+\end{terminaisonrec}
+\begin{correction}[Correction (récurrence sur $n$)]
+\small
+Les deux moitiés sont triées par hypothèse de récurrence, et la fusion de deux listes
+triées renvoie une liste triée contenant exactement les mêmes éléments.
+\end{correction}
+\end{frame}
+
+\begin{frame}{Complexité}
+Soit $C(n)$ le nombre de comparaisons. La division coûte $0$, la fusion coûte au plus $n$ :
+\[
+C(n)\;=\;2\,C\!\left(\frac n2\right)+\Th(n),\qquad C(1)=0 .
+\]
+\vspace{-6pt}
+\begin{center}
+\begin{tikzpicture}[font=\scriptsize,yscale=0.9]
+  \foreach \k/\lab/\c in {0/{1 appel de taille $n$}/{$n$},
+                          1/{2 appels de taille $n/2$}/{$n$},
+                          2/{4 appels de taille $n/4$}/{$n$}}{
+    \draw[teal,fill=tealclair] (0,-\k*0.95) rectangle (6.4,-\k*0.95-0.55);
+    \node at (3.2,-\k*0.95-0.28) {\lab};
+    \node[anchor=west,teal] at (6.8,-\k*0.95-0.28) {coût : \c};
+  }
+  \node at (3.2,-2.9) {$\vdots$};
+  \draw[teal,fill=tealclair] (0,-3.6) rectangle (6.4,-4.15);
+  \node at (3.2,-3.88) {$n$ appels de taille $1$};
+  \node[anchor=west,teal] at (6.8,-3.88) {coût : $n$};
+  \draw[<->,thick,orangefonce] (-0.4,-0.28)--(-0.4,-3.88);
+  \node[orangefonce,anchor=east] at (-0.6,-2) {$\log_2 n$};
+\end{tikzpicture}
+\end{center}
+\vspace{-2pt}
+\begin{encadre}
+\centering
+$\log_2 n$ niveaux, chacun de coût $\Th(n)$ \;$\Longrightarrow$\;
+$C(n)=\Th(n\log n)$, \textbf{dans tous les cas}.
+\end{encadre}
+\end{frame}
+
+\begin{frame}{Tri par fusion : bilan}
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+Meilleur cas & $\Th(n\log n)$\\
+Cas moyen & $\Th(n\log n)$\\
+Pire cas & $\Th(n\log n)$ --- \textbf{aucune entrée ne le ralentit}\\
+Mémoire auxiliaire & $\Th(n)$ : \textbf{n'est pas un tri en place}\\
+Stabilité & \textbf{stable} grâce au test \tab{u[i] <= v[j]}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{8pt}
+\begin{encadre}\small
+\textbf{Atout.} Une complexité garantie et la stabilité : c'est le tri de référence
+lorsqu'on veut une performance sûre, ou lorsque les données sont lues séquentiellement
+(fichiers, listes chaînées).
+\end{encadre}
+\begin{attention}\small
+\textbf{Limite.} Il faut recopier les données : $\Th(n)$ de mémoire supplémentaire.
+\end{attention}
+\end{frame}
+
+% =====================================================================
+\section{Le tri rapide}
+% =====================================================================
+
+\begin{frame}{Principe}
+\begin{encadre}
+On choisit un élément, le \motcle{pivot}. On \textbf{partitionne} le tableau :
+à gauche les éléments plus petits que le pivot, à droite les plus grands.
+Le pivot est alors \emph{à sa place définitive}, et il ne reste qu'à trier
+récursivement les deux côtés --- \textbf{sans rien recombiner}.
+\end{encadre}
+\vspace{6pt}
+\begin{center}
+\begin{tikzpicture}[font=\scriptsize,>=Stealth]
+  \draw[draw=teal,fill=grisclair] (0,0) rectangle (9,0.7);
+  \node at (4.5,0.35) {tableau quelconque};
+  \draw[->,thick,teal] (4.5,-0.1)--(4.5,-0.7) node[midway,right] {partition : coût $\Th(n)$};
+  \draw[draw=teal,fill=tealclair] (0,-1.45) rectangle (3.6,-0.75);
+  \node at (1.8,-1.1) {éléments $\le p$};
+  \draw[draw=orangefonce,fill=orangeclair] (3.6,-1.45) rectangle (4.8,-0.75);
+  \node at (4.2,-1.1) {\textbf{p}};
+  \draw[draw=teal,fill=tealclair] (4.8,-1.45) rectangle (9,-0.75);
+  \node at (6.9,-1.1) {éléments $>p$};
+  \draw[->,thick,vertrec] (1.8,-1.6)--(1.8,-2.1) node[midway,left] {tri récursif};
+  \draw[->,thick,vertrec] (6.9,-1.6)--(6.9,-2.1) node[midway,right] {tri récursif};
+  \node[orangefonce] at (4.2,-2.2) {\textbf{définitivement placé}};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{La partition}
+\begin{lstlisting}
+def partition(t, g, d):
+    """Partitionne t[g..d] autour du pivot t[d] ; renvoie la place du pivot."""
+    p = t[d]
+    i = g                      # t[g..i-1] contient les elements <= p
+    for j in range(g, d):
+        if t[j] <= p:
+            t[i], t[j] = t[j], t[i]
+            i += 1
+    t[i], t[d] = t[d], t[i]    # on place enfin le pivot
+    return i
+\end{lstlisting}
+\begin{encadre}\small
+Un seul parcours du tableau, avec une comparaison par tour :
+la partition de $n$ éléments coûte $n-1$ comparaisons, donc $\Th(n)$,
+et n'utilise \textbf{aucune mémoire supplémentaire}.
+\end{encadre}
+\end{frame}
+
+\begin{frame}[fragile]{L'algorithme}
+\begin{lstlisting}
+def tri_rapide(t, g=0, d=None):
+    if d is None:
+        d = len(t) - 1
+    if g < d:                    # cas de base : 0 ou 1 element
+        k = partition(t, g, d)   # diviser
+        tri_rapide(t, g, k - 1)  # regner a gauche
+        tri_rapide(t, k + 1, d)  # regner a droite
+    return t
+\end{lstlisting}
+\vspace{2pt}
+\begin{terminaisonrec}
+Le pivot est \emph{exclu} des deux appels récursifs : la taille de la tranche
+$d-g+1$ décroît donc strictement à chaque appel.
+\end{terminaisonrec}
+\begin{correction}[Correction (récurrence sur la taille de la tranche)]
+\small
+Après la partition, $t[k]$ est à sa place et tout élément à sa gauche lui est
+inférieur ou égal, tout élément à sa droite lui est supérieur. Si les deux tranches
+sont triées, le tout est trié.
+\end{correction}
+\end{frame}
+
+\begin{frame}{Complexité : tout dépend du pivot}
+\begin{encadre}[title=Le meilleur cas : le pivot coupe en deux,fonttitle=\bfseries]
+$C(n)=2\,C(n/2)+n$ \; d'où \; $C(n)=\Th(n\log n)$, comme le tri par fusion.
+\end{encadre}
+\vspace{4pt}
+\begin{attention}
+\textbf{Le pire cas : le pivot est toujours le plus grand (ou le plus petit)}\\[3pt]
+C'est ce qui arrive si le tableau est \emph{déjà trié} : une tranche vide, une tranche
+de taille $n-1$.
+\[
+C(n)=C(n-1)+(n-1)\quad\Longrightarrow\quad C(n)=\frac{n(n-1)}2=\Th(n^2).
+\]
+\end{attention}
+\vspace{4pt}
+\begin{encadre}[title=Le cas moyen,fonttitle=\bfseries]
+Sur une entrée aléatoire, on démontre que
+$C_{\text{moy}}(n)\approx 1{,}39\,n\log_2 n=\Th(n\log n)$ :
+seulement $39\,\%$ de plus que l'optimum.
+\end{encadre}
+\end{frame}
+
+\begin{frame}{Le choix du pivot}
+Le pire cas vient d'un pivot mal choisi. Trois parades classiques :
+\vspace{4pt}
+\begin{encadre}
+\textbf{1. Pivot aléatoire} --- tirer au hasard l'indice du pivot puis l'échanger avec
+\tab{t[d]}. Aucune entrée particulière n'est plus « mauvaise » qu'une autre : le
+$\Th(n\log n)$ devient vrai \emph{en moyenne pour toute entrée}.
+\end{encadre}
+\vspace{3pt}
+\begin{encadre}
+\textbf{2. Médiane de trois} --- prendre la médiane de $t[g]$, $t[(g+d)//2]$ et $t[d]$.
+Élimine le pire cas « tableau déjà trié », de loin le plus fréquent en pratique.
+\end{encadre}
+\vspace{3pt}
+\begin{encadre}
+\textbf{3. Bascule} --- pour une tranche de moins de $15$ éléments, terminer par un
+tri par insertion, plus rapide sur les petites tailles.
+\end{encadre}
+\end{frame}
+
+\begin{frame}{Tri rapide : bilan}
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+Meilleur cas & $\Th(n\log n)$\\
+Cas moyen & $\Th(n\log n)$, environ $1{,}39\,n\log_2 n$\\
+Pire cas & $\Th(n^2)$ (tableau déjà trié, pivot extrême)\\
+Mémoire auxiliaire & $\Th(\log n)$ (pile d'appels) : \textbf{tri en place}\\
+Stabilité & \textbf{non stable} : les échanges se font à distance\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{8pt}
+\begin{attention}\small
+\textbf{À ne pas dire.} « Le tri rapide est en $\Th(n\log n)$ » est incomplet :
+il l'est \textbf{en moyenne}, et il est en $\Th(n^2)$ dans le pire cas.
+C'est pourtant le plus rapide en pratique, car il travaille en place,
+sans recopie de tableau.
+\end{attention}
+\end{frame}
+
+% =====================================================================
+\section{Comparaison}
+% =====================================================================
+
+\begin{frame}{Comparaison des cinq algorithmes}
+\begin{center}\scriptsize
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Tri} & \textbf{Meilleur} & \textbf{Moyen} & \textbf{Pire} & \textbf{Mémoire} & \textbf{En place} & \textbf{Stable}\\
+\midrule
+Sélection & $\Th(n^2)$ & $\Th(n^2)$ & $\Th(n^2)$ & $\Th(1)$ & oui & non\\
+Insertion & $\Th(n)$ & $\Th(n^2)$ & $\Th(n^2)$ & $\Th(1)$ & oui & oui\\
+Bulles & $\Th(n)$ & $\Th(n^2)$ & $\Th(n^2)$ & $\Th(1)$ & oui & oui\\
+\midrule
+\rowcolor{tealclair}
+Fusion & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n)$ & non & oui\\
+\rowcolor{tealclair}
+Rapide & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n^2)$ & $\Th(\log n)$ & oui & non\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{8pt}
+\begin{encadre}\small
+\textbf{Ordres de grandeur pour $n=10^6$ :} environ $5\cdot10^{11}$ comparaisons pour un
+tri quadratique (plus d'une heure) contre $2\cdot10^{7}$ pour un tri en $n\log n$
+(une fraction de seconde).
+\end{encadre}
+\end{frame}
+
+\begin{frame}{À retenir}
+\begin{encadre}[title=Quatre points,fonttitle=\bfseries]
+\begin{enumerate}\setlength\itemsep{3pt}
+  \item Les deux algorithmes appliquent \motcle{diviser pour régner}, mais placent
+        l'effort à des endroits opposés : la fusion pour l'un, la partition pour l'autre.
+  \item Le \motcle{tri par fusion} est en $\Th(n\log n)$ \emph{toujours}, et il est
+        \emph{stable} ; en revanche il n'est pas en place ($\Th(n)$ de mémoire).
+  \item Le \motcle{tri rapide} est \emph{en place} et le plus rapide en pratique,
+        mais il est en $\Th(n^2)$ dans le pire cas et il n'est pas stable.
+  \item Le \motcle{choix du pivot} (aléatoire, médiane de trois) est ce qui rend le
+        tri rapide fiable.
+\end{enumerate}
+\end{encadre}
+\end{frame}
+
+\begin{frame}{Pour s'entraîner}
+\begin{enumerate}\small\setlength\itemsep{5pt}
+  \item Dérouler à la main le tri par fusion, puis le tri rapide, sur le tableau
+        $[5,\,3,\,8,\,1,\,9,\,2]$. Compter les comparaisons dans chaque cas.
+  \item Écrire une version de \tab{tri\_rapide} avec pivot aléatoire, et vérifier
+        expérimentalement qu'un tableau déjà trié n'est plus un cas défavorable.
+  \item Montrer sur un exemple que le tri rapide n'est pas stable.
+  \item Comparer les temps d'exécution des cinq tris pour
+        $n=10^2,10^3,10^4$ (module \tab{time}), et tracer les courbes obtenues.
+  \item Modifier le tri par fusion pour qu'il compte en plus le nombre d'inversions
+        du tableau initial, sans changer sa complexité.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[plain]
+  \vfill
+  \begin{center}
+    {\color{teal}\hrule height 2pt}\vspace{10pt}
+    {\LARGE\bfseries\color{teal} Fin}\\[8pt]
+    {\normalsize Tri rapide et tri par fusion --- CPGE MP / PSI / TSI}\\[10pt]
+    {\color{teal}\hrule height 1pt}
+  \end{center}
+  \vfill
+\end{frame}
+
+\end{document}

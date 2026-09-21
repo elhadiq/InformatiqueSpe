@@ -1,0 +1,1003 @@
+% =====================================================================
+%  Cours : LES ALGORITHMES DE TRI
+%  CPGE --- filières MP / PSI / TSI --- programme officiel (réforme 2023)
+%  Beamer, thème maison « CPGE teal »
+%  Compilation :  latexmk -pdf cours-tris.tex
+% =====================================================================
+\documentclass[11pt,aspectratio=169]{beamer}
+\usepackage{theme-cpge}
+\usepackage{appendixnumberbeamer}
+
+\title{Les algorithmes de tri}
+\subtitle{Complexité, correction, terminaison \quad$\bullet$\quad Diviser pour régner}
+\date{Année scolaire 2026--2027}
+\author{}
+\institute{}
+
+\begin{document}
+
+% =====================================================================
+\begin{frame}[plain]
+  \vfill
+  \begin{center}
+    {\color{teal}\hrule height 2.5pt}\vspace{12pt}
+    {\Huge\bfseries\color{teal} Les algorithmes de tri}\\[10pt]
+    {\large Complexité \;$\bullet$\; Correction \;$\bullet$\; Terminaison}\\[6pt]
+    {\large Diviser pour régner : tri fusion et tri rapide}\\[14pt]
+    {\normalsize CPGE --- filières MP / PSI / TSI}\\[4pt]
+    {\footnotesize Programme officiel d'informatique --- réforme 2023}\\[10pt]
+    {\color{teal}\hrule height 1pt}
+  \end{center}
+  \vfill
+\end{frame}
+
+% =====================================================================
+\begin{frame}{Plan du cours}
+  \tableofcontents
+\end{frame}
+
+% =====================================================================
+\begin{frame}{Ce que dit le programme}
+\begin{encadre}
+\small
+\textbf{Première année.} Tri par insertion, tri par sélection (et tri à bulles) :
+mise en \oe uvre, \emph{preuve de correction} par invariant de boucle,
+\emph{terminaison} par variant, \emph{coût} en nombre de comparaisons.
+\end{encadre}
+\vspace{4pt}
+\begin{encadre}
+\small
+\textbf{Deuxième année.} Méthode \motcle{diviser pour régner} : tri fusion et tri rapide.
+Mise en équation du coût par une \emph{relation de récurrence}, résolution,
+comparaison des complexités dans le meilleur cas, le pire cas et en moyenne.
+Notion de borne inférieure en $\Th(n\log n)$ pour les tris par comparaisons.
+\end{encadre}
+\vspace{6pt}
+\begin{attention}
+\small
+\textbf{Objectif de la séquence.} On \emph{réexploite} les tris de première année comme
+support d'exercices de \emph{calcul de complexité} (le code est donné, la complexité est
+à établir), puis on construit les deux tris efficaces du programme de deuxième année.
+\end{attention}
+\end{frame}
+
+% =====================================================================
+\section{Le problème du tri : vocabulaire et outils}
+% =====================================================================
+
+\begin{frame}{Le problème}
+\begin{encadre}[title=Problème du tri,fonttitle=\bfseries]
+\textbf{Entrée :} un tableau $t=[t[0],\dots,t[n-1]]$ de $n$ éléments deux à deux
+comparables (relation d'ordre total $\le$).\\[3pt]
+\textbf{Sortie :} une \emph{permutation} $\sigma$ de $t$ telle que
+$\ t_{\sigma(0)}\le t_{\sigma(1)}\le\dots\le t_{\sigma(n-1)}$.
+\end{encadre}
+\vspace{6pt}
+Deux exigences, jamais une seule :
+\begin{enumerate}[<+->]
+  \item le tableau final est \motcle{trié} (croissant) ;
+  \item le tableau final est une \motcle{permutation} du tableau initial
+        (on n'a ni perdu ni inventé d'élément).
+\end{enumerate}
+\vspace{4pt}
+\onslide<3->{%
+\begin{attention}\small
+Oublier le point 2 est l'erreur classique : \texttt{return [1]*n} produit un tableau
+parfaitement trié\dots{} et faux.
+\end{attention}}
+\end{frame}
+
+% =====================================================================
+\begin{frame}{Vocabulaire}
+\begin{itemize}
+  \item \motcle{Opération élémentaire de référence} : la \textbf{comparaison} entre deux
+        éléments. On compte à part les \textbf{échanges} et les \textbf{décalages}.
+  \item \motcle{Tri en place} : la mémoire auxiliaire utilisée est $\Oh(1)$ ou $\Oh(\log n)$
+        (on ne recopie pas le tableau).
+  \item \motcle{Tri stable} : deux éléments de même clé conservent leur ordre relatif.
+  \item \motcle{Inversion} de $t$ : couple $(i,j)$ avec $i\lt j$ et $t[i]\gt t[j]$.
+        On note $I(t)$ leur nombre.
+\end{itemize}
+\vspace{4pt}
+\begin{encadre}
+\small
+$0\le I(t)\le \binom n2=\dfrac{n(n-1)}2$, avec :
+\begin{itemize}\setlength\itemsep{1pt}
+  \item $I(t)=0 \iff t$ est déjà trié ;
+  \item $I(t)=\binom n2 \iff t$ est trié en ordre strictement décroissant.
+\end{itemize}
+\emph{Un échange d'éléments voisins fait varier $I$ de exactement $\pm1$} :
+c'est la clé du coût du tri par insertion et du tri à bulles.
+\end{encadre}
+\end{frame}
+
+% =====================================================================
+\begin{frame}{Rappels de complexité}
+On note $C(n)$ le nombre de comparaisons effectuées sur une entrée de taille $n$.
+\begin{itemize}
+  \item \motcle{Pire cas} : $C_{\max}(n)=\max\{C(t)\ ;\ |t|=n\}$ --- la garantie.
+  \item \motcle{Meilleur cas} : $C_{\min}(n)$ --- ce qu'on ne peut pas battre.
+  \item \motcle{Cas moyen} : $\displaystyle C_{\text{moy}}(n)=\frac1{n!}\sum_{\sigma\in\mathfrak S_n} C(\sigma)$,
+        sous l'hypothèse d'équiprobabilité des $n!$ permutations.
+\end{itemize}
+\vspace{4pt}
+\begin{encadre}
+\small
+$f=\Th(g)$ signifie : $\exists\,c_1,c_2>0,\ \exists\,n_0,\ \forall n\ge n_0,\
+c_1 g(n)\le f(n)\le c_2 g(n)$.\\[3pt]
+Sommes utiles : $\displaystyle\sum_{k=1}^{n}k=\frac{n(n+1)}2$, \quad
+$H_n=\displaystyle\sum_{k=1}^n\frac1k=\ln n+\gamma+o(1)$, \quad
+$n!\sim\sqrt{2\pi n}\left(\frac ne\right)^n$.
+\end{encadre}
+\vspace{2pt}
+\centering\footnotesize Sauf mention contraire, $\log$ désigne le logarithme en base $2$.
+\end{frame}
+
+% =====================================================================
+\section{Les tris quadratiques : exercices de complexité}
+% =====================================================================
+
+\begin{frame}{Les trois tris de première année}
+\begin{center}
+\begin{tikzpicture}[node distance=6mm,
+  boite/.style={draw=teal,fill=tealclair,rounded corners=2pt,inner sep=5pt,
+                minimum width=3.1cm,align=center,font=\small}]
+  \node[boite] (a) {\textbf{Tri par sélection}\\[2pt]\scriptsize on cherche le minimum\\\scriptsize et on le met devant};
+  \node[boite,right=of a] (b) {\textbf{Tri par insertion}\\[2pt]\scriptsize on insère chaque élément\\\scriptsize à sa place dans le début trié};
+  \node[boite,right=of b] (c) {\textbf{Tri à bulles}\\[2pt]\scriptsize on échange les voisins\\\scriptsize mal ordonnés, en boucle};
+\end{tikzpicture}
+\end{center}
+\vspace{4pt}
+\begin{encadre}
+\small
+Dans cette partie, le \textbf{code est donné}. Le travail demandé est celui de
+l'évaluateur de concours :
+\begin{enumerate}\setlength\itemsep{1pt}
+  \item compter \emph{exactement} les opérations élémentaires ;
+  \item en déduire la classe $\Th$ dans le meilleur, le pire et le cas moyen ;
+  \item justifier \emph{terminaison} (variant) et \emph{correction} (invariant).
+\end{enumerate}
+\end{encadre}
+\end{frame}
+
+% ---------------------------------------------------------------- sélection
+\begin{frame}[fragile]{Tri par sélection --- le code}
+\begin{lstlisting}
+def tri_selection(t):
+    n = len(t)
+    for i in range(n - 1):          # boucle externe
+        imin = i
+        for j in range(i + 1, n):   # boucle interne
+            if t[j] < t[imin]:      # <-- comparaison comptee
+                imin = j
+        t[i], t[imin] = t[imin], t[i]
+    return t
+\end{lstlisting}
+\begin{encadre}\small
+\textbf{Principe.} À l'étape $i$, la tranche $t[0..i-1]$ est définitivement en place ;
+on cherche le minimum de $t[i..n-1]$ et on l'échange avec $t[i]$.
+\end{encadre}
+\end{frame}
+
+\begin{frame}[fragile,shrink=15]{Tri par sélection --- complexité}
+\begin{exercice}{1}{comptage exact}
+\begin{enumerate}\setlength\itemsep{1pt}
+  \item Donner le nombre \emph{exact} de comparaisons \tab{t[j] < t[imin]}.
+  \item Dépend-il du contenu de $t$ ? Conclure sur $C_{\min}$, $C_{\max}$, $C_{\text{moy}}$.
+  \item Donner le nombre exact d'échanges.
+\end{enumerate}
+\end{exercice}
+\pause
+\begin{soluce}
+\small
+Pour $i$ fixé, la boucle interne parcourt $j\in\{i+1,\dots,n-1\}$, soit $n-1-i$ comparaisons.
+\[
+C(n)=\sum_{i=0}^{n-2}(n-1-i)\;\overset{k=n-1-i}{=}\;\sum_{k=1}^{n-1}k=\frac{n(n-1)}2 .
+\]
+Aucun test ne conditionne le \emph{nombre} de tours : le comptage est \textbf{indépendant
+des données}. Donc
+$C_{\min}(n)=C_{\max}(n)=C_{\text{moy}}(n)=\frac{n(n-1)}2=\Th(n^2)$.\\[2pt]
+Échanges : exactement $n-1$, soit $\Th(n)$ --- c'est le \emph{seul} avantage de ce tri
+(coût d'écriture minimal).
+\end{soluce}
+\end{frame}
+
+\begin{frame}[shrink=15]{Tri par sélection --- preuves}
+\begin{terminaisonit}
+Boucle interne : variant $v_j=n-j$, entier, $\ge 0$, strictement décroissant (car $j$
+augmente de $1$) : elle s'arrête. Boucle externe : variant $v_i=n-1-i$. \\
+Les deux boucles étant \tab{for} sur des intervalles finis, la terminaison est immédiate ;
+l'exercice est de savoir l'\emph{écrire} avec un variant.
+\end{terminaisonit}
+\vspace{3pt}
+\begin{correction}
+\small
+\textbf{Invariant $\mathcal I_i$ :} \emph{avant l'itération $i$, la tranche $t[0..i-1]$ est
+triée par ordre croissant et contient les $i$ plus petits éléments du tableau initial
+(au sens du multi-ensemble), et $t$ est une permutation du tableau initial.}
+\begin{itemize}\setlength\itemsep{1pt}
+  \item \emph{Initialisation} ($i=0$) : la tranche est vide, l'invariant est vrai.
+  \item \emph{Hérédité} : l'itération place en $t[i]$ le minimum de $t[i..n-1]$, lequel est
+        $\ge\max t[0..i-1]$ par $\mathcal I_i$ ; seul un échange est effectué, donc $t$ reste
+        une permutation. D'où $\mathcal I_{i+1}$.
+  \item \emph{Sortie} ($i=n-1$) : $t[0..n-2]$ est trié et contient les $n-1$ plus petits ;
+        $t[n-1]$ est donc le plus grand : $t$ est trié.
+\end{itemize}
+\end{correction}
+\end{frame}
+
+% ---------------------------------------------------------------- insertion
+\begin{frame}[fragile]{Tri par insertion --- le code}
+\begin{lstlisting}
+def tri_insertion(t):
+    n = len(t)
+    for i in range(1, n):
+        x = t[i]                 # element a inserer
+        j = i - 1
+        while j >= 0 and t[j] > x:   # <-- comparaison comptee
+            t[j + 1] = t[j]          # <-- decalage
+            j = j - 1
+        t[j + 1] = x
+    return t
+\end{lstlisting}
+\begin{encadre}\small
+\textbf{Principe.} C'est le tri du joueur de cartes : $t[0..i-1]$ est déjà trié, on fait
+« glisser » $x=t[i]$ vers la gauche jusqu'à sa place.
+\end{encadre}
+\end{frame}
+
+\begin{frame}[fragile]{Tri par insertion --- meilleur et pire cas}
+\begin{exercice}{2}{les deux extrêmes}
+\begin{enumerate}\setlength\itemsep{1pt}
+  \item Quelle entrée minimise le nombre de comparaisons ? Le calculer exactement.
+  \item Quelle entrée le maximise ? Le calculer exactement.
+  \item En déduire $C_{\min}(n)$ et $C_{\max}(n)$ en $\Th$.
+\end{enumerate}
+\end{exercice}
+\pause
+\begin{soluce}
+\small
+\textbf{Meilleur cas : $t$ déjà trié.} Le test \tab{t[j] > x} est faux au premier essai
+pour chaque $i$ : une seule comparaison par tour, soit
+$C_{\min}(n)=n-1=\Th(n)$. \emph{Le tri par insertion est linéaire sur une entrée presque
+triée} : c'est sa qualité remarquable.\\[3pt]
+\textbf{Pire cas : $t$ trié strictement décroissant.} $x$ descend jusqu'à l'indice $0$ :
+$i$ comparaisons au tour $i$, donc
+\[
+C_{\max}(n)=\sum_{i=1}^{n-1} i=\frac{n(n-1)}2=\Th(n^2).
+\]
+\end{soluce}
+\end{frame}
+
+\begin{frame}[shrink=15]{Tri par insertion --- le lien avec les inversions}
+\begin{exercice}{3}{décalages et inversions}
+Montrer que le nombre total de décalages \tab{t[j+1] = t[j]} est exactement $I(t)$, le
+nombre d'inversions du tableau initial. En déduire le coût moyen.
+\end{exercice}
+\pause
+\begin{soluce}
+\small
+Au tour $i$, on décale un élément $t[j]$ exactement lorsque $t[j]>x=t[i]$ avec $j<i$ :
+c'est précisément une inversion $(j,i)$. Comme la tranche $t[0..i-1]$ contient les mêmes
+éléments que la tranche initiale, le nombre de décalages du tour $i$ est le nombre
+d'inversions dont le second indice est $i$. En sommant : \textbf{nombre de décalages}
+$=I(t)$, et le nombre de comparaisons vaut $I(t)+(\text{au plus } n-1)$.\\[3pt]
+\textbf{En moyenne :} pour une permutation aléatoire uniforme, chaque couple $(i,j)$, $i<j$,
+est une inversion avec probabilité $\tfrac12$. Par linéarité de l'espérance,
+\[
+\mathbb E[I]=\frac12\binom n2=\frac{n(n-1)}4,\qquad\text{donc}\qquad
+C_{\text{moy}}(n)\sim\frac{n^2}4=\Th(n^2).
+\]
+Le cas moyen est quadratique, mais avec une constante deux fois meilleure que le pire cas.
+\end{soluce}
+\end{frame}
+
+\begin{frame}[shrink=15]{Tri par insertion --- preuves}
+\begin{terminaisonit}[Terminaison --- variant de la boucle \texttt{while}]
+$v=j+1$ est un entier, minoré par $0$ grâce à la condition \tab{j >= 0}, et strictement
+décroissant à chaque tour (\tab{j = j - 1}). La boucle \tab{while} termine ; la boucle
+\tab{for} est finie.
+\end{terminaisonit}
+\vspace{3pt}
+\begin{correction}
+\small
+\textbf{Invariant externe $\mathcal I_i$ :} \emph{avant l'itération $i$, $t[0..i-1]$ est
+trié et $t$ est une permutation du tableau initial.}\\[2pt]
+\textbf{Invariant interne :} \emph{$t[j+2..i]$ contient les éléments de $t[j+1..i-1]$
+initiaux, tous $>x$, rangés dans le même ordre ; la case $t[j+1]$ est libre.}
+\begin{itemize}\setlength\itemsep{1pt}
+  \item \emph{Initialisation} : $i=1$, tranche $t[0..0]$ triée.
+  \item \emph{Hérédité} : à la sortie du \tab{while}, $j=-1$ ou $t[j]\le x$ ; l'affectation
+        \tab{t[j+1] = x} place $x$ après tous les éléments $\le x$ et avant tous les
+        éléments $>x$ : $t[0..i]$ est trié.
+  \item \emph{Sortie} : $i=n$, donc $t[0..n-1]$ est trié.
+\end{itemize}
+\textbf{Bonus :} l'invariant interne montre aussi que le tri est \motcle{stable}
+(le test est $>$ strict, un élément égal n'est pas dépassé).
+\end{correction}
+\end{frame}
+
+% ---------------------------------------------------------------- bulles
+\begin{frame}[fragile]{Tri à bulles --- le code}
+\begin{lstlisting}
+def tri_bulles(t):
+    n = len(t)
+    for i in range(n - 1, 0, -1):
+        echange = False
+        for j in range(i):
+            if t[j] > t[j + 1]:            # <-- comparaison
+                t[j], t[j+1] = t[j+1], t[j]  # <-- echange de voisins
+                echange = True
+        if not echange:      # optimisation : deja trie
+            return t
+    return t
+\end{lstlisting}
+\begin{encadre}\small
+\textbf{Principe.} À chaque passe, le maximum de la zone non triée « remonte » en fin de
+zone comme une bulle.
+\end{encadre}
+\end{frame}
+
+\begin{frame}{Tri à bulles --- complexité}
+\begin{exercice}{4}{avec et sans l'optimisation}
+\begin{enumerate}\setlength\itemsep{1pt}
+  \item Sans le drapeau \tab{echange}, combien de comparaisons exactement ?
+  \item Avec le drapeau, que vaut $C_{\min}(n)$ ? Sur quelle entrée ?
+  \item Montrer que le nombre d'échanges vaut exactement $I(t)$.
+\end{enumerate}
+\end{exercice}
+\pause
+\begin{soluce}
+\small
+1. Pour $i$ de $n-1$ à $1$, la boucle interne fait $i$ comparaisons :
+$\sum_{i=1}^{n-1} i=\frac{n(n-1)}2=\Th(n^2)$, quelle que soit l'entrée.\\[2pt]
+2. Si $t$ est déjà trié, la première passe ne provoque aucun échange et on sort :
+$C_{\min}(n)=n-1=\Th(n)$. Le pire cas reste $\frac{n(n-1)}2=\Th(n^2)$
+(entrée décroissante).\\[2pt]
+3. Un échange porte sur deux voisins mal ordonnés : il supprime exactement une inversion
+et n'en crée aucune (l'ordre relatif des autres couples est inchangé). Comme on part de
+$I(t)$ inversions et qu'on termine à $0$, le nombre d'échanges est exactement $I(t)$ ;
+en moyenne $\frac{n(n-1)}4$.
+\end{soluce}
+\end{frame}
+
+\begin{frame}[shrink=15]{Tri à bulles --- preuves}
+\begin{terminaisonit}
+Boucle externe : variant $v_i=i$, entier positif strictement décroissant.
+Boucle interne : variant $i-j$.
+\end{terminaisonit}
+\vspace{3pt}
+\begin{correction}
+\small
+\textbf{Invariant de la boucle interne :} \emph{après le traitement de l'indice $j$,
+$t[j+1]=\max\big(t[0..j+1]\big)$} --- le maximum courant est « poussé » vers la droite.\\[2pt]
+\textbf{Invariant de la boucle externe $\mathcal I_i$ :} \emph{la tranche $t[i+1..n-1]$ est
+triée, contient les $n-1-i$ plus grands éléments, et $t$ est une permutation de l'entrée.}
+\begin{itemize}\setlength\itemsep{1pt}
+  \item \emph{Initialisation} : $i=n-1$, tranche vide.
+  \item \emph{Hérédité} : la passe amène $\max t[0..i]$ en position $i$, et n'utilise que des
+        échanges (permutation préservée).
+  \item \emph{Sortie} : $i=0$ donne $t[1..n-1]$ trié et $t[0]$ minimal, donc $t$ trié.
+  \item \emph{Sortie anticipée} : \tab{echange} faux signifie $t[j]\le t[j+1]$ pour tout
+        $j<i$, donc $t[0..i]$ est trié ; avec $\mathcal I_i$, $t$ est trié.
+\end{itemize}
+\end{correction}
+\end{frame}
+
+% ---------------------------------------------------------------- bilan
+\begin{frame}{Bilan des tris quadratiques}
+\begin{center}\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Tri} & $C_{\min}$ & $C_{\max}$ & $C_{\text{moy}}$ & \textbf{Échanges} & \textbf{En place} & \textbf{Stable}\\
+\midrule
+Sélection & $\frac{n(n-1)}2$ & $\frac{n(n-1)}2$ & $\frac{n(n-1)}2$ & $n-1$ & oui & non\\
+Insertion & $n-1$ & $\frac{n(n-1)}2$ & $\sim\frac{n^2}4$ & $I(t)$ décal. & oui & oui\\
+Bulles & $n-1$ & $\frac{n(n-1)}2$ & $\frac{n(n-1)}2$ & $I(t)$ & oui & oui\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{6pt}
+\begin{attention}\small
+Les trois sont en $\Th(n^2)$ dans le pire cas. Pour $n=10^6$, cela représente
+$\approx 5\cdot10^{11}$ comparaisons : plusieurs heures. Un tri en $\Th(n\log n)$ en demande
+$\approx 2\cdot 10^7$ : une fraction de seconde.
+\end{attention}
+\vspace{2pt}
+\centering\motcle{Question : peut-on faire mieux que $n^2$ ? Et jusqu'où ?}
+\end{frame}
+
+% =====================================================================
+\section{Une borne inférieure : \texorpdfstring{$\Omega(n\log n)$}{Omega(n log n)}}
+% =====================================================================
+
+\begin{frame}{L'arbre de décision}
+Un tri \emph{par comparaisons} n'accède aux données que par des tests $t[i]\le t[j]$.
+Son exécution sur les $n!$ entrées possibles se représente par un arbre binaire :
+\begin{center}
+\begin{tikzpicture}[level distance=11mm,scale=0.9,
+  every node/.style={font=\scriptsize},
+  n/.style={circle,draw=teal,fill=tealclair,inner sep=1.5pt},
+  f/.style={rectangle,draw=orangefonce,fill=orangeclair,inner sep=2pt}]
+  \node[n] {$a\!\le\! b$?}
+    child {node[n] {$b\!\le\! c$?}
+      child {node[f] {$abc$}}
+      child {node[n] {$a\!\le\! c$?}
+        child {node[f] {$acb$}} child {node[f] {$cab$}}}}
+    child {node[n] {$a\!\le\! c$?}
+      child {node[f] {$bac$}}
+      child {node[n] {$b\!\le\! c$?}
+        child {node[f] {$bca$}} child {node[f] {$cba$}}}};
+\end{tikzpicture}
+\end{center}
+\begin{itemize}\small
+  \item chaque \emph{n\oe ud interne} = une comparaison, ses deux fils = les deux réponses ;
+  \item chaque \emph{feuille} = une permutation produite en sortie ;
+  \item le nombre de comparaisons sur une entrée = la profondeur de la feuille atteinte ;
+  \item $C_{\max}(n)$ = la \textbf{hauteur} $h$ de l'arbre.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[shrink=15]{Le théorème de la borne inférieure}
+\begin{encadre}[title=Théorème,fonttitle=\bfseries]
+Tout algorithme de tri par comparaisons effectue, dans le pire cas, au moins
+$\big\lceil\log_2(n!)\big\rceil = \Omega(n\log n)$ comparaisons.
+\end{encadre}
+\pause
+\vspace{4pt}
+\textbf{Démonstration.} L'algorithme doit pouvoir produire les $n!$ permutations : l'arbre
+possède au moins $n!$ feuilles. Or un arbre binaire de hauteur $h$ a au plus $2^h$ feuilles.
+Donc
+\[
+2^h\ \ge\ n!\qquad\Longrightarrow\qquad h\ \ge\ \log_2(n!).
+\]
+Par la formule de Stirling, $n!\ge\left(\frac ne\right)^n$, d'où
+\[
+h\ \ge\ n\log_2 n - n\log_2 e\ =\ \Th(n\log n).\qquad\blacksquare
+\]
+\pause
+\vspace{2pt}
+\begin{attention}\small
+Conséquence : $\Th(n\log n)$ est \textbf{optimal} pour un tri par comparaisons.
+Les tris fusion et rapide atteignent cette borne --- le second seulement en moyenne.
+\end{attention}
+\end{frame}
+
+% =====================================================================
+\section{Diviser pour régner}
+% =====================================================================
+
+\begin{frame}[shrink=15]{Le paradigme}
+\begin{encadre}[title=Diviser pour régner (\emph{divide and conquer}),fonttitle=\bfseries]
+\begin{description}[leftmargin=1.7cm,style=nextline,itemsep=1pt]
+  \item[Diviser] découper le problème de taille $n$ en $a$ sous-problèmes de taille $n/b$ ;
+  \item[Régner] les résoudre \emph{récursivement} (cas de base : taille $\le 1$) ;
+  \item[Combiner] reconstruire la solution globale à partir des solutions partielles.
+\end{description}
+\end{encadre}
+\vspace{4pt}
+Le coût obéit alors à une \motcle{relation de récurrence} :
+\[
+T(n)\;=\;a\,T\!\left(\frac nb\right)\;+\;f(n),\qquad T(1)=\Th(1),
+\]
+où $f(n)$ est le coût de la division et de la combinaison.
+\vspace{4pt}
+\begin{center}\small
+\begin{tabular}{lccl}
+\toprule
+& \textbf{Diviser} & \textbf{Combiner} & \\
+\midrule
+Tri fusion & trivial (milieu) & coûteux (fusion en $\Th(n)$) & $T(n)=2T(n/2)+\Th(n)$\\
+Tri rapide & coûteux (partition $\Th(n)$) & trivial (rien) & $T(n)=T(k)+T(n{-}1{-}k)+\Th(n)$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\centering\footnotesize\motcle{Les deux tris sont duaux l'un de l'autre.}
+\end{frame}
+
+\begin{frame}{Le théorème maître (\emph{master theorem})}
+\begin{encadre}
+Soit $T(n)=a\,T(n/b)+\Th(n^c)$ avec $a\ge1$, $b>1$, $c\ge0$. Posons
+$c^\star=\log_b a$. Alors :
+\[
+T(n)=
+\begin{cases}
+\Th(n^{c}) & \text{si } c>c^\star \quad(\text{la combinaison domine}),\\[3pt]
+\Th(n^{c}\log n) & \text{si } c=c^\star \quad(\text{équilibre}),\\[3pt]
+\Th(n^{c^\star}) & \text{si } c<c^\star \quad(\text{les feuilles dominent}).
+\end{cases}
+\]
+\end{encadre}
+\vspace{4pt}
+\begin{exercice}{5}{application immédiate}
+Appliquer le théorème à $T(n)=2T(n/2)+\Th(n)$, puis à $T(n)=2T(n/2)+\Th(1)$.
+\end{exercice}
+\pause
+\begin{soluce}\small
+Premier cas : $a=b=2$, $c=1$, $c^\star=\log_2 2=1$, donc $c=c^\star$ :
+$T(n)=\Th(n\log n)$ --- c'est le \textbf{tri fusion}.\\
+Second cas : $c=0<c^\star=1$, donc $T(n)=\Th(n)$ (exemple : compter les feuilles d'un arbre).
+\end{soluce}
+\end{frame}
+
+% =====================================================================
+\section{Le tri fusion}
+% =====================================================================
+
+\begin{frame}[shrink=15]{Principe}
+\begin{encadre}[title=Idée,fonttitle=\bfseries]
+\textbf{Fusionner} deux listes \emph{déjà triées} est facile et linéaire : on compare les
+deux têtes et on prend la plus petite. D'où l'algorithme :
+couper en deux, trier chaque moitié récursivement, fusionner.
+\end{encadre}
+\vspace{6pt}
+\begin{center}
+\begin{tikzpicture}[scale=0.82,transform shape,font=\scriptsize,
+  b/.style={draw=teal,fill=tealclair,inner sep=3pt,rounded corners=1.5pt},
+  r/.style={draw=vertrec,fill=vertrec!12,inner sep=3pt,rounded corners=1.5pt},
+  >=Stealth]
+  \node[b] (a0) at (0,3) {38 \ 27 \ 43 \ 3 \ 9 \ 82 \ 10};
+  \node[b] (a1) at (-2.8,2) {38 \ 27 \ 43}; \node[b] (a2) at (2.8,2) {3 \ 9 \ 82 \ 10};
+  \node[b] (b1) at (-4.4,1) {38}; \node[b] (b2) at (-1.9,1) {27 \ 43};
+  \node[b] (b3) at (1.6,1) {3 \ 9}; \node[b] (b4) at (4.4,1) {82 \ 10};
+  \node[r] (c2) at (-1.9,0) {27 \ 43}; \node[r] (c3) at (1.6,0) {3 \ 9}; \node[r] (c4) at (4.4,0) {10 \ 82};
+  \node[r] (d1) at (-2.8,-1) {27 \ 38 \ 43}; \node[r] (d2) at (2.8,-1) {3 \ 9 \ 10 \ 82};
+  \node[r] (e0) at (0,-2) {3 \ 9 \ 10 \ 27 \ 38 \ 43 \ 82};
+  \draw[->,teal] (a0)--(a1); \draw[->,teal] (a0)--(a2);
+  \draw[->,teal] (a1)--(b1); \draw[->,teal] (a1)--(b2);
+  \draw[->,teal] (a2)--(b3); \draw[->,teal] (a2)--(b4);
+  \draw[->,vertrec] (b2)--(c2); \draw[->,vertrec] (b3)--(c3); \draw[->,vertrec] (b4)--(c4);
+  \draw[->,vertrec] (b1)-- (d1); \draw[->,vertrec] (c2)--(d1);
+  \draw[->,vertrec] (c3)--(d2); \draw[->,vertrec] (c4)--(d2);
+  \draw[->,vertrec] (d1)--(e0); \draw[->,vertrec] (d2)--(e0);
+  \node[teal] at (-6.2,2.5) {\textbf{diviser}};
+  \node[vertrec] at (-6.2,-0.8) {\textbf{fusionner}};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{La fusion}
+\begin{lstlisting}
+def fusion(u, v):
+    """u et v sont deux listes triees ; renvoie la liste triee des elements."""
+    res = []
+    i, j = 0, 0
+    while i < len(u) and j < len(v):
+        if u[i] <= v[j]:        # <= : garantit la stabilite
+            res.append(u[i]); i += 1
+        else:
+            res.append(v[j]); j += 1
+    return res + u[i:] + v[j:]   # l'une des deux tranches est vide
+\end{lstlisting}
+\begin{terminaisonit}[Terminaison]
+Variant $v=(|u|-i)+(|v|-j)$ : entier $\ge0$, décroît strictement de $1$ à chaque tour.
+\end{terminaisonit}
+\end{frame}
+
+\begin{frame}{La fusion --- correction et coût}
+\begin{correction}
+\small
+\textbf{Invariant :} \emph{\tab{res} est trié, \tab{res} contient exactement
+$u[0..i-1]$ et $v[0..j-1]$, et tout élément de \tab{res} est $\le$ tout élément de
+$u[i..]$ et de $v[j..]$.}
+\begin{itemize}\setlength\itemsep{1pt}
+  \item \emph{Initialisation} : \tab{res} vide, propriétés vraies.
+  \item \emph{Hérédité} : on ajoute $\min(u[i],v[j])$ ; comme $u$ et $v$ sont triées, cet
+        élément minore tout le reste, et il est $\ge$ le dernier de \tab{res}.
+  \item \emph{Sortie} : une des deux listes est épuisée ; la concaténation du reste, déjà
+        trié et plus grand que tout \tab{res}, conserve l'invariant.
+\end{itemize}
+\end{correction}
+\vspace{3pt}
+\begin{encadre}\small
+\textbf{Coût.} Chaque tour de boucle ajoute un élément à \tab{res} : au plus $|u|+|v|$
+tours, chacun à une comparaison. Donc
+\[
+\big(\min(|u|,|v|)\big)\ \le\ C_{\text{fusion}}\ \le\ |u|+|v|-1 \;=\; \Th(n).
+\]
+\end{encadre}
+\end{frame}
+
+\begin{frame}[fragile,shrink=15]{Le tri fusion}
+\begin{lstlisting}
+def tri_fusion(t):
+    n = len(t)
+    if n <= 1:                 # cas de base
+        return t
+    m = n // 2                 # diviser
+    gauche = tri_fusion(t[:m]) # regner
+    droite = tri_fusion(t[m:])
+    return fusion(gauche, droite)   # combiner
+\end{lstlisting}
+\begin{terminaisonrec}[Terminaison --- fonction de mesure]
+$\mu(t)=|t|\in\mathbb N$. Si $n\ge2$ alors $1\le m\le n-1$, donc
+$\mu(t[:m])=m<n$ et $\mu(t[m:])=n-m<n$ : la mesure décroît strictement à chaque appel,
+et le cas de base $n\le1$ est atteint. La récursion est \emph{bien fondée}.
+\end{terminaisonrec}
+\vspace{2pt}
+\begin{correction}[Correction --- récurrence forte sur $n$]
+\small
+\emph{Base} : $n\le1$, $t$ est trié. \emph{Hérédité} : si \tab{tri\_fusion} trie
+correctement toute liste de taille $<n$, alors \tab{gauche} et \tab{droite} sont triées et
+sont des permutations des deux moitiés ; la fusion (correcte, prouvée ci-dessus) renvoie
+une liste triée qui est une permutation de $t$.
+\end{correction}
+\end{frame}
+
+\begin{frame}[shrink=15]{Tri fusion --- complexité}
+\begin{exercice}{6}{mise en équation et résolution}
+\begin{enumerate}\setlength\itemsep{1pt}
+  \item Écrire la récurrence vérifiée par $C(n)$, nombre de comparaisons dans le pire cas.
+  \item La résoudre pour $n=2^p$ en déroulant, puis conclure par le théorème maître.
+  \item Le pire cas et le meilleur cas sont-ils du même ordre ?
+\end{enumerate}
+\end{exercice}
+\pause
+\begin{soluce}\small
+1. $C(n)=C(\lceil n/2\rceil)+C(\lfloor n/2\rfloor)+(n-1)$, \; $C(1)=0$.\\[2pt]
+2. Pour $n=2^p$ : $C(n)=2\,C(n/2)+n-1$. En divisant par $n$ et en posant
+$u_p=C(2^p)/2^p$ :
+\[
+u_p=u_{p-1}+1-2^{-p}\ \Longrightarrow\
+u_p=p-\sum_{k=1}^{p}2^{-k}=p-1+2^{-p}.
+\]
+Donc $C(n)=n\log_2 n-n+1$. Théorème maître ($a=b=2$, $c=1=c^\star$) : $C(n)=\Th(n\log n)$.\\[2pt]
+3. Oui : le nombre de tours de fusion ne dépend quasiment pas des données
+($\ge \frac n2$ comparaisons par fusion). On a
+$C_{\min}(n)=C_{\max}(n)=C_{\text{moy}}(n)=\Th(n\log n)$ : \textbf{aucune entrée ne dégrade le tri fusion}.
+\end{soluce}
+\end{frame}
+
+\begin{frame}{Tri fusion --- lecture de l'arbre d'appels}
+\begin{center}
+\begin{tikzpicture}[font=\scriptsize,yscale=0.95]
+  \foreach \k/\lab/\cout in {0/{1 appel de taille $n$}/{$n$},
+                             1/{2 appels de taille $n/2$}/{$2\cdot n/2=n$},
+                             2/{4 appels de taille $n/4$}/{$4\cdot n/4=n$}}{
+    \draw[teal,fill=tealclair] (0,-\k*1.1) rectangle (7,-\k*1.1-0.6);
+    \node at (3.5,-\k*1.1-0.3) {\lab};
+    \node[anchor=west,teal] at (7.4,-\k*1.1-0.3) {coût du niveau : \cout};
+  }
+  \node at (3.5,-3.5) {$\vdots$};
+  \draw[teal,fill=tealclair] (0,-4.5) rectangle (7,-5.1);
+  \node at (3.5,-4.8) {$n$ appels de taille $1$};
+  \node[anchor=west,teal] at (7.4,-4.8) {coût du niveau : $n$};
+  \draw[<->,thick,orangefonce] (-0.4,-0.3)--(-0.4,-4.8)
+      node[midway,left,rotate=90,anchor=south] {$\log_2 n$ niveaux};
+\end{tikzpicture}
+\end{center}
+\vspace{2pt}
+\begin{encadre}
+\centering
+$\log_2 n$ niveaux $\times$ un coût de $\Th(n)$ par niveau $\;=\;\Th(n\log n)$.
+\end{encadre}
+\end{frame}
+
+\begin{frame}{Tri fusion --- bilan}
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+Meilleur / moyen / pire cas & $\Th(n\log n)$ dans les trois cas\\
+Comparaisons exactes ($n=2^p$, pire cas) & $n\log_2 n-n+1$\\
+Mémoire auxiliaire & $\Th(n)$ --- \textbf{n'est pas en place}\\
+Stabilité & \textbf{stable} (grâce au test \tab{u[i] <= v[j]})\\
+Profondeur de récursion & $\Th(\log n)$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{6pt}
+\begin{encadre}\small
+\textbf{Atouts.} Complexité garantie, stabilité, comportement idéal sur les données
+lues séquentiellement (fichiers, listes chaînées) : c'est le tri des tris externes.
+\end{encadre}
+\begin{attention}\small
+\textbf{Limite.} Le coût mémoire $\Th(n)$ (et les recopies \tab{t[:m]}, \tab{t[m:]})
+le rendent plus lent en pratique qu'un tri rapide bien implanté sur un tableau en mémoire.
+\end{attention}
+\end{frame}
+
+% =====================================================================
+\section{Le tri rapide}
+% =====================================================================
+
+\begin{frame}{Principe}
+\begin{encadre}[title=Idée,fonttitle=\bfseries]
+On choisit un élément $p$, le \motcle{pivot}, et on \textbf{partitionne} le tableau :
+à gauche les éléments $\le p$, à droite les éléments $>p$. Le pivot est alors
+\emph{définitivement à sa place}. Il ne reste qu'à trier récursivement les deux côtés ---
+\textbf{sans rien recombiner}.
+\end{encadre}
+\vspace{6pt}
+\begin{center}
+\begin{tikzpicture}[font=\scriptsize,>=Stealth]
+  \draw[draw=teal,fill=grisclair] (0,0) rectangle (9,0.7);
+  \node at (4.5,0.35) {tableau quelconque $t[g..d]$};
+  \draw[->,thick,teal] (4.5,-0.15)--(4.5,-0.75) node[midway,right] {partition (coût $\Th(n)$)};
+  \draw[draw=teal,fill=tealclair] (0,-1.5) rectangle (3.6,-0.8);
+  \node at (1.8,-1.15) {éléments $\le p$};
+  \draw[draw=orangefonce,fill=orangeclair] (3.6,-1.5) rectangle (4.8,-0.8);
+  \node at (4.2,-1.15) {\textbf{$p$}};
+  \draw[draw=teal,fill=tealclair] (4.8,-1.5) rectangle (9,-0.8);
+  \node at (6.9,-1.15) {éléments $>p$};
+  \draw[->,thick,vertrec] (1.8,-1.65)--(1.8,-2.15) node[midway,left] {tri récursif};
+  \draw[->,thick,vertrec] (6.9,-1.65)--(6.9,-2.15) node[midway,right] {tri récursif};
+  \node[orangefonce] at (4.2,-2.3) {\textbf{en place}};
+\end{tikzpicture}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{La partition (schéma de Lomuto)}
+\begin{lstlisting}
+def partition(t, g, d):
+    """Partitionne t[g..d] autour du pivot t[d] ; renvoie l'indice final du pivot."""
+    p = t[d]
+    i = g                       # frontiere : t[g..i-1] contient les elements <= p
+    for j in range(g, d):
+        if t[j] <= p:           # <-- comparaison comptee
+            t[i], t[j] = t[j], t[i]
+            i += 1
+    t[i], t[d] = t[d], t[i]     # on place le pivot
+    return i
+\end{lstlisting}
+\begin{correction}[Correction --- invariant de la partition]
+\small
+\emph{Avant le tour $j$ : $t[g..i-1]$ ne contient que des éléments $\le p$, et
+$t[i..j-1]$ que des éléments $>p$.} Initialisation : les deux tranches sont vides.
+Hérédité : si $t[j]\le p$ on l'échange avec le premier élément $>p$ et on avance la
+frontière ; sinon la tranche des « $>p$ » s'allonge. Sortie ($j=d$) : l'échange final place
+$p$ entre les deux tranches, donc à sa place définitive.
+\end{correction}
+\end{frame}
+
+\begin{frame}[fragile,shrink=15]{Le tri rapide}
+\begin{lstlisting}
+def tri_rapide(t, g=0, d=None):
+    if d is None:
+        d = len(t) - 1
+    if g < d:                    # cas de base : tranche de taille <= 1
+        k = partition(t, g, d)   # diviser  (le travail est ici)
+        tri_rapide(t, g, k - 1)  # regner
+        tri_rapide(t, k + 1, d)
+    return t
+\end{lstlisting}
+\begin{terminaisonrec}
+$\mu(g,d)=d-g+1$ (taille de la tranche), entier $\ge0$. Comme $g\le k\le d$, les deux
+appels portent sur des tranches de tailles $k-g$ et $d-k$, toutes deux
+$\le \mu-1<\mu$ : la mesure décroît strictement. \emph{C'est le fait que le pivot soit
+exclu des deux appels qui assure la terminaison.}
+\end{terminaisonrec}
+\begin{correction}[Correction --- récurrence forte sur la taille de la tranche]
+\small
+Base : tranche de taille $\le1$, triée. Hérédité : après partition, $t[k]$ est à sa place,
+tout $t[g..k-1]$ est $\le t[k]\le$ tout $t[k+1..d]$ ; par hypothèse de récurrence les deux
+tranches sont triées, donc $t[g..d]$ l'est.
+\end{correction}
+\end{frame}
+
+\begin{frame}[shrink=15]{Tri rapide --- le pire cas}
+\begin{exercice}{7}{la partition dégénérée}
+\begin{enumerate}\setlength\itemsep{1pt}
+  \item Sur quelle entrée le pivot \tab{t[d]} est-il systématiquement le maximum de la
+        tranche ? Que deviennent alors les deux appels récursifs ?
+  \item En déduire la récurrence, puis $C_{\max}(n)$.
+  \item Quelle est la profondeur de récursion dans ce cas ?
+\end{enumerate}
+\end{exercice}
+\pause
+\begin{soluce}\small
+1. Si $t$ est \textbf{déjà trié} (ou trié à l'envers), le pivot est un extremum :
+la partition renvoie $k=d$ (resp. $k=g$), donc une tranche de taille $n-1$ et une tranche vide.\\[2pt]
+2. $C(n)=C(n-1)+(n-1)$, $C(0)=C(1)=0$, d'où
+\[
+C(n)=\sum_{i=1}^{n-1} i=\frac{n(n-1)}2=\Th(n^2).
+\]
+3. Profondeur $n$ : sur $n=10^5$, Python lève \tab{RecursionError}.\\[2pt]
+\textbf{Ironie :} le tri rapide est le plus lent des tris sur une entrée déjà triée.
+\end{soluce}
+\end{frame}
+
+\begin{frame}{Tri rapide --- le meilleur cas}
+\begin{exercice}{8}{la partition équilibrée}
+Supposer qu'à chaque appel le pivot tombe au milieu. Écrire et résoudre la récurrence.
+\end{exercice}
+\pause
+\begin{soluce}\small
+$C(n)=2\,C\!\left(\frac{n-1}2\right)+(n-1)\le 2\,C(n/2)+n$.
+Théorème maître avec $a=b=2$, $c=1=c^\star$ :
+\[
+C_{\min}(n)=\Th(n\log n),
+\]
+et la profondeur de récursion tombe à $\Th(\log n)$.
+\end{soluce}
+\vspace{4pt}
+\pause
+\begin{attention}\small
+\textbf{Le grand écart.} $\Th(n\log n)$ dans le meilleur cas, $\Th(n^2)$ dans le pire :
+tout dépend de la qualité du pivot. La question décisive est donc :
+\motcle{que se passe-t-il en moyenne ?}
+\end{attention}
+\end{frame}
+
+\begin{frame}{Tri rapide --- le cas moyen}
+On suppose les $n!$ permutations équiprobables ; le pivot est alors, avec probabilité
+$\frac1n$, le $(k+1)$-ième plus petit élément, pour chaque $k\in\{0,\dots,n-1\}$.
+\[
+C(n)=(n-1)+\frac1n\sum_{k=0}^{n-1}\big(C(k)+C(n-1-k)\big)
+    =(n-1)+\frac2n\sum_{k=0}^{n-1}C(k).
+\]
+\pause
+\textbf{Résolution.} On multiplie par $n$ puis on soustrait la relation au rang $n-1$ :
+\[
+nC(n)-(n-1)C(n-1)=n(n-1)-(n-1)(n-2)+2C(n-1)=2(n-1)+2C(n-1),
+\]
+\[
+\text{d'où}\qquad nC(n)=(n+1)C(n-1)+2(n-1)
+\qquad\Longrightarrow\qquad
+\frac{C(n)}{n+1}=\frac{C(n-1)}{n}+\frac{2(n-1)}{n(n+1)} .
+\]
+\pause
+En posant $w_n=\frac{C(n)}{n+1}$ et en télescopant, puis en utilisant
+$\frac{2(k-1)}{k(k+1)}\le \frac2k$ :
+\[
+w_n=\sum_{k=1}^{n}\frac{2(k-1)}{k(k+1)}=2H_{n+1}-\frac{4n}{n+1}
+\quad\Longrightarrow\quad
+\boxed{\,C_{\text{moy}}(n)=2(n+1)H_{n+1}-4n\,}
+\]
+\end{frame}
+
+\begin{frame}{Tri rapide --- conclusion du cas moyen}
+Avec $H_n=\ln n+\gamma+o(1)$ :
+\[
+C_{\text{moy}}(n)\ \sim\ 2n\ln n\ =\ \frac{2}{\log_2 e}\,n\log_2 n\ \approx\ 1{,}39\,n\log_2 n
+\ =\ \Th(n\log n).
+\]
+\begin{encadre}\small
+En moyenne, le tri rapide n'est qu'environ \textbf{39\,\% plus coûteux en comparaisons}
+que l'optimum théorique $n\log_2 n$ --- et il travaille \textbf{en place}, sans recopie,
+avec une excellente localité mémoire. C'est pourquoi il est, en pratique, le plus rapide.
+\end{encadre}
+\pause
+\vspace{4pt}
+\textbf{Comment éviter le pire cas ?}
+\begin{itemize}\small\setlength\itemsep{1pt}
+  \item \motcle{Pivot aléatoire} : \tab{i = random.randint(g, d)} puis échange avec \tab{t[d]}.
+        Le pire cas n'est plus lié à \emph{une} entrée mais devient improbable : l'espérance
+        est $\Th(n\log n)$ \emph{pour toute entrée}.
+  \item \motcle{Médiane de trois} : pivot $=$ médiane de $t[g]$, $t[(g+d)/2]$, $t[d]$.
+        Détruit le pire cas « tableau trié », le plus fréquent en pratique.
+  \item \motcle{Bascule} vers le tri par insertion pour $d-g<15$ (peu d'appels récursifs).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tri rapide --- bilan}
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+Meilleur cas & $\Th(n\log n)$ (pivot médian)\\
+Cas moyen & $2(n+1)H_{n+1}-4n\approx 1{,}39\,n\log_2 n=\Th(n\log n)$\\
+Pire cas & $\frac{n(n-1)}2=\Th(n^2)$ (tableau déjà trié, pivot extrême)\\
+Mémoire auxiliaire & $\Th(\log n)$ en moyenne (pile d'appels) --- \textbf{en place}\\
+Stabilité & \textbf{non stable} (les échanges à distance cassent l'ordre)\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{6pt}
+\begin{attention}\small
+\textbf{À retenir pour l'oral.} « Le tri rapide est en $\Th(n\log n)$ » est \emph{faux}
+sans précision. Il est en $\Th(n\log n)$ \textbf{en moyenne}, et en $\Th(n^2)$
+dans le pire cas.
+\end{attention}
+\end{frame}
+
+% =====================================================================
+\section{Synthèse}
+% =====================================================================
+
+\begin{frame}{Tableau comparatif}
+\begin{center}\scriptsize
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Tri} & \textbf{Meilleur} & \textbf{Moyen} & \textbf{Pire} & \textbf{Mémoire} & \textbf{En place} & \textbf{Stable}\\
+\midrule
+Sélection & $\Th(n^2)$ & $\Th(n^2)$ & $\Th(n^2)$ & $\Th(1)$ & oui & non\\
+Insertion & $\Th(n)$ & $\Th(n^2)$ & $\Th(n^2)$ & $\Th(1)$ & oui & oui\\
+Bulles & $\Th(n)$ & $\Th(n^2)$ & $\Th(n^2)$ & $\Th(1)$ & oui & oui\\
+\midrule
+\rowcolor{tealclair}
+Fusion & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n)$ & non & oui\\
+\rowcolor{tealclair}
+Rapide & $\Th(n\log n)$ & $\Th(n\log n)$ & $\Th(n^2)$ & $\Th(\log n)$ & oui & non\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{6pt}
+\begin{encadre}\small
+\textbf{Comment choisir ?}
+\begin{itemize}\setlength\itemsep{1pt}
+  \item garantie de complexité, stabilité, données volumineuses ou séquentielles
+        $\to$ \motcle{tri fusion} ;
+  \item vitesse brute sur un tableau en mémoire, mémoire contrainte
+        $\to$ \motcle{tri rapide} (avec pivot aléatoire ou médian) ;
+  \item $n$ petit ($\le 15$) ou tableau presque trié $\to$ \motcle{tri par insertion}.
+\end{itemize}
+\end{encadre}
+\end{frame}
+
+\begin{frame}{Ordres de grandeur}
+\begin{center}\small
+\begin{tabular}{rrrr}
+\toprule
+$n$ & $\frac{n(n-1)}2$ & $n\log_2 n$ & rapport\\
+\midrule
+$10^2$ & $4{,}95\cdot10^{3}$ & $6{,}6\cdot10^{2}$ & $\times 7$\\
+$10^3$ & $5{,}0\cdot10^{5}$ & $1{,}0\cdot10^{4}$ & $\times 50$\\
+$10^4$ & $5{,}0\cdot10^{7}$ & $1{,}3\cdot10^{5}$ & $\times 376$\\
+$10^6$ & $5{,}0\cdot10^{11}$ & $2{,}0\cdot10^{7}$ & $\times 25\,000$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{6pt}
+\begin{encadre}\small
+À $10^{8}$ comparaisons par seconde : trier un million d'entiers demande
+\textbf{$\approx 1{,}4$ heure} avec un tri quadratique, et \textbf{$0{,}2$ seconde}
+avec un tri en $n\log n$. \emph{Le choix de l'algorithme pèse plus lourd que le choix
+de la machine.}
+\end{encadre}
+\end{frame}
+
+\begin{frame}{À retenir}
+\begin{encadre}[title=Les cinq points du chapitre,fonttitle=\bfseries]
+\begin{enumerate}\setlength\itemsep{3pt}
+  \item Les trois tris quadratiques coûtent $\Th(n^2)$ comparaisons dans le pire cas ;
+        seul le tri par insertion est linéaire sur une entrée presque triée
+        (coût $=I(t)$ décalages).
+  \item Aucun tri par comparaisons ne peut descendre sous $\Omega(n\log n)$ :
+        argument de l'arbre de décision, $2^h\ge n!$.
+  \item \emph{Diviser pour régner} $\Rightarrow$ récurrence $T(n)=aT(n/b)+f(n)$,
+        résolue en déroulant ou par le théorème maître.
+  \item Tri fusion : $\Th(n\log n)$ \emph{garanti}, stable, mais $\Th(n)$ de mémoire.
+  \item Tri rapide : en place, $\Th(n\log n)$ \emph{en moyenne}
+        ($\approx1{,}39\,n\log_2 n$), mais $\Th(n^2)$ dans le pire cas ---
+        d'où le pivot aléatoire.
+\end{enumerate}
+\end{encadre}
+\vspace{4pt}
+\centering
+\motcle{Et toujours : terminaison (variant / mesure), correction (invariant / récurrence),
+complexité (récurrence).}
+\end{frame}
+
+% =====================================================================
+\appendix
+\section*{Pour aller plus loin}
+
+\begin{frame}{Exercices de préparation}
+\begin{enumerate}\small\setlength\itemsep{4pt}
+  \item \textbf{Fusion sans recopie.} Écrire \tab{fusion\_en\_place(t, g, m, d)} utilisant un
+        unique tableau tampon de taille $d-g+1$. Quelle est la complexité mémoire totale du
+        tri fusion ainsi implanté ?
+  \item \textbf{Comptage d'inversions.} Adapter le tri fusion pour qu'il renvoie
+        $(t_{\text{trié}}, I(t))$ en $\Th(n\log n)$. \emph{Indication :} quand on prend un
+        élément de la moitié droite, combien d'inversions supprime-t-on d'un coup ?
+  \item \textbf{$k$-ième plus petit élément.} Adapter la partition du tri rapide pour
+        obtenir \tab{selection(t, k)} en $\Th(n)$ \emph{en moyenne} (algorithme
+        \emph{quickselect}). Écrire et résoudre la récurrence $C(n)=C(n/2)+n$.
+  \item \textbf{Tri rapide à trois voies.} Partitionner en $\{<p\}$, $\{=p\}$, $\{>p\}$.
+        Quelle est la complexité sur un tableau ne contenant que $\Oh(1)$ valeurs distinctes ?
+  \item \textbf{Borne fine.} Montrer que $\log_2(n!)=n\log_2 n-n\log_2 e+\Th(\log n)$ ;
+        en déduire que le tri fusion est optimal à un terme d'ordre $n$ près.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}[plain]
+  \vfill
+  \begin{center}
+    {\color{teal}\hrule height 2pt}\vspace{10pt}
+    {\LARGE\bfseries\color{teal} Fin du chapitre}\\[8pt]
+    {\normalsize Algorithmes de tri --- CPGE MP / PSI / TSI}\\[10pt]
+    {\color{teal}\hrule height 1pt}
+  \end{center}
+  \vfill
+\end{frame}
+
+\end{document}

@@ -1,0 +1,7 @@
+\beamer@sectionintoc {1}{Le problème du tri : vocabulaire et outils}{4}{0}{1}
+\beamer@sectionintoc {2}{Les tris quadratiques : exercices de complexité}{10}{0}{2}
+\beamer@sectionintoc {3}{Une borne inférieure : $\Omega (n\qopname \relax o{log}n)$}{27}{0}{3}
+\beamer@sectionintoc {4}{Diviser pour régner}{32}{0}{4}
+\beamer@sectionintoc {5}{Le tri fusion}{36}{0}{5}
+\beamer@sectionintoc {6}{Le tri rapide}{45}{0}{6}
+\beamer@sectionintoc {7}{Synthèse}{60}{0}{7}
